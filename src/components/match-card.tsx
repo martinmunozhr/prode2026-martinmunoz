@@ -1,11 +1,12 @@
 import { Match, getTeam } from "@/lib/mock-data";
 import { MapPin, Clock } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Props = {
   match: Match;
   editable?: boolean;
-  initialPrediction?: { home: number; away: number };
+  initialPrediction?: { home: number; away: number } | null;
+  onSave?: (home: number, away: number) => Promise<void> | void;
 };
 
 const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
@@ -18,7 +19,7 @@ function fmtDate(iso: string) {
   return `${day}-${month} · ${hh}:${mm} UTC`;
 }
 
-export function MatchCard({ match, editable, initialPrediction }: Props) {
+export function MatchCard({ match, editable, initialPrediction, onSave }: Props) {
   const home = getTeam(match.homeId)!;
   const away = getTeam(match.awayId)!;
   const isFinished = match.status === "finished";
@@ -26,6 +27,29 @@ export function MatchCard({ match, editable, initialPrediction }: Props) {
 
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (initialPrediction) {
+      setPred(initialPrediction);
+      setSaved(true);
+    }
+  }, [initialPrediction?.home, initialPrediction?.away]);
+
+  const handleSave = async () => {
+    if (saving) return;
+    if (onSave) {
+      setSaving(true);
+      try {
+        await onSave(pred.home, pred.away);
+        setSaved(true);
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      setSaved(true);
+    }
+  };
 
   return (
     <div className="group bg-gradient-card border border-border/50 rounded-2xl p-5 shadow-card-sport hover:shadow-elevated hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
@@ -95,11 +119,11 @@ export function MatchCard({ match, editable, initialPrediction }: Props) {
         </div>
         {editable && (
           <button
-            onClick={() => setSaved(true)}
-            disabled={saved}
+            onClick={handleSave}
+            disabled={saving}
             className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-wider disabled:opacity-60 hover:scale-105 transition-transform"
           >
-            {saved ? "Guardado ✓" : "Guardar"}
+            {saving ? "Guardando..." : saved ? "Guardado ✓" : "Guardar"}
           </button>
         )}
       </div>
