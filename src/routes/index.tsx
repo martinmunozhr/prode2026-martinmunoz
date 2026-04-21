@@ -1,26 +1,127 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CountdownHero } from "@/components/countdown-hero";
+import { MatchCard } from "@/components/match-card";
+import { RankingRow } from "@/components/ranking-row";
+import { getUpcomingMatches, ranking } from "@/lib/mock-data";
+import { ArrowRight, Trophy, Users, Zap, Target } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Prode Mundial 2026 — Pronosticá cada partido" },
+      { name: "description", content: "Sumate al prode del Mundial 2026. Pronosticá los 104 partidos, competí en el ranking global y armá tu álbum de figuritas." },
+      { property: "og:title", content: "Prode Mundial 2026" },
+      { property: "og:description", content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos." },
+    ],
+  }),
+  component: HomePage,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function HomePage() {
+  const upcoming = getUpcomingMatches(3);
+  const top3 = ranking.slice(0, 3);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="container mx-auto px-4 py-8 md:py-14">
+      <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-hero shadow-elevated p-6 md:p-12">
+        <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-accent/15 blur-3xl" />
+
+        <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+              <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+              Inscripciones abiertas
+            </div>
+            <h1 className="font-display text-5xl sm:text-6xl md:text-8xl leading-[0.9] tracking-tight">
+              EL PRODE
+              <br />
+              <span className="text-gradient-pitch">DEL MUNDIAL</span>
+              <br />
+              2026.
+            </h1>
+            <p className="mt-5 text-lg text-muted-foreground max-w-xl">
+              48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado, sumá puntos y escalá en el ranking global.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link to="/registro" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                Sumate al prode <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/fixture" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors">
+                Ver fixture
+              </Link>
+            </div>
+
+            <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
+              <Stat icon={<Users className="h-5 w-5" />} value="48" label="Selecciones" />
+              <Stat icon={<Zap className="h-5 w-5" />} value="104" label="Partidos" />
+              <Stat icon={<Trophy className="h-5 w-5" />} value="1" label="Campeón" />
+            </div>
+          </div>
+
+          <div className="lg:pl-6">
+            <div className="text-center mb-4">
+              <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">Inicio del Mundial</div>
+              <div className="font-display text-2xl text-foreground mt-1">11 · JUN · 2026</div>
+            </div>
+            <CountdownHero />
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-14">
+        <SectionHeader
+          eyebrow="Calendario"
+          title="Próximos partidos"
+          action={<Link to="/fixture" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Ver todos <ArrowRight className="h-4 w-4" /></Link>}
+        />
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
+        </div>
+      </section>
+
+      <section className="mt-14">
+        <SectionHeader
+          eyebrow="Competencia"
+          title="Top del ranking"
+          action={<Link to="/ranking" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Tabla completa <ArrowRight className="h-4 w-4" /></Link>}
+        />
+        <div className="mt-6 space-y-2">
+          {top3.map((e) => <RankingRow key={e.position} entry={e} highlight={e.position === 1} />)}
+        </div>
+      </section>
+
+      <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
+        <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
+        <Target className="h-12 w-12 text-primary mx-auto mb-4" />
+        <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
+        <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
+        <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+          Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
     </div>
   );
 }
 
-function Index() {
-  return <PlaceholderIndex />;
+function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+  return (
+    <div className="bg-card/40 backdrop-blur border border-border/40 rounded-xl p-3">
+      <div className="text-primary">{icon}</div>
+      <div className="font-display text-2xl mt-1">{value}</div>
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function SectionHeader({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">{eyebrow}</div>
+        <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-1">{title}</h2>
+      </div>
+      {action}
+    </div>
+  );
 }
