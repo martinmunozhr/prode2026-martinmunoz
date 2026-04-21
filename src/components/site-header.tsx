@@ -4,12 +4,12 @@ import { Menu, X, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { to: "/", label: "Inicio", exact: true },
-  { to: "/fixture", label: "Fixture" },
-  { to: "/mis-pronosticos", label: "Mis Pronósticos" },
-  { to: "/ranking", label: "Ranking" },
-  { to: "/equipos", label: "Equipos" },
-] as const;
+  { to: "/" as const, label: "Inicio", exact: true },
+  { to: "/fixture" as const, label: "Fixture", exact: false },
+  { to: "/mis-pronosticos" as const, label: "Mis Pronósticos", exact: false },
+  { to: "/ranking" as const, label: "Ranking", exact: false },
+  { to: "/equipos" as const, label: "Equipos", exact: false },
+];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
