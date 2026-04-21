@@ -8,10 +8,14 @@ type Props = {
   initialPrediction?: { home: number; away: number };
 };
 
+const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 function fmtDate(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleDateString("es-AR", { day: "2-digit", month: "short" }) +
-    " · " + d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  const month = MONTHS_ES[d.getUTCMonth()];
+  const hh = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${day}-${month} · ${hh}:${mm} UTC`;
 }
 
 export function MatchCard({ match, editable, initialPrediction }: Props) {
