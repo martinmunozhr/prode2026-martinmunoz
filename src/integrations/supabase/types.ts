@@ -14,16 +14,212 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      matches: {
+        Row: {
+          away_id: string
+          away_score: number | null
+          city: string
+          created_at: string
+          group_letter: string | null
+          home_id: string
+          home_score: number | null
+          id: string
+          match_date: string
+          stadium: string
+          stage: Database["public"]["Enums"]["match_stage"]
+          status: Database["public"]["Enums"]["match_status"]
+          updated_at: string
+        }
+        Insert: {
+          away_id: string
+          away_score?: number | null
+          city: string
+          created_at?: string
+          group_letter?: string | null
+          home_id: string
+          home_score?: number | null
+          id: string
+          match_date: string
+          stadium: string
+          stage: Database["public"]["Enums"]["match_stage"]
+          status?: Database["public"]["Enums"]["match_status"]
+          updated_at?: string
+        }
+        Update: {
+          away_id?: string
+          away_score?: number | null
+          city?: string
+          created_at?: string
+          group_letter?: string | null
+          home_id?: string
+          home_score?: number | null
+          id?: string
+          match_date?: string
+          stadium?: string
+          stage?: Database["public"]["Enums"]["match_stage"]
+          status?: Database["public"]["Enums"]["match_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_away_id_fkey"
+            columns: ["away_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_home_id_fkey"
+            columns: ["home_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      predictions: {
+        Row: {
+          away_score: number
+          created_at: string
+          home_score: number
+          id: string
+          match_id: string
+          points_earned: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          away_score: number
+          created_at?: string
+          home_score: number
+          id?: string
+          match_id: string
+          points_earned?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          away_score?: number
+          created_at?: string
+          home_score?: number
+          id?: string
+          match_id?: string
+          points_earned?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "predictions_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_color: string
+          created_at: string
+          favorite_team_id: string | null
+          id: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_color?: string
+          created_at?: string
+          favorite_team_id?: string | null
+          id: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_color?: string
+          created_at?: string
+          favorite_team_id?: string | null
+          id?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          code: string
+          confederation: string
+          created_at: string
+          flag: string
+          group_letter: string
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          confederation: string
+          created_at?: string
+          flag: string
+          group_letter: string
+          id: string
+          name: string
+        }
+        Update: {
+          code?: string
+          confederation?: string
+          created_at?: string
+          flag?: string
+          group_letter?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      match_stage:
+        | "Grupos"
+        | "Dieciseisavos"
+        | "Octavos"
+        | "Cuartos"
+        | "Semifinal"
+        | "Tercer Puesto"
+        | "Final"
+      match_status: "scheduled" | "live" | "finished"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +346,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      match_stage: [
+        "Grupos",
+        "Dieciseisavos",
+        "Octavos",
+        "Cuartos",
+        "Semifinal",
+        "Tercer Puesto",
+        "Final",
+      ],
+      match_status: ["scheduled", "live", "finished"],
+    },
   },
 } as const
