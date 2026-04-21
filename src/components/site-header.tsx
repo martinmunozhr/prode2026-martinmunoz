@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Trophy } from "lucide-react";
+import { Menu, X, Trophy, LogOut, User as UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/auth-context";
 
 const links = [
   { to: "/" as const, label: "Inicio", exact: true },
@@ -13,6 +14,14 @@ const links = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { user, profile, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setOpen(false);
+    navigate({ to: "/" });
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -43,18 +52,39 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
-          <Link
-            to="/login"
-            className="px-4 py-2 text-sm font-semibold uppercase tracking-wider text-foreground hover:text-primary transition-colors"
-          >
-            Ingresar
-          </Link>
-          <Link
-            to="/registro"
-            className="px-4 py-2 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
-          >
-            Sumate
-          </Link>
+          {loading ? (
+            <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
+          ) : user ? (
+            <>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/40 border border-border/30">
+                <UserIcon className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">{profile?.username ?? "..."}</span>
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm font-semibold uppercase tracking-wider text-foreground hover:text-primary transition-colors"
+              >
+                Ingresar
+              </Link>
+              <Link
+                to="/registro"
+                className="px-4 py-2 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
+              >
+                Sumate
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -83,12 +113,25 @@ export function SiteHeader() {
               </Link>
             ))}
             <div className="border-t border-border/50 mt-2 pt-2 flex gap-2">
-              <Link to="/login" onClick={() => setOpen(false)} className="flex-1 text-center px-4 py-2 rounded-md border border-border text-sm font-semibold uppercase">
-                Ingresar
-              </Link>
-              <Link to="/registro" onClick={() => setOpen(false)} className="flex-1 text-center px-4 py-2 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase">
-                Sumate
-              </Link>
+              {user ? (
+                <>
+                  <div className="flex-1 text-center px-4 py-2 rounded-md bg-muted/40 text-sm font-semibold">
+                    {profile?.username ?? "..."}
+                  </div>
+                  <button onClick={handleSignOut} className="px-4 py-2 rounded-md border border-border text-sm font-semibold uppercase">
+                    Salir
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setOpen(false)} className="flex-1 text-center px-4 py-2 rounded-md border border-border text-sm font-semibold uppercase">
+                    Ingresar
+                  </Link>
+                  <Link to="/registro" onClick={() => setOpen(false)} className="flex-1 text-center px-4 py-2 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase">
+                    Sumate
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>
