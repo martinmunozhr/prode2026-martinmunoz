@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { getTeam, getRoster, matches } from "@/lib/mock-data";
+import { getTeam, getRoster, matches, type Player } from "@/lib/mock-data";
 import { PlayerCard } from "@/components/player-card";
 import { MatchCard } from "@/components/match-card";
 import { ArrowLeft } from "lucide-react";
@@ -33,11 +33,11 @@ function EquipoDetailPage() {
   const { team, roster } = Route.useLoaderData();
   const teamMatches = matches.filter((m) => m.homeId === team.id || m.awayId === team.id).slice(0, 3);
 
-  const byPos = {
-    POR: roster.filter((p) => p.position === "POR"),
-    DEF: roster.filter((p) => p.position === "DEF"),
-    MED: roster.filter((p) => p.position === "MED"),
-    DEL: roster.filter((p) => p.position === "DEL"),
+  const byPos: Record<Player["position"], Player[]> = {
+    POR: roster.filter((p: Player) => p.position === "POR"),
+    DEF: roster.filter((p: Player) => p.position === "DEF"),
+    MED: roster.filter((p: Player) => p.position === "MED"),
+    DEL: roster.filter((p: Player) => p.position === "DEL"),
   };
 
   return (
@@ -87,7 +87,7 @@ function EquipoDetailPage() {
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{byPos[pos].length}</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-              {byPos[pos].map((p) => (
+              {byPos[pos].map((p: Player) => (
                 <PlayerCard key={p.id} player={p} teamFlag={team.flag} />
               ))}
             </div>
