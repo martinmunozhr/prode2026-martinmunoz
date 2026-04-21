@@ -9,38 +9,174 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as FixtureRouteImport } from './routes/fixture'
+import { Route as EquiposRouteImport } from './routes/equipos'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EquiposEquipoIdRouteImport } from './routes/equipos.$equipoId'
 
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MisPronosticosRoute = MisPronosticosRouteImport.update({
+  id: '/mis-pronosticos',
+  path: '/mis-pronosticos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FixtureRoute = FixtureRouteImport.update({
+  id: '/fixture',
+  path: '/fixture',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquiposRoute = EquiposRouteImport.update({
+  id: '/equipos',
+  path: '/equipos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EquiposEquipoIdRoute = EquiposEquipoIdRouteImport.update({
+  id: '/$equipoId',
+  path: '/$equipoId',
+  getParentRoute: () => EquiposRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/equipos': typeof EquiposRouteWithChildren
+  '/fixture': typeof FixtureRoute
+  '/login': typeof LoginRoute
+  '/mis-pronosticos': typeof MisPronosticosRoute
+  '/ranking': typeof RankingRoute
+  '/registro': typeof RegistroRoute
+  '/equipos/$equipoId': typeof EquiposEquipoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/equipos': typeof EquiposRouteWithChildren
+  '/fixture': typeof FixtureRoute
+  '/login': typeof LoginRoute
+  '/mis-pronosticos': typeof MisPronosticosRoute
+  '/ranking': typeof RankingRoute
+  '/registro': typeof RegistroRoute
+  '/equipos/$equipoId': typeof EquiposEquipoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/equipos': typeof EquiposRouteWithChildren
+  '/fixture': typeof FixtureRoute
+  '/login': typeof LoginRoute
+  '/mis-pronosticos': typeof MisPronosticosRoute
+  '/ranking': typeof RankingRoute
+  '/registro': typeof RegistroRoute
+  '/equipos/$equipoId': typeof EquiposEquipoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/equipos'
+    | '/fixture'
+    | '/login'
+    | '/mis-pronosticos'
+    | '/ranking'
+    | '/registro'
+    | '/equipos/$equipoId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/equipos'
+    | '/fixture'
+    | '/login'
+    | '/mis-pronosticos'
+    | '/ranking'
+    | '/registro'
+    | '/equipos/$equipoId'
+  id:
+    | '__root__'
+    | '/'
+    | '/equipos'
+    | '/fixture'
+    | '/login'
+    | '/mis-pronosticos'
+    | '/ranking'
+    | '/registro'
+    | '/equipos/$equipoId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EquiposRoute: typeof EquiposRouteWithChildren
+  FixtureRoute: typeof FixtureRoute
+  LoginRoute: typeof LoginRoute
+  MisPronosticosRoute: typeof MisPronosticosRoute
+  RankingRoute: typeof RankingRoute
+  RegistroRoute: typeof RegistroRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mis-pronosticos': {
+      id: '/mis-pronosticos'
+      path: '/mis-pronosticos'
+      fullPath: '/mis-pronosticos'
+      preLoaderRoute: typeof MisPronosticosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fixture': {
+      id: '/fixture'
+      path: '/fixture'
+      fullPath: '/fixture'
+      preLoaderRoute: typeof FixtureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipos': {
+      id: '/equipos'
+      path: '/equipos'
+      fullPath: '/equipos'
+      preLoaderRoute: typeof EquiposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +184,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/equipos/$equipoId': {
+      id: '/equipos/$equipoId'
+      path: '/$equipoId'
+      fullPath: '/equipos/$equipoId'
+      preLoaderRoute: typeof EquiposEquipoIdRouteImport
+      parentRoute: typeof EquiposRoute
+    }
   }
 }
 
+interface EquiposRouteChildren {
+  EquiposEquipoIdRoute: typeof EquiposEquipoIdRoute
+}
+
+const EquiposRouteChildren: EquiposRouteChildren = {
+  EquiposEquipoIdRoute: EquiposEquipoIdRoute,
+}
+
+const EquiposRouteWithChildren =
+  EquiposRoute._addFileChildren(EquiposRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EquiposRoute: EquiposRouteWithChildren,
+  FixtureRoute: FixtureRoute,
+  LoginRoute: LoginRoute,
+  MisPronosticosRoute: MisPronosticosRoute,
+  RankingRoute: RankingRoute,
+  RegistroRoute: RegistroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
