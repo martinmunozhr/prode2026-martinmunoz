@@ -59,10 +59,14 @@ export function SiteHeader() {
             <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
           ) : user ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/40 border border-border/30">
+              <Link
+                to="/perfil"
+                className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/40 border border-border/30 hover:border-primary/40 transition-colors"
+              >
                 <UserIcon className="h-4 w-4 text-primary" />
                 <span className="text-sm font-semibold">{profile?.username ?? "..."}</span>
-              </div>
+              </Link>
+              <ThemeToggle />
               <button
                 onClick={handleSignOut}
                 className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -74,6 +78,7 @@ export function SiteHeader() {
             </>
           ) : (
             <>
+              <ThemeToggle />
               <Link
                 to="/login"
                 className="px-4 py-2 text-sm font-semibold uppercase tracking-wider text-foreground hover:text-primary transition-colors"
