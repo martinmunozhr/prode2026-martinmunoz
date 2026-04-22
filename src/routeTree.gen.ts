@@ -11,10 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as FixtureRouteImport } from './routes/fixture'
 import { Route as EquiposRouteImport } from './routes/equipos'
+import { Route as BolaDeCristalRouteImport } from './routes/bola-de-cristal'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EquiposEquipoIdRouteImport } from './routes/equipos.$equipoId'
 
@@ -28,6 +31,11 @@ const RankingRoute = RankingRouteImport.update({
   path: '/ranking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MisPronosticosRoute = MisPronosticosRouteImport.update({
   id: '/mis-pronosticos',
   path: '/mis-pronosticos',
@@ -38,6 +46,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FixtureRoute = FixtureRouteImport.update({
   id: '/fixture',
   path: '/fixture',
@@ -46,6 +59,11 @@ const FixtureRoute = FixtureRouteImport.update({
 const EquiposRoute = EquiposRouteImport.update({
   id: '/equipos',
   path: '/equipos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BolaDeCristalRoute = BolaDeCristalRouteImport.update({
+  id: '/bola-de-cristal',
+  path: '/bola-de-cristal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -61,20 +79,26 @@ const EquiposEquipoIdRoute = EquiposEquipoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
+  '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
+  '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
+  '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
+  '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
@@ -82,10 +106,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
+  '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
+  '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
@@ -94,30 +121,39 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
+    | '/insights'
     | '/login'
     | '/mis-pronosticos'
+    | '/perfil'
     | '/ranking'
     | '/registro'
     | '/equipos/$equipoId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
+    | '/insights'
     | '/login'
     | '/mis-pronosticos'
+    | '/perfil'
     | '/ranking'
     | '/registro'
     | '/equipos/$equipoId'
   id:
     | '__root__'
     | '/'
+    | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
+    | '/insights'
     | '/login'
     | '/mis-pronosticos'
+    | '/perfil'
     | '/ranking'
     | '/registro'
     | '/equipos/$equipoId'
@@ -125,10 +161,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BolaDeCristalRoute: typeof BolaDeCristalRoute
   EquiposRoute: typeof EquiposRouteWithChildren
   FixtureRoute: typeof FixtureRoute
+  InsightsRoute: typeof InsightsRoute
   LoginRoute: typeof LoginRoute
   MisPronosticosRoute: typeof MisPronosticosRoute
+  PerfilRoute: typeof PerfilRoute
   RankingRoute: typeof RankingRoute
   RegistroRoute: typeof RegistroRoute
 }
@@ -149,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RankingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mis-pronosticos': {
       id: '/mis-pronosticos'
       path: '/mis-pronosticos'
@@ -163,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fixture': {
       id: '/fixture'
       path: '/fixture'
@@ -175,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/equipos'
       fullPath: '/equipos'
       preLoaderRoute: typeof EquiposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bola-de-cristal': {
+      id: '/bola-de-cristal'
+      path: '/bola-de-cristal'
+      fullPath: '/bola-de-cristal'
+      preLoaderRoute: typeof BolaDeCristalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -207,10 +267,13 @@ const EquiposRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BolaDeCristalRoute: BolaDeCristalRoute,
   EquiposRoute: EquiposRouteWithChildren,
   FixtureRoute: FixtureRoute,
+  InsightsRoute: InsightsRoute,
   LoginRoute: LoginRoute,
   MisPronosticosRoute: MisPronosticosRoute,
+  PerfilRoute: PerfilRoute,
   RankingRoute: RankingRoute,
   RegistroRoute: RegistroRoute,
 }
