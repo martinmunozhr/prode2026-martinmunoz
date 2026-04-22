@@ -171,6 +171,28 @@
   --sidebar-ring: oklch(0.7 0.24 295);
 }
 
+.light {
+  --background: oklch(0.98 0.01 290);
+  --foreground: oklch(0.18 0.05 290);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.05 290);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.05 290);
+  --primary: oklch(0.55 0.25 295);
+  --primary-foreground: oklch(0.99 0.005 290);
+  --secondary: oklch(0.94 0.03 290);
+  --secondary-foreground: oklch(0.18 0.05 290);
+  --muted: oklch(0.94 0.02 290);
+  --muted-foreground: oklch(0.45 0.04 288);
+  --accent: oklch(0.62 0.24 340);
+  --accent-foreground: oklch(0.99 0.005 290);
+  --destructive: oklch(0.55 0.25 25);
+  --destructive-foreground: oklch(0.99 0.005 290);
+  --border: oklch(0 0 0 / 12%);
+  --input: oklch(0 0 0 / 8%);
+  --ring: oklch(0.55 0.25 295);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
