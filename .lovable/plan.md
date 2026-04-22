@@ -1,80 +1,42 @@
 
-# Prode Mundial 2026 — Reconstrucción mejorada
+# Próximo paso para el álbum: jugadores reales
 
-Reconstruyo el proyecto del repo en Lovable con un enfoque **visual-first deportivo dramático**, usando mock data al inicio para iterar rápido en UX. Las integraciones con APIs reales (fixtures, planteles, resultados live) quedan planificadas como fases posteriores.
+El álbum ya existe visualmente y se ve como Panini, pero los 26 nombres por equipo son placeholders ("Jugador 1, Jugador 2…"). Para rematarlo hay tres caminos — elegí uno y avanzo.
 
----
+## Opción A — Planteles reales hardcodeados (rápido, sin API)
 
-## Fase 1 — Visual base + estructura (foco de esta iteración)
+Cargo manualmente los 26 convocados (o lista probable actual) de las **selecciones top** (Argentina, Brasil, Francia, España, Inglaterra, Portugal, Alemania, Países Bajos, Uruguay, Colombia, México, USA, ~12-15 equipos) en `mock-data.ts` con: nombre real, dorsal, posición, club actual, edad. Para los equipos restantes dejo el generador actual hasta tener API.
 
-**Objetivo:** que la app *se sienta* como un prode atractivo y profesional, aunque la data sea simulada.
+- ✅ Sin dependencias externas, sin costos, datos visibles ya
+- ✅ Empuja el álbum a sentirse "de verdad" para los equipos que el usuario más va a abrir
+- ❌ Trabajo manual, datos congelados (hay que actualizar a mano si cambia un convocado)
 
-### Identidad visual
-- **Tema oscuro deportivo**: fondos profundos (azul medianoche / negro), acentos neón (verde césped, dorado trofeo, rojo alerta).
-- **Tipografía condensada bold** estilo broadcast (Oswald / Bebas Neue para titulares, Inter para texto).
-- **Gradientes y glows** en cards de partidos, badges de equipos, contadores.
-- **Animaciones sutiles**: countdowns que pulsan, hover en figuritas, transiciones entre vistas.
-- Banderas circulares grandes, scores tipo marcador estadio.
+## Opción B — API de fútbol (datos vivos)
 
-### Estructura de rutas (TanStack Start, separadas para SEO)
-- `/` — **Home/Landing**: hero con countdown al Mundial, CTA "Sumate al prode", highlights de próximos partidos, top 3 del ranking.
-- `/fixture` — Calendario completo de partidos por fase (grupos, octavos, etc.), filtrable por fecha y grupo.
-- `/mis-pronosticos` — Cards de partidos pendientes con inputs de marcador, badge de "ya cargado / pendiente / cerrado".
-- `/ranking` — Tabla de posiciones global, podio destacado arriba.
-- `/equipos` — Grilla de las 48 selecciones con banderas.
-- `/equipos/$equipoId` — Detalle del equipo + **álbum de figuritas** (26 jugadores con cards estilo Panini, brillos holográficos en estrellas).
-- `/login` y `/registro` — Auth (preparadas, pero sin backend aún).
+Conecto **API-Football** (free tier: 100 requests/día) vía edge function:
+- Endpoint que trae plantel por país y lo cachea en una tabla `players` de Lovable Cloud
+- Job que refresca cada X días para no quemar la cuota
+- Foto real del jugador (la API la incluye) reemplaza la bandera en la card
 
-### Componentes clave
-- `MatchCard` — Equipo vs Equipo con banderas, hora, estadio, input de pronóstico inline.
-- `PlayerCard` — Figurita con foto, posición, número, dorsal, rareza visual.
-- `RankingRow` — Posición, avatar, nombre, puntos, racha.
-- `CountdownHero` — Reloj gigante al próximo partido / kickoff del Mundial.
-- `GroupTable` — Tabla de grupo con equipos, PJ, PG, PE, PP, GF, GC, Pts.
+- ✅ 48 equipos con datos reales y fotos
+- ✅ Se actualiza solo
+- ❌ Requiere API key del usuario (gratis, pero hay que registrarse en api-football.com)
+- ❌ Más complejidad: tabla `players`, edge function, cache logic
 
-### Mock data
-- Fixture realista del Mundial 2026 (48 equipos, formato nuevo de 12 grupos de 4).
-- Planteles de muestra (26 jugadores genéricos por equipo, expandibles luego).
-- Usuarios y rankings ficticios para poblar la tabla.
-- Resultados parcialmente cargados para mostrar puntajes.
+## Opción C — Subir el nivel visual del álbum primero (sin tocar datos)
 
----
+Antes de meter datos reales, mejoro el álbum visualmente:
+- Reemplazar la bandera-como-foto por **avatares ilustrados generados con IA** (silueta deportiva estilizada por posición)
+- Animación de "abrir sobre" al entrar a la página (las figuritas aparecen una por una)
+- Vista de **figurita ampliada** al click (modal con stats, "rareza", botón "agregar al álbum")
+- Contador "X / 26 figuritas obtenidas" como gamificación
+- Filtros por posición / rareza
 
-## Fase 2 — Auth + lógica del prode (siguiente iteración, post-aprobación visual)
+- ✅ El álbum se siente único y juega con la gamificación del prode
+- ❌ Sigue con nombres genéricos hasta combinar con A o B después
 
-- Login con email/password vía Lovable Cloud.
-- Tabla `profiles` (username, avatar, equipo favorito).
-- Tabla `predictions` (user_id, match_id, home_score, away_score, locked_at).
-- Tabla `matches` y `teams` con seed inicial.
-- Lógica de puntaje: 3 pts resultado exacto, 1 pt ganador correcto, 0 pts incorrecto (configurable).
-- RLS: cada usuario solo ve/edita sus propios pronósticos; resultados oficiales solo admin.
-- Cierre automático de pronósticos al inicio del partido.
+## Mi recomendación
 
-## Fase 3 — Álbum de figuritas con datos oficiales
+**A + C combinados**: cargo planteles reales para las ~15 selecciones favoritas (los equipos que la familia más va a abrir) y al mismo tiempo subo el nivel visual con modal de figurita ampliada y animación de apertura. La opción B (API real) la dejamos para Fase 3 cuando tengas ganas de gestionar la API key.
 
-- Conectar a una API de fútbol (ej: [API-Football](https://www.api-football.com/), free tier) para traer planteles reales de las 48 selecciones.
-- Almacenar en Lovable Cloud (cache) para no quemar requests.
-- Sistema de "figuritas obtenidas" (gamificación opcional: completás el álbum cargando pronósticos).
-
-## Fase 4 — Resultados automáticos
-
-- Job programado (server function + cron externo) que consulta API de resultados oficiales.
-- Cálculo automático de puntajes al finalizar cada partido.
-- Notificaciones in-app cuando se actualiza tu posición en el ranking.
-
-## Fase 5 — Bugs y pulido del repo original
-
-- Una vez que tengamos la base sólida, reviso el repo de Martin para detectar features/lógica útil que valga la pena portar (formato de puntajes, reglas especiales, etc.).
-
----
-
-## En esta primera implementación entrego
-
-✅ Identidad visual completa (theme oscuro deportivo, tipografías, tokens de color)
-✅ Las 7 rutas listas con contenido mockeado y diseño pulido
-✅ Todos los componentes clave (MatchCard, PlayerCard, RankingRow, etc.)
-✅ Responsive mobile-first
-✅ Navegación funcional entre secciones
-✅ Mock data realista del Mundial 2026
-
-❌ Aún sin auth real, sin DB, sin API externa (Fases 2-4)
+Decime cuál preferís y arranco.
