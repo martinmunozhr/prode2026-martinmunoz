@@ -3,13 +3,16 @@ import { useState } from "react";
 import { Menu, X, Trophy, LogOut, User as UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
   { to: "/" as const, label: "Inicio", exact: true },
   { to: "/fixture" as const, label: "Fixture", exact: false },
-  { to: "/mis-pronosticos" as const, label: "Mis Pronósticos", exact: false },
+  { to: "/mis-pronosticos" as const, label: "Pronósticos", exact: false },
+  { to: "/bola-de-cristal" as const, label: "Bola", exact: false },
   { to: "/ranking" as const, label: "Ranking", exact: false },
-  { to: "/equipos" as const, label: "Equipos", exact: false },
+  { to: "/insights" as const, label: "Insights", exact: false },
+  { to: "/equipos" as const, label: "Álbum", exact: false },
 ];
 
 export function SiteHeader() {
