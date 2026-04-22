@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      crystal_ball: {
+        Row: {
+          campeon_id: string | null
+          created_at: string
+          fair_play_id: string | null
+          goleador_nombre: string | null
+          id: string
+          locked: boolean
+          mejor_arquero_nombre: string | null
+          mejor_jugador_nombre: string | null
+          points_earned: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campeon_id?: string | null
+          created_at?: string
+          fair_play_id?: string | null
+          goleador_nombre?: string | null
+          id?: string
+          locked?: boolean
+          mejor_arquero_nombre?: string | null
+          mejor_jugador_nombre?: string | null
+          points_earned?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campeon_id?: string | null
+          created_at?: string
+          fair_play_id?: string | null
+          goleador_nombre?: string | null
+          id?: string
+          locked?: boolean
+          mejor_arquero_nombre?: string | null
+          mejor_jugador_nombre?: string | null
+          points_earned?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           away_id: string
