@@ -72,6 +72,6 @@ export function PlayerCard({ player, teamFlag, onClick, animationDelay }: { play
           />
         ))}
       </div>
-    </div>
+    </button>
   );
 }
