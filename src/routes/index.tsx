@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CountdownHero } from "@/components/countdown-hero";
 import { MatchCard } from "@/components/match-card";
 import { RankingRow } from "@/components/ranking-row";
+import { AlbumPreview } from "@/components/album-preview";
 import { getUpcomingMatches, ranking } from "@/lib/mock-data";
 import { ArrowRight, Trophy, Users, Zap, Target } from "lucide-react";
 
@@ -78,6 +79,10 @@ function HomePage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
         </div>
+      </section>
+
+      <section className="mt-14">
+        <AlbumPreview />
       </section>
 
       <section className="mt-14">

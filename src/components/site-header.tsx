@@ -3,13 +3,16 @@ import { useState } from "react";
 import { Menu, X, Trophy, LogOut, User as UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
   { to: "/" as const, label: "Inicio", exact: true },
   { to: "/fixture" as const, label: "Fixture", exact: false },
-  { to: "/mis-pronosticos" as const, label: "Mis Pronósticos", exact: false },
+  { to: "/mis-pronosticos" as const, label: "Pronósticos", exact: false },
+  { to: "/bola-de-cristal" as const, label: "Bola", exact: false },
   { to: "/ranking" as const, label: "Ranking", exact: false },
-  { to: "/equipos" as const, label: "Equipos", exact: false },
+  { to: "/insights" as const, label: "Insights", exact: false },
+  { to: "/equipos" as const, label: "Álbum", exact: false },
 ];
 
 export function SiteHeader() {
@@ -56,10 +59,14 @@ export function SiteHeader() {
             <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
           ) : user ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/40 border border-border/30">
+              <Link
+                to="/perfil"
+                className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/40 border border-border/30 hover:border-primary/40 transition-colors"
+              >
                 <UserIcon className="h-4 w-4 text-primary" />
                 <span className="text-sm font-semibold">{profile?.username ?? "..."}</span>
-              </div>
+              </Link>
+              <ThemeToggle />
               <button
                 onClick={handleSignOut}
                 className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -71,6 +78,7 @@ export function SiteHeader() {
             </>
           ) : (
             <>
+              <ThemeToggle />
               <Link
                 to="/login"
                 className="px-4 py-2 text-sm font-semibold uppercase tracking-wider text-foreground hover:text-primary transition-colors"

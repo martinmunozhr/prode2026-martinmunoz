@@ -13,9 +13,11 @@ function diff(now: number) {
 }
 
 export function CountdownHero() {
-  const [t, setT] = useState(() => diff(Date.now()));
+  // Start with zeros so SSR and first client render match — avoids hydration mismatch.
+  const [t, setT] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
+    setT(diff(Date.now()));
     const i = setInterval(() => setT(diff(Date.now())), 1000);
     return () => clearInterval(i);
   }, []);
