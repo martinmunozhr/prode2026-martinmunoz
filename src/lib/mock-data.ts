@@ -213,8 +213,12 @@ function rarityFor(idx: number): Player["rarity"] {
   return "common";
 }
 
+import { getRealRoster, hasRealRoster } from "./real-squads";
+
 export function getRoster(teamId: string): Player[] {
-  // Deterministic per team
+  const real = getRealRoster(teamId);
+  if (real) return real;
+  // Fallback genérico determinístico
   const seed = teamId.charCodeAt(0) + teamId.charCodeAt(1);
   return positions.map((pos, i) => ({
     id: `${teamId}-p${i + 1}`,
@@ -225,6 +229,10 @@ export function getRoster(teamId: string): Player[] {
     club: clubs[(seed + i * 5) % clubs.length],
     rarity: rarityFor(i),
   }));
+}
+
+export function isRealRoster(teamId: string): boolean {
+  return hasRealRoster(teamId);
 }
 
 export const ranking: RankingEntry[] = [

@@ -16,14 +16,17 @@ const positionColor: Record<Player["position"], string> = {
   DEL: "text-alert",
 };
 
-export function PlayerCard({ player, teamFlag }: { player: Player; teamFlag: string }) {
+export function PlayerCard({ player, teamFlag, onClick, animationDelay }: { player: Player; teamFlag: string; onClick?: () => void; animationDelay?: number }) {
   const r = rarityStyles[player.rarity];
   const isLegendary = player.rarity === "legendary";
 
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
+      style={animationDelay !== undefined ? { animationDelay: `${animationDelay}ms` } : undefined}
       className={cn(
-        "relative aspect-[3/4] rounded-2xl border-2 overflow-hidden p-3 flex flex-col transition-all duration-300 hover:scale-[1.04] hover:-translate-y-1 cursor-pointer group",
+        "relative aspect-[3/4] rounded-2xl border-2 overflow-hidden p-3 flex flex-col transition-all duration-300 hover:scale-[1.04] hover:-translate-y-1 cursor-pointer group text-left animate-card-reveal focus:outline-none focus:ring-2 focus:ring-primary",
         r.ring,
         r.bg,
       )}
@@ -69,6 +72,6 @@ export function PlayerCard({ player, teamFlag }: { player: Player; teamFlag: str
           />
         ))}
       </div>
-    </div>
+    </button>
   );
 }
