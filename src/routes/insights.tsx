@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { computeInsights, type UserInsights } from "@/lib/insights";
 import { teams, type Match } from "@/lib/mock-data";
+import { Flag } from "@/components/flag";
 import { Activity, Target, TrendingUp, Flame, LogIn } from "lucide-react";
 
 export const Route = createFileRoute("/insights")({

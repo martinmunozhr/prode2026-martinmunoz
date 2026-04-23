@@ -181,6 +181,7 @@ function EquipoDetailPage() {
 
       <PlayerModal
         player={selected}
+        teamId={team.id}
         teamFlag={team.flag}
         teamName={team.name}
         open={modalOpen}
