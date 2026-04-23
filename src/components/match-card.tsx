@@ -10,14 +10,19 @@ type Props = {
   onSave?: (home: number, away: number) => Promise<void> | void;
 };
 
-const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+// Show match date in the user's local timezone (most users in AR/UY/CL).
 function fmtDate(iso: string) {
-  const d = new Date(iso);
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  const month = MONTHS_ES[d.getUTCMonth()];
-  const hh = String(d.getUTCHours()).padStart(2, "0");
-  const mm = String(d.getUTCMinutes()).padStart(2, "0");
-  return `${day}-${month} · ${hh}:${mm} UTC`;
+  try {
+    return new Intl.DateTimeFormat("es-AR", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
 }
 
 export function MatchCard({ match, editable, initialPrediction, onSave }: Props) {
@@ -90,9 +95,9 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
             </div>
           ) : editable ? (
             <div className="flex items-center gap-2">
-              <ScoreInput value={pred.home} onChange={(v) => { setPred({ ...pred, home: v }); setSaved(false); }} />
-              <span className="text-muted-foreground font-display text-2xl">:</span>
-              <ScoreInput value={pred.away} onChange={(v) => { setPred({ ...pred, away: v }); setSaved(false); }} />
+              <ScoreInput label={`Goles ${home.name}`} value={pred.home} onChange={(v) => { setPred({ ...pred, home: v }); setSaved(false); }} />
+              <span className="text-muted-foreground font-display text-2xl" aria-hidden>:</span>
+              <ScoreInput label={`Goles ${away.name}`} value={pred.away} onChange={(v) => { setPred({ ...pred, away: v }); setSaved(false); }} />
             </div>
           ) : (
             <div className="font-display text-3xl text-muted-foreground/70">VS</div>
@@ -132,13 +137,20 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   );
 }
 
-function ScoreInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+function ScoreInput({ value, onChange, label }: { value: number; onChange: (v: number) => void; label?: string }) {
   return (
     <input
       type="number"
+      inputMode="numeric"
       min={0}
       max={20}
       value={value}
+      aria-label={label}
+      onWheel={(e) => e.currentTarget.blur()}
+      onKeyDown={(e) => {
+        // arrow up/down already work; block "e" / "+" / "-" which can corrupt the value
+        if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+      }}
       onChange={(e) => onChange(Math.max(0, Math.min(20, Number(e.target.value) || 0)))}
       className="w-14 h-14 rounded-lg bg-input border border-border/50 text-center font-display text-3xl text-primary focus:outline-none focus:border-primary focus:shadow-glow-pitch transition-all tabular-nums"
     />

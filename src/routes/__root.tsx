@@ -36,12 +36,14 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#1a0d2e" },
       { title: "Prode Mundial 2026" },
       { name: "description", content: "El prode del Mundial 2026. Pronosticá los 104 partidos y competí en el ranking global." },
       { property: "og:title", content: "Prode Mundial 2026" },
       { property: "og:description", content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos." },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "es_AR" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -56,11 +58,23 @@ export const Route = createRootRoute({
   notFoundComponent: NotFoundComponent,
 });
 
+// Inline script that runs BEFORE first paint to set the theme class.
+// Avoids the FOUC where light-mode users see a dark flash on every navigation.
+const themeBootScript = `
+(function(){try{
+  var t = localStorage.getItem('prode-theme') || 'dark';
+  var c = document.documentElement.classList;
+  c.remove('light','dark');
+  c.add(t);
+}catch(e){}})();
+`;
+
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="es" className="dark">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
         {children}
