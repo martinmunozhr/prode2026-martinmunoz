@@ -156,6 +156,7 @@ function EquipoDetailPage() {
                     <PlayerCard
                       key={p.id}
                       player={p}
+                      teamId={team.id}
                       teamFlag={team.flag}
                       animationDelay={delay}
                       onClick={() => { setSelected(p); setModalOpen(true); }}
