@@ -95,13 +95,17 @@ export function SiteHeader() {
           )}
         </div>
 
-        <button
-          className="md:hidden p-2 text-foreground"
-          onClick={() => setOpen(!open)}
-          aria-label="Menú"
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="md:hidden flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            className="p-2 text-foreground"
+            onClick={() => setOpen(!open)}
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -123,9 +127,14 @@ export function SiteHeader() {
             <div className="border-t border-border/50 mt-2 pt-2 flex gap-2">
               {user ? (
                 <>
-                  <div className="flex-1 text-center px-4 py-2 rounded-md bg-muted/40 text-sm font-semibold">
-                    {profile?.username ?? "..."}
-                  </div>
+                  <Link
+                    to="/perfil"
+                    onClick={() => setOpen(false)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-muted/40 border border-border/30 text-sm font-semibold"
+                  >
+                    <UserIcon className="h-4 w-4 text-primary" />
+                    {profile?.username ?? "Mi perfil"}
+                  </Link>
                   <button onClick={handleSignOut} className="px-4 py-2 rounded-md border border-border text-sm font-semibold uppercase">
                     Salir
                   </button>

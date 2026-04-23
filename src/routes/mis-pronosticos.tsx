@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MatchCard } from "@/components/match-card";
 import type { Match } from "@/lib/mock-data";
+import { calcMatchPoints } from "@/lib/scoring";
 import { Target, Clock, Lock, LogIn } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -105,6 +106,16 @@ function MisPronosticosPage() {
   const pending = matches.filter((m) => m.status === "scheduled");
   const finished = matches.filter((m) => m.status === "finished");
   const myCount = Object.keys(preds).length;
+
+  const totalPoints = useMemo(() => {
+    let pts = 0;
+    finished.forEach((m) => {
+      const p = preds[m.id];
+      if (!p || m.homeScore == null || m.awayScore == null) return;
+      pts += calcMatchPoints({ home: p.home, away: p.away }, { home: m.homeScore, away: m.awayScore }, m.stage);
+    });
+    return Math.round(pts);
+  }, [finished, preds]);
 
   if (authLoading || loading) {
     return (
