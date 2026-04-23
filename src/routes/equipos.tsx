@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { teams, groupLetters } from "@/lib/mock-data";
+import { Flag } from "@/components/flag";
 
 export const Route = createFileRoute("/equipos")({
   head: () => ({
@@ -49,7 +50,7 @@ function EquiposPage() {
                     params={{ equipoId: t.id }}
                     className="group bg-gradient-card border border-border/50 rounded-2xl p-4 flex items-center gap-3 hover:border-primary/40 hover:shadow-glow-pitch transition-all"
                   >
-                    <div className="text-4xl group-hover:scale-110 transition-transform">{t.flag}</div>
+                    <Flag teamId={t.id} className="text-4xl group-hover:scale-110 transition-transform" />
                     <div className="min-w-0">
                       <div className="font-display text-base tracking-wide truncate">{t.name}</div>
                       <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{t.confederation}</div>

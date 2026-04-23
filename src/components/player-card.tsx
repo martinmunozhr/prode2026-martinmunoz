@@ -1,4 +1,5 @@
 import { Player } from "@/lib/mock-data";
+import { Flag, teamIdToIso2 } from "@/components/flag";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,7 @@ const positionColor: Record<Player["position"], string> = {
   DEL: "text-alert",
 };
 
-export function PlayerCard({ player, teamFlag, onClick, animationDelay }: { player: Player; teamFlag: string; onClick?: () => void; animationDelay?: number }) {
+export function PlayerCard({ player, teamId, teamFlag, onClick, animationDelay }: { player: Player; teamId?: string; teamFlag?: string; onClick?: () => void; animationDelay?: number }) {
   const r = rarityStyles[player.rarity];
   const isLegendary = player.rarity === "legendary";
 
@@ -46,11 +47,15 @@ export function PlayerCard({ player, teamFlag, onClick, animationDelay }: { play
         </div>
       </div>
 
-      {/* Avatar (emoji placeholder) */}
+      {/* Avatar — bandera SVG del país */}
       <div className="flex-1 flex items-center justify-center relative z-10">
-        <div className={cn("text-6xl md:text-7xl transition-transform group-hover:scale-110", isLegendary && "drop-shadow-2xl")}>
-          {teamFlag}
-        </div>
+        {teamId && teamIdToIso2(teamId) ? (
+          <Flag teamId={teamId} className={cn("text-6xl md:text-7xl transition-transform group-hover:scale-110 !rounded-md shadow-lg", isLegendary && "drop-shadow-2xl")} />
+        ) : (
+          <div className={cn("text-6xl md:text-7xl transition-transform group-hover:scale-110", isLegendary && "drop-shadow-2xl")}>
+            {teamFlag}
+          </div>
+        )}
       </div>
 
       {/* Name + club */}

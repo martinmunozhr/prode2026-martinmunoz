@@ -1,4 +1,5 @@
 import { Player } from "@/lib/mock-data";
+import { Flag, teamIdToIso2 } from "@/components/flag";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Star, Trophy, Calendar, MapPin, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,8 +18,9 @@ const positionLabel: Record<Player["position"], string> = {
   DEL: "Delantero",
 };
 
-export function PlayerModal({ player, teamFlag, teamName, open, onOpenChange }: {
+export function PlayerModal({ player, teamId, teamFlag, teamName, open, onOpenChange }: {
   player: Player | null;
+  teamId?: string;
   teamFlag: string;
   teamName: string;
   open: boolean;
@@ -46,7 +48,11 @@ export function PlayerModal({ player, teamFlag, teamName, open, onOpenChange }: 
           </div>
 
           <div className="flex-1 flex items-center justify-center relative z-10">
-            <div className={cn("text-[10rem] leading-none", isLegendary && "drop-shadow-2xl")}>{teamFlag}</div>
+            {teamId && teamIdToIso2(teamId) ? (
+              <Flag teamId={teamId} className={cn("text-[10rem] !rounded-lg shadow-elevated", isLegendary && "drop-shadow-2xl")} />
+            ) : (
+              <div className={cn("text-[10rem] leading-none", isLegendary && "drop-shadow-2xl")}>{teamFlag}</div>
+            )}
           </div>
 
           <div className="relative z-10 text-center">
