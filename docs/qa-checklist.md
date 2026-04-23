@@ -143,6 +143,29 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 
 ---
 
+## 🤖 Smoke automatizado
+
+Script: `scripts/smoke-tests.mjs` (Playwright + Chromium).
+
+```bash
+# Contra dev local
+BASE_URL=http://localhost:3000 node scripts/smoke-tests.mjs
+
+# Contra preview / producción
+BASE_URL=https://tu-app.lovable.app node scripts/smoke-tests.mjs
+```
+
+- Recorre 10 rutas críticas en desktop (1280x800) **y** mobile (390x844).
+- Captura screenshot fullpage por ruta + viewport en `./smoke-report/`.
+- Registra: errores de consola, warnings, page errors, requests fallidos, HTTP status, tiempo de carga.
+- Genera `smoke-report/report.md` (humano) y `report.json` (CI).
+- Sale con `exit 1` si hay errores → integrable en CI/PR checks.
+- Filtra ruido conocido (`[vite]`, RESET_BLANK_CHECK, React DevTools).
+
+Pre-requisito: `npx playwright install chromium` la primera vez.
+
+---
+
 ## 🐛 Smoke regresiones recurrentes
 
 - [ ] **Hydration timezone**: `MatchCard` no debe mostrar diff server/cliente en la fecha.
