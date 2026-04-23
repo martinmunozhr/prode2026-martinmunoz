@@ -26,12 +26,21 @@ export function RankingRow({ entry, highlight }: { entry: RankingEntry; highligh
         </div>
         <div className="min-w-0">
           <div className="font-semibold text-foreground truncate">{entry.username}</div>
-          {entry.streak > 0 && (
-            <div className="flex items-center gap-1 text-xs text-alert">
-              <Flame className="h-3 w-3" />
-              <span>{entry.streak} en racha</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {/* Compact stats visible on mobile (hidden on desktop where columns show them) */}
+            <span className="md:hidden inline-flex items-center gap-1">
+              <Target className="h-3 w-3 text-primary" />
+              <span className="tabular-nums font-semibold text-foreground">{entry.exact}</span>
+              <span className="opacity-60">·</span>
+              <span className="tabular-nums">{entry.partial}p</span>
+            </span>
+            {entry.streak > 0 && (
+              <span className="inline-flex items-center gap-1 text-alert">
+                <Flame className="h-3 w-3" />
+                <span>{entry.streak}</span>
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

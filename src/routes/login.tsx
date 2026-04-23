@@ -33,7 +33,7 @@ function LoginPage() {
       toast.error(error === "Invalid login credentials" ? "Email o contraseña incorrectos" : error);
       return;
     }
-    toast.success("¡Bienvenido devuelta!");
+    toast.success("¡Bienvenido de vuelta!");
     navigate({ to: "/mis-pronosticos" });
   };
 
@@ -46,7 +46,7 @@ function LoginPage() {
           </div>
         </div>
         <h1 className="font-display text-4xl text-center tracking-tight">Ingresar</h1>
-        <p className="text-center text-muted-foreground mt-2 text-sm">Bienvenido devuelta. Volvé a tu prode.</p>
+        <p className="text-center text-muted-foreground mt-2 text-sm">Bienvenido de vuelta. Volvé a tu prode.</p>
 
         <form className="mt-8 space-y-4" onSubmit={onSubmit}>
           <Field label="Email" type="email" placeholder="vos@email.com" value={email} onChange={setEmail} required />

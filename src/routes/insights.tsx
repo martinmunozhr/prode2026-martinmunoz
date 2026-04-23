@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { computeInsights, type UserInsights } from "@/lib/insights";
+import { computeInsights, type UserInsights, type UserPrediction } from "@/lib/insights";
 import { teams, type Match } from "@/lib/mock-data";
 import { Flag } from "@/components/flag";
 import { Activity, Target, TrendingUp, Flame, LogIn } from "lucide-react";
@@ -49,7 +49,7 @@ function InsightsPage() {
       if (!active) return;
       const matchesById: Record<string, Match> = {};
       ((ms as DbMatch[] | null) ?? []).forEach((m) => { matchesById[m.id] = dbToMatch(m); });
-      setInsights(computeInsights((ps as any[]) ?? [], matchesById));
+      setInsights(computeInsights(((ps as UserPrediction[] | null) ?? []), matchesById));
       setLoading(false);
     })();
     return () => { active = false; };

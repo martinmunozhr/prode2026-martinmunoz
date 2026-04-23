@@ -21,6 +21,14 @@ function FixturePage() {
   const [activeGroup, setActiveGroup] = useState<string>("A");
   const groupMatches = matches.filter((m) => m.group === activeGroup);
 
+  const selectGroup = (g: string) => {
+    setActiveGroup(g);
+    if (typeof window !== "undefined") {
+      // smooth scroll the content into view
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <header className="mb-8">
@@ -30,11 +38,14 @@ function FixturePage() {
       </header>
 
       {/* Group selector */}
-      <div className="flex flex-wrap gap-2 mb-8 sticky top-16 z-40 bg-background/80 backdrop-blur-xl py-3 -mx-4 px-4 border-b border-border/30">
+      <div className="flex flex-wrap gap-2 mb-8 sticky top-16 z-40 bg-background/80 backdrop-blur-xl py-3 -mx-4 px-4 border-b border-border/30" role="tablist" aria-label="Seleccionar grupo">
         {groupLetters.map((g) => (
           <button
             key={g}
-            onClick={() => setActiveGroup(g)}
+            onClick={() => selectGroup(g)}
+            role="tab"
+            aria-selected={activeGroup === g}
+            aria-label={`Grupo ${g}`}
             className={cn(
               "h-11 w-11 rounded-lg font-display text-xl tracking-wider transition-all",
               activeGroup === g

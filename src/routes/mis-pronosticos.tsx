@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MatchCard } from "@/components/match-card";
 import type { Match } from "@/lib/mock-data";
+import { calcMatchPoints } from "@/lib/scoring";
 import { Target, Clock, Lock, LogIn } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -106,6 +107,16 @@ function MisPronosticosPage() {
   const finished = matches.filter((m) => m.status === "finished");
   const myCount = Object.keys(preds).length;
 
+  const totalPoints = useMemo(() => {
+    let pts = 0;
+    finished.forEach((m) => {
+      const p = preds[m.id];
+      if (!p || m.homeScore == null || m.awayScore == null) return;
+      pts += calcMatchPoints({ home: p.home, away: p.away }, { home: m.homeScore, away: m.awayScore }, m.stage);
+    });
+    return Math.round(pts);
+  }, [finished, preds]);
+
   if (authLoading || loading) {
     return (
       <div className="container mx-auto px-4 py-20 text-center text-muted-foreground">
@@ -144,7 +155,7 @@ function MisPronosticosPage() {
         <StatCard icon={<Target />} value={String(myCount)} label="Cargados" tone="primary" />
         <StatCard icon={<Clock />} value={String(pending.length)} label="Pendientes" tone="accent" />
         <StatCard icon={<Lock />} value={String(finished.length)} label="Cerrados" tone="muted" />
-        <StatCard icon={<Target />} value="0" label="Puntos totales" tone="primary" />
+        <StatCard icon={<Target />} value={String(totalPoints)} label="Puntos totales" tone="primary" />
       </div>
 
       <section className="mb-12">
@@ -176,12 +187,19 @@ function MisPronosticosPage() {
         <div className="flex items-center gap-2 mb-5">
           <Lock className="h-5 w-5 text-muted-foreground" />
           <h2 className="font-display text-2xl tracking-wider">Ya jugados</h2>
+          <span className="ml-auto text-xs text-muted-foreground">{finished.length} partidos</span>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {finished.map((m) => (
-            <MatchCard key={m.id} match={m} initialPrediction={preds[m.id] ?? null} />
-          ))}
-        </div>
+        {finished.length === 0 ? (
+          <div className="text-sm text-muted-foreground border border-border/40 rounded-xl p-6 text-center">
+            Todavía no se jugaron partidos.
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4">
+            {finished.map((m) => (
+              <MatchCard key={m.id} match={m} initialPrediction={preds[m.id] ?? null} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
