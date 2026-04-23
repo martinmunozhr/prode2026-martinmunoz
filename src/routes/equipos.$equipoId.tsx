@@ -88,16 +88,6 @@ function EquipoDetailPage() {
         </div>
       </header>
 
-      {/* Próximos partidos */}
-      {teamMatches.length > 0 && (
-        <section className="mb-12">
-          <h2 className="font-display text-2xl tracking-wider mb-4">Próximos partidos</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {teamMatches.map((m) => <MatchCard key={m.id} match={m} />)}
-          </div>
-        </section>
-      )}
-
       {/* Álbum de figuritas */}
       <section>
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -174,6 +164,16 @@ function EquipoDetailPage() {
           ),
         )}
       </section>
+
+      {/* Próximos partidos */}
+      {teamMatches.length > 0 && (
+        <section className="mt-12">
+          <h2 className="font-display text-2xl tracking-wider mb-4">Próximos partidos</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {teamMatches.map((m) => <MatchCard key={m.id} match={m} />)}
+          </div>
+        </section>
+      )}
 
       <PlayerModal
         player={selected}
