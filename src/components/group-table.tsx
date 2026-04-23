@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { getGroupStandings } from "@/lib/mock-data";
+import { Flag } from "@/components/flag";
 import { cn } from "@/lib/utils";
 
 export function GroupTable({ group }: { group: string }) {
@@ -30,7 +31,7 @@ export function GroupTable({ group }: { group: string }) {
               <td className="px-3 py-2.5 font-display text-base tabular-nums">{i + 1}</td>
               <td className="px-3 py-2.5">
                 <Link to="/equipos/$equipoId" params={{ equipoId: r.team.id }} className="flex items-center gap-2 hover:text-primary">
-                  <span className="text-xl">{r.team.flag}</span>
+                  <Flag teamId={r.team.id} className="text-xl" />
                   <span className="font-semibold truncate">{r.team.name}</span>
                 </Link>
               </td>

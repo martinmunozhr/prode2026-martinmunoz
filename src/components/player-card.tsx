@@ -1,4 +1,5 @@
 import { Player } from "@/lib/mock-data";
+import { Flag, teamIdToIso2 } from "@/components/flag";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 

@@ -1,4 +1,5 @@
 import { Match, getTeam } from "@/lib/mock-data";
+import { Flag } from "@/components/flag";
 import { MapPin, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -77,7 +78,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
       {/* Teams + Score */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="text-5xl leading-none">{home.flag}</div>
+          <Flag teamId={home.id} className="text-5xl" />
           <div className="font-display text-base md:text-lg tracking-wide leading-tight">{home.name}</div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{home.code}</div>
         </div>
@@ -105,7 +106,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="text-5xl leading-none">{away.flag}</div>
+          <Flag teamId={away.id} className="text-5xl" />
           <div className="font-display text-base md:text-lg tracking-wide leading-tight">{away.name}</div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{away.code}</div>
         </div>
