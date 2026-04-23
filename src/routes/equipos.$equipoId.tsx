@@ -39,7 +39,7 @@ type PosFilter = "ALL" | Player["position"];
 type RarityFilter = "ALL" | Player["rarity"];
 
 function EquipoDetailPage() {
-  const { team, roster, real } = Route.useLoaderData();
+  const { team, roster, real } = Route.useLoaderData() as LoaderData;
   const teamMatches = matches.filter((m) => m.homeId === team.id || m.awayId === team.id).slice(0, 3);
 
   const [posFilter, setPosFilter] = useState<PosFilter>("ALL");
