@@ -97,7 +97,7 @@ function PerfilPage() {
           >
             <option value="">Sin elegir</option>
             {teams.map((t) => (
-              <option key={t.id} value={t.id}>{t.flag} {t.name}</option>
+              <option key={t.id} value={t.id}>{t.code} — {t.name}</option>
             ))}
           </select>
         </section>
