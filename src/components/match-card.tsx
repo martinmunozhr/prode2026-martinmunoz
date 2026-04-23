@@ -34,6 +34,8 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
   const [saving, setSaving] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (initialPrediction) {
@@ -105,7 +107,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           {!isFinished && (
             <div className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground">
               <Clock className="h-3 w-3" />
-              {fmtDate(match.date)}
+              <span suppressHydrationWarning>{mounted ? fmtDate(match.date) : ""}</span>
             </div>
           )}
         </div>
