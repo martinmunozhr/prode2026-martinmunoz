@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { teams, groupLetters } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/equipos")({
@@ -14,6 +14,12 @@ export const Route = createFileRoute("/equipos")({
 });
 
 function EquiposPage() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  if (pathname !== "/equipos") {
+    return <Outlet />;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <header className="mb-10">
