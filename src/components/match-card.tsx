@@ -34,6 +34,8 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
   const [saving, setSaving] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (initialPrediction) {
