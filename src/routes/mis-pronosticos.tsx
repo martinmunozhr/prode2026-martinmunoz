@@ -155,7 +155,7 @@ function MisPronosticosPage() {
         <StatCard icon={<Target />} value={String(myCount)} label="Cargados" tone="primary" />
         <StatCard icon={<Clock />} value={String(pending.length)} label="Pendientes" tone="accent" />
         <StatCard icon={<Lock />} value={String(finished.length)} label="Cerrados" tone="muted" />
-        <StatCard icon={<Target />} value="0" label="Puntos totales" tone="primary" />
+        <StatCard icon={<Target />} value={String(totalPoints)} label="Puntos totales" tone="primary" />
       </div>
 
       <section className="mb-12">
@@ -187,12 +187,19 @@ function MisPronosticosPage() {
         <div className="flex items-center gap-2 mb-5">
           <Lock className="h-5 w-5 text-muted-foreground" />
           <h2 className="font-display text-2xl tracking-wider">Ya jugados</h2>
+          <span className="ml-auto text-xs text-muted-foreground">{finished.length} partidos</span>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {finished.map((m) => (
-            <MatchCard key={m.id} match={m} initialPrediction={preds[m.id] ?? null} />
-          ))}
-        </div>
+        {finished.length === 0 ? (
+          <div className="text-sm text-muted-foreground border border-border/40 rounded-xl p-6 text-center">
+            Todavía no se jugaron partidos.
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4">
+            {finished.map((m) => (
+              <MatchCard key={m.id} match={m} initialPrediction={preds[m.id] ?? null} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
