@@ -116,7 +116,7 @@ function InsightsPage() {
               if (!team) return null;
               return (
                 <div key={t.teamId} className="flex items-center gap-3 p-3 rounded-xl bg-background/40 border border-border/30">
-                  <div className="text-3xl">{team.flag}</div>
+                  <Flag teamId={team.id} className="text-3xl" />
                   <div className="font-display text-base tracking-wide flex-1">{team.name}</div>
                   <div className="font-display text-2xl tabular-nums text-primary">{t.count}</div>
                   <div className="text-[10px] uppercase tracking-widest text-muted-foreground">veces</div>
