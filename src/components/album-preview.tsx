@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { teams } from "@/lib/mock-data";
+import { Flag } from "@/components/flag";
 import { ArrowRight, BookOpen } from "lucide-react";
 
 const FEATURED = ["arg", "bra", "fra", "esp", "ing", "por"];
@@ -38,7 +39,7 @@ export function AlbumPreview() {
             params={{ equipoId: t.id }}
             className="group relative bg-background/40 border border-border/50 rounded-2xl p-4 flex flex-col items-center gap-2 hover:border-primary/50 hover:shadow-glow-pitch transition-all"
           >
-            <div className="text-5xl group-hover:scale-110 transition-transform">{t.flag}</div>
+            <Flag teamId={t.id} className="text-5xl group-hover:scale-110 transition-transform" />
             <div className="text-[11px] font-display tracking-wider uppercase truncate w-full text-center">
               {t.name}
             </div>

@@ -1,14 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { getTeam, getRoster, matches, isRealRoster, type Player } from "@/lib/mock-data";
+import { getTeam, getRoster, matches, isRealRoster, type Player, type Team } from "@/lib/mock-data";
 import { PlayerCard } from "@/components/player-card";
 import { PlayerModal } from "@/components/player-modal";
 import { MatchCard } from "@/components/match-card";
+import { Flag } from "@/components/flag";
 import { ArrowLeft, Sparkles, CheckCircle2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
+type LoaderData = { team: Team; roster: Player[]; real: boolean };
+
 export const Route = createFileRoute("/equipos/$equipoId")({
-  loader: ({ params }) => {
+  loader: ({ params }): LoaderData => {
     const team = getTeam(params.equipoId);
     if (!team) throw notFound();
     return { team, roster: getRoster(params.equipoId), real: isRealRoster(params.equipoId) };
@@ -74,7 +77,7 @@ function EquipoDetailPage() {
       <header className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-hero p-6 md:p-10 mb-10">
         <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
         <div className="relative flex flex-col md:flex-row items-center gap-6">
-          <div className="text-[8rem] md:text-[10rem] leading-none drop-shadow-2xl">{team.flag}</div>
+          <Flag teamId={team.id} className="text-[8rem] md:text-[10rem] !rounded-lg shadow-elevated" />
           <div className="text-center md:text-left">
             <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Grupo {team.group} · {team.confederation}</div>
             <h1 className="font-display text-5xl md:text-7xl tracking-tight mt-1">{team.name}</h1>
