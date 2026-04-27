@@ -32,7 +32,7 @@ function RankingPage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute -top-4 right-0 h-44 lg:h-52 object-contain pointer-events-none drop-shadow-2xl"
-        />
+        / loading="lazy" decoding="async">
       </header>
 
       {loading ? (

@@ -28,7 +28,7 @@ function RulesPage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute -top-2 right-0 h-28 lg:h-36 object-contain pointer-events-none drop-shadow-2xl"
-        />
+        / loading="lazy" decoding="async">
       </header>
 
       <Section icon={<Target />} title="Puntos por partido">
