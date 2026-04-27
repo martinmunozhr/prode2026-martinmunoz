@@ -21,9 +21,10 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { matches: upcoming } = useUpcomingLiveMatches(3);
-  const { ranking: liveRanking } = useLiveRanking();
-  const top3 = liveRanking.length > 0 ? liveRanking.slice(0, 3) : fallbackRanking.slice(0, 3);
+  const { user } = useAuth();
+  const { matches: upcoming, loading: loadingMatches } = useUpcomingLiveMatches(3);
+  const { ranking: liveRanking, loading: loadingRanking } = useLiveRanking();
+  const top3 = liveRanking.slice(0, 3);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-14">
