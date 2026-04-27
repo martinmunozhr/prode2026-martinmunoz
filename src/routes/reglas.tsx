@@ -20,7 +20,7 @@ function RulesPage() {
       <header className="relative mb-10 overflow-visible">
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Cómo se juega</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Reglas del Prode</h1>
-        <p className="mt-3 text-muted-foreground text-lg">
+        <p className="mt-3 text-muted-foreground text-lg max-w-xl">
           Simple, claro y para toda la familia. Cargá tus pronósticos antes de cada partido y sumá puntos.
         </p>
         <img
