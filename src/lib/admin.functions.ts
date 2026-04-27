@@ -159,7 +159,7 @@ export const syncResults = createServerFn({ method: "POST" })
       });
       requestsUsed++;
 
-      const { data: matches } = await supabaseAdmin.from("matches").select("id, home_id, away_id, match_date, teams_home:home_id(name), teams_away:away_id(name)");
+      const { data: matches } = await supabaseAdmin.from("matches").select("id, home_id, away_id, match_date");
 
       const teamMap = new Map<string, string>(); // norm(name) -> teams.id
       const { data: allTeams } = await supabaseAdmin.from("teams").select("id, name");
