@@ -368,14 +368,10 @@ function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number 
 }
 
 function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: string; label: string; tone: "primary" | "accent" | "muted" }) {
-  const colors = {
-    primary: "text-primary",
-    accent: "text-accent",
-    muted: "text-muted-foreground",
-  };
+  const toneClass = tone === "primary" ? "text-primary" : tone === "accent" ? "text-accent" : "text-muted-foreground";
   return (
     <div className="bg-gradient-card border border-border/50 rounded-xl p-4 shadow-card-sport">
-      <div className={colors[tone]}>{icon}</div>
+      <div className={toneClass}>{icon}</div>
       <div className="font-display text-3xl mt-2 tabular-nums">{value}</div>
       <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">{label}</div>
     </div>
