@@ -7,7 +7,6 @@ import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
 import figMbappe from "@/assets/figuras/mbappe.png";
 import figVinicius from "@/assets/figuras/vinicius.png";
-import figJulian from "@/assets/figuras/julian.png";
 
 const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
 type Stage = typeof STAGES[number];
@@ -44,21 +43,17 @@ function FixturePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <header className="relative mb-8 overflow-visible">
-        <img
-          src={figJulian}
-          alt=""
-          aria-hidden
-          className="hidden xl:block absolute -top-3 left-0 h-40 object-contain pointer-events-none drop-shadow-2xl"
-        />
-        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Calendario</div>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Fixture</h1>
-        <p className="mt-2 text-muted-foreground max-w-2xl">12 grupos de 4 equipos. Los 2 mejores de cada grupo + los 8 mejores terceros pasan a dieciseisavos.</p>
+      <header className="relative mb-8 rounded-2xl border border-border/40 bg-gradient-card overflow-hidden h-44 md:h-52">
+        <div className="relative z-10 p-5 md:p-7 max-w-[60%]">
+          <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Calendario</div>
+          <h1 className="font-display text-4xl md:text-6xl tracking-tight mt-1">Fixture</h1>
+          <p className="mt-2 text-sm md:text-base text-muted-foreground max-w-md">12 grupos de 4. Los 2 mejores y los 8 mejores terceros pasan a dieciseisavos.</p>
+        </div>
         <img
           src={figMbappe}
           alt=""
           aria-hidden
-          className="hidden md:block absolute -top-6 right-0 h-48 lg:h-56 object-contain pointer-events-none drop-shadow-2xl"
+          className="hidden md:block absolute right-0 bottom-0 h-[110%] object-contain object-bottom pointer-events-none drop-shadow-2xl"
         />
       </header>
 
