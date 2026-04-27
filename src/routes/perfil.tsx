@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { AvatarColorPicker, AVATAR_COLORS } from "@/components/avatar-color-picker";
+import { AchievementsPanel } from "@/components/achievements-panel";
 import { toast } from "sonner";
 import { LogIn, Save } from "lucide-react";
 
