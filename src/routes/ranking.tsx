@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RankingRow } from "@/components/ranking-row";
 import { useLiveRanking, type LiveRankingEntry } from "@/lib/live-data";
 import { Trophy, Medal, Award, Users } from "lucide-react";
+import figRonaldo from "@/assets/figuras/ronaldo.png";
 
 export const Route = createFileRoute("/ranking")({
   head: () => ({
@@ -22,10 +23,16 @@ function RankingPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <header className="mb-8">
+      <header className="relative mb-8 overflow-visible">
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Competencia global</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Ranking</h1>
-        <p className="mt-2 text-muted-foreground">3 pts por resultado exacto · 1 pt por ganador correcto. Multiplica en mata-mata.</p>
+        <p className="mt-2 text-muted-foreground max-w-xl">3 pts por resultado exacto · 1 pt por ganador correcto. Multiplica en mata-mata.</p>
+        <img
+          src={figRonaldo}
+          alt=""
+          aria-hidden
+          className="hidden md:block absolute -top-4 right-0 h-44 lg:h-52 object-contain pointer-events-none drop-shadow-2xl"
+        />
       </header>
 
       {loading ? (

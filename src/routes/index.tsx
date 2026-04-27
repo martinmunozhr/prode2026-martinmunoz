@@ -5,10 +5,23 @@ import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
-import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles, Star } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
 import figMessi from "@/assets/figuras/messi.png";
+import figMbappe from "@/assets/figuras/mbappe.png";
+import figVinicius from "@/assets/figuras/vinicius.png";
 import figHaaland from "@/assets/figuras/haaland.png";
+import figBellingham from "@/assets/figuras/bellingham.png";
+import figRonaldo from "@/assets/figuras/ronaldo.png";
+
+const FIGURAS = [
+  { img: figMessi, name: "Messi", country: "Argentina", flag: "🇦🇷" },
+  { img: figMbappe, name: "Mbappé", country: "Francia", flag: "🇫🇷" },
+  { img: figVinicius, name: "Vinícius Jr.", country: "Brasil", flag: "🇧🇷" },
+  { img: figHaaland, name: "Haaland", country: "Noruega", flag: "🇳🇴" },
+  { img: figBellingham, name: "Bellingham", country: "Inglaterra", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  { img: figRonaldo, name: "Ronaldo", country: "Portugal", flag: "🇵🇹" },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -123,7 +136,31 @@ function HomePage() {
         )}
       </section>
 
-
+      <section className="mt-14">
+        <SectionHeader eyebrow="Las figuras" title="Estrellas del Mundial" />
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {FIGURAS.map((f) => (
+            <div
+              key={f.name}
+              className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-border/50 bg-gradient-to-b from-primary/10 via-card to-accent/10 shadow-elevated"
+            >
+              <img
+                src={f.img}
+                alt={`${f.name} - ${f.country}`}
+                className="absolute inset-x-0 bottom-0 mx-auto h-[110%] object-contain object-bottom transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-background via-background/85 to-transparent pt-10">
+                <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-primary font-bold">
+                  <Star className="h-2.5 w-2.5" /> Figura
+                </div>
+                <div className="font-display text-sm sm:text-base leading-tight mt-0.5">{f.name}</div>
+                <div className="text-[10px] text-muted-foreground">{f.flag} {f.country}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-14">
         <AlbumPreview />
