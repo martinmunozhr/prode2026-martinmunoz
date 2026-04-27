@@ -166,7 +166,7 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
   const handleAccept = async (id: string) => {
     setBusy(id);
     try {
-      await acceptTradeFn({ data: { tradeId: id } });
+      await acceptTradeFn({ data: { tradeId: id }, headers: await authHeaders() });
       toast.success("¡Intercambio aceptado! Las figuritas ya están en tu álbum.");
       await load();
     } catch (e) {
