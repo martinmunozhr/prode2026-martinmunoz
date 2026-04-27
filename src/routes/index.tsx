@@ -38,20 +38,26 @@ function HomePage() {
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
               Inscripciones abiertas
             </div>
-            <h1 className="font-display text-5xl sm:text-6xl md:text-8xl leading-[0.9] tracking-tight">
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight">
               EL PRODE
               <br />
               <span className="text-gradient-pitch">DEL MUNDIAL</span>
               <br />
               2026.
             </h1>
-            <p className="mt-5 text-lg text-muted-foreground max-w-xl">
+            <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-xl">
               48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado, sumá puntos y escalá en el ranking global.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/registro" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
-                Sumate al prode <ArrowRight className="h-4 w-4" />
-              </Link>
+              {user ? (
+                <Link to="/mis-pronosticos" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                  Ir a mis pronósticos <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link to="/registro" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                  Sumate al prode <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
               <Link to="/fixture" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors">
                 Ver fixture
               </Link>
