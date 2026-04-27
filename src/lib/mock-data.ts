@@ -232,20 +232,8 @@ export function isRealRoster(teamId: string): boolean {
   return hasRealRoster(teamId);
 }
 
-export const ranking: RankingEntry[] = [
-  { position: 1, username: "elprofeta", avatar: "🧙", points: 142, exact: 18, partial: 32, streak: 7 },
-  { position: 2, username: "messi_fan10", avatar: "🐐", points: 138, exact: 17, partial: 33, streak: 5 },
-  { position: 3, username: "tactico", avatar: "🧠", points: 131, exact: 15, partial: 36, streak: 3 },
-  { position: 4, username: "lacrack", avatar: "🔥", points: 124, exact: 14, partial: 34, streak: 2 },
-  { position: 5, username: "vamosarg", avatar: "🇦🇷", points: 119, exact: 13, partial: 33, streak: 4 },
-  { position: 6, username: "mundialista", avatar: "🌍", points: 115, exact: 12, partial: 33, streak: 1 },
-  { position: 7, username: "pibedeoro", avatar: "⚽", points: 108, exact: 11, partial: 32, streak: 0 },
-  { position: 8, username: "elcomentarista", avatar: "🎙️", points: 103, exact: 10, partial: 31, streak: 2 },
-  { position: 9, username: "futbolero99", avatar: "👟", points: 97, exact: 9, partial: 30, streak: 1 },
-  { position: 10, username: "garra_charrua", avatar: "🇺🇾", points: 94, exact: 9, partial: 28, streak: 0 },
-  { position: 11, username: "samba", avatar: "🥁", points: 88, exact: 8, partial: 28, streak: 0 },
-  { position: 12, username: "tucapitán", avatar: "©️", points: 81, exact: 7, partial: 26, streak: 1 },
-];
+// Pre-tournament: real ranking comes from useLiveRanking() once users start predicting.
+export const ranking: RankingEntry[] = [];
 
 export function getGroupStandings(group: string) {
   const ts = getTeamsByGroup(group);
