@@ -5,20 +5,10 @@ import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
-import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
-import figMessi from "@/assets/figuras/messi.jpg";
-import figMbappe from "@/assets/figuras/mbappe.jpg";
-import figVinicius from "@/assets/figuras/vinicius.jpg";
-import figHaaland from "@/assets/figuras/haaland.jpg";
-import imgPelota from "@/assets/elementos/pelota.jpg";
-
-const FIGURAS = [
-  { img: figMessi, name: "Lionel Messi", country: "Argentina", flag: "🇦🇷", credit: "Wikimedia Commons / CC BY-SA" },
-  { img: figMbappe, name: "Kylian Mbappé", country: "Francia", flag: "🇫🇷", credit: "Wikimedia Commons / CC BY-SA" },
-  { img: figVinicius, name: "Vinícius Jr.", country: "Brasil", flag: "🇧🇷", credit: "Wikimedia Commons / CC BY-SA" },
-  { img: figHaaland, name: "Erling Haaland", country: "Noruega", flag: "🇳🇴", credit: "Wikimedia Commons / CC BY-SA" },
-];
+import figMessi from "@/assets/figuras/messi.png";
+import figHaaland from "@/assets/figuras/haaland.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({

@@ -33,12 +33,12 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2 group">
-          <img src={logoMundial} alt="Mundial 2026" className="h-10 w-10 object-contain" />
-          <div className="font-display text-xl sm:text-2xl tracking-wide leading-none">
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="font-display text-xl sm:text-2xl tracking-wide leading-none flex items-baseline gap-1">
             <span className="text-foreground">PRODE</span>
-            <span className="text-gradient-pitch ml-1">2026</span>
+            <span className="text-gradient-pitch">MUNDIAL 2026</span>
           </div>
+          <img src={logoMundial} alt="Mundial 2026" className="h-14 w-14 sm:h-16 sm:w-16 object-contain drop-shadow-lg" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
