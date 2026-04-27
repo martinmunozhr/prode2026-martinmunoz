@@ -152,3 +152,73 @@ export const simulatePackFn = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { result: (result ?? []) as { rarity: CardRarity; count: number }[] };
   });
+
+// Simula la apertura de UN sobre y devuelve cartas reales (sin persistir nada).
+const SimulateOpenSchema = z.object({
+  packType: z.enum(["comun", "raro", "epico", "legendario"]),
+});
+
+const PACK_DEFS: Record<PackType, { cards: number; odds: Record<CardRarity, number>; guaranteesLegendary?: boolean }> = {
+  comun: { cards: 5, odds: { comun: 0.75, raro: 0.22, epico: 0.03, legendario: 0 } },
+  raro: { cards: 7, odds: { comun: 0.45, raro: 0.45, epico: 0.09, legendario: 0.01 } },
+  epico: { cards: 9, odds: { comun: 0.15, raro: 0.45, epico: 0.35, legendario: 0.05 } },
+  legendario: { cards: 11, odds: { comun: 0, raro: 0.30, epico: 0.55, legendario: 0.15 }, guaranteesLegendary: true },
+};
+
+function pickRarity(odds: Record<CardRarity, number>): CardRarity {
+  const r = Math.random();
+  let acc = 0;
+  const order: CardRarity[] = ["comun", "raro", "epico", "legendario"];
+  for (const k of order) {
+    acc += odds[k];
+    if (r <= acc) return k;
+  }
+  return "comun";
+}
+
+export const simulateOpenPackFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => SimulateOpenSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: roles } = await supabase
+      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!roles) throw new Error("Solo admin");
+
+    const def = PACK_DEFS[data.packType as PackType];
+    const rarities: CardRarity[] = [];
+    for (let i = 0; i < def.cards; i++) rarities.push(pickRarity(def.odds));
+    if (def.guaranteesLegendary && !rarities.includes("legendario")) {
+      rarities[rarities.length - 1] = "legendario";
+    }
+
+    // Trae jugadores agrupados por rareza necesaria
+    const uniqueRarities = Array.from(new Set(rarities));
+    const { data: players, error } = await supabase
+      .from("players")
+      .select("id, name, team_id, position, jersey_number, club, rarity")
+      .in("rarity", uniqueRarities);
+    if (error) throw new Error(error.message);
+
+    const pool: Record<CardRarity, typeof players> = { comun: [], raro: [], epico: [], legendario: [] };
+    for (const p of players ?? []) pool[p.rarity as CardRarity].push(p);
+
+    const cards = rarities.map((r) => {
+      const bucket = pool[r];
+      if (!bucket || bucket.length === 0) {
+        return { player_id: "—", rarity: r, player_name: "Sin jugador disponible", team_id: "", position: "", jersey_number: null, club: null };
+      }
+      const p = bucket[Math.floor(Math.random() * bucket.length)];
+      return {
+        player_id: p.id,
+        rarity: r,
+        player_name: p.name,
+        team_id: p.team_id,
+        position: p.position,
+        jersey_number: p.jersey_number,
+        club: p.club,
+      };
+    });
+
+    return { cards };
+  });

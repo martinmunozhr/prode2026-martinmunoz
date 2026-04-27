@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Package, BarChart3, Sparkles } from "lucide-react";
-import { simulatePackFn } from "@/lib/cards.functions";
+import { Loader2, Package, BarChart3, Sparkles, PackageOpen } from "lucide-react";
+import { simulatePackFn, simulateOpenPackFn } from "@/lib/cards.functions";
 import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
+import { FutCard } from "@/components/fut-card";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { authHeaders } from "@/lib/auth-headers";
@@ -10,6 +11,16 @@ import { authHeaders } from "@/lib/auth-headers";
 export const Route = createFileRoute("/admin/sobres")({
   component: AdminSobres,
 });
+
+type SimCard = {
+  player_id: string;
+  rarity: CardRarity;
+  player_name: string;
+  team_id: string;
+  position: string;
+  jersey_number: number | null;
+  club: string | null;
+};
 
 const RARITY_COLOR: Record<CardRarity, string> = {
   comun: "bg-zinc-500",
@@ -22,6 +33,8 @@ function AdminSobres() {
   const [packType, setPackType] = useState<PackType>("epico");
   const [iter, setIter] = useState<number>(500);
   const [running, setRunning] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [reveal, setReveal] = useState<SimCard[] | null>(null);
   const [result, setResult] = useState<{ rarity: CardRarity; count: number }[] | null>(null);
 
   const run = async () => {
@@ -33,6 +46,18 @@ function AdminSobres() {
       toast.error(e instanceof Error ? e.message : "Error en la simulación");
     } finally {
       setRunning(false);
+    }
+  };
+
+  const openOne = async () => {
+    setOpening(true);
+    try {
+      const r = await simulateOpenPackFn({ data: { packType }, headers: await authHeaders() });
+      setReveal(r.cards as SimCard[]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error abriendo sobre");
+    } finally {
+      setOpening(false);
     }
   };
 
@@ -86,14 +111,22 @@ function AdminSobres() {
           />
           <p className="text-[10px] text-muted-foreground mt-1">Total cartas a simular: {(iter * pack.cards).toLocaleString()}</p>
         </div>
-        <div className="flex items-end">
+        <div className="flex items-end gap-2">
           <button
             onClick={run}
             disabled={running}
-            className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-xs shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50"
           >
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
             Simular
+          </button>
+          <button
+            onClick={openOne}
+            disabled={opening}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-accent/50 bg-accent/10 text-accent font-bold uppercase tracking-wider text-xs hover:bg-accent/20 transition-colors disabled:opacity-50"
+          >
+            {opening ? <Loader2 className="h-4 w-4 animate-spin" /> : <PackageOpen className="h-4 w-4" />}
+            Abrir 1 sobre
           </button>
         </div>
       </div>
@@ -163,6 +196,111 @@ function AdminSobres() {
           </p>
         </div>
       )}
+
+      {reveal && <SimRevealModal cards={reveal} onClose={() => setReveal(null)} />}
+    </div>
+  );
+}
+
+function SimRevealModal({ cards, onClose }: { cards: SimCard[]; onClose: () => void }) {
+  const [step, setStep] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const showAll = step >= cards.length;
+  const current = !showAll ? cards[step] : null;
+
+  useEffect(() => { setFlipped(false); }, [step]);
+
+  const advance = () => {
+    if (!flipped) { setFlipped(true); return; }
+    setStep((s) => s + 1);
+  };
+  const skipAll = () => setStep(cards.length);
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-md flex items-center justify-center p-4 overflow-auto">
+      {current?.rarity === "legendario" && flipped && (
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,oklch(0.7_0.24_295/0.35),transparent_60%)] animate-pulse" />
+      )}
+      {current?.rarity === "epico" && flipped && (
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,oklch(0.78_0.18_75/0.25),transparent_65%)]" />
+      )}
+
+      <div className="max-w-5xl w-full relative">
+        <div className="text-center mb-6">
+          <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Simulación · sin afectar tu álbum</div>
+          <h2 className="font-display text-4xl mt-1">{showAll ? "Botín simulado" : `Carta ${step + 1} de ${cards.length}`}</h2>
+          {!showAll && (
+            <button onClick={skipAll} className="text-xs text-muted-foreground hover:text-foreground mt-2 underline underline-offset-4">
+              Saltar animación
+            </button>
+          )}
+        </div>
+
+        {showAll ? (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {cards.map((c, i) => (
+                <FutCard
+                  key={i}
+                  name={c.player_name}
+                  teamId={c.team_id}
+                  position={c.position.slice(0, 3).toUpperCase()}
+                  jerseyNumber={c.jersey_number}
+                  club={c.club}
+                  rarity={c.rarity}
+                  animationDelay={i * 60}
+                  size="md"
+                />
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <button onClick={onClose} className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch">
+                Cerrar
+              </button>
+            </div>
+          </>
+        ) : current ? (
+          <button
+            onClick={advance}
+            className="block mx-auto group"
+            aria-label="Revelar siguiente carta"
+            style={{ perspective: "1200px" }}
+          >
+            <div
+              className="w-64 transition-transform duration-700"
+              style={{
+                transformStyle: "preserve-3d",
+                transform: flipped ? "rotateY(0deg)" : "rotateY(180deg)",
+              }}
+            >
+              {flipped ? (
+                <div key={step} className="animate-card-flip">
+                  <FutCard
+                    name={current.player_name}
+                    teamId={current.team_id}
+                    position={current.position.slice(0, 3).toUpperCase()}
+                    jerseyNumber={current.jersey_number}
+                    club={current.club}
+                    rarity={current.rarity}
+                    size="lg"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[3/4.2] w-full rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-zinc-900 via-purple-950 to-zinc-900 flex items-center justify-center shadow-elevated relative overflow-hidden">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,oklch(0.7_0.24_295/0.3),transparent_50%)]" />
+                  <Sparkles className="h-20 w-20 text-accent animate-pulse" />
+                  <div className="absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-widest text-white/70">
+                    Tocá para revelar
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="text-center mt-4 text-xs text-muted-foreground uppercase tracking-widest">
+              {flipped ? "Tocá para continuar" : "Tocá la carta"}
+            </div>
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }
