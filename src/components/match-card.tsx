@@ -126,7 +126,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           <MapPin className="h-3 w-3" />
           <span>{match.stadium} · {match.city}</span>
         </div>
-        {editable && (
+        {editable && !isTbd && (
           <button
             onClick={handleSave}
             disabled={saving}
