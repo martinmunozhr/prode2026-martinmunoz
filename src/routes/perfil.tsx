@@ -112,6 +112,12 @@ function PerfilPage() {
           <Save className="h-4 w-4" /> {saving ? "Guardando..." : "Guardar cambios"}
         </button>
       </div>
+
+      <section className="mb-8">
+        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Tu progreso</div>
+        <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-1 mb-5">Logros y monedas</h2>
+        <AchievementsPanel userId={user.id} />
+      </section>
     </div>
   );
 }
