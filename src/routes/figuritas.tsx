@@ -7,6 +7,7 @@ import { useCoins } from "@/hooks/use-coins";
 import { FutCard } from "@/components/fut-card";
 import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
 import { openPackFn, recycleCardFn, type OpenedCard } from "@/lib/cards.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { teams as MOCK_TEAMS } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
