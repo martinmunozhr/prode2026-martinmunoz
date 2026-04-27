@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { teams } from "@/lib/mock-data";
+import figBellingham from "@/assets/figuras/bellingham.png";
 import { isCrystalBallLocked, WORLD_CUP_KICKOFF, crystalBallPoints } from "@/lib/scoring";
 import { Sparkles, Lock, LogIn, Trophy, Save } from "lucide-react";
 import { toast } from "sonner";
@@ -134,14 +135,20 @@ function BolaDeCristalPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
-      <header className="mb-8">
+      <header className="relative mb-8 overflow-visible">
         <div className="text-[11px] uppercase tracking-widest text-accent font-bold flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5" /> Predicciones del torneo
         </div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Bola de Cristal</h1>
-        <p className="mt-2 text-muted-foreground">
+        <p className="mt-2 text-muted-foreground max-w-xl">
           5 predicciones de torneo. Se bloquean al inicio del Mundial.
         </p>
+        <img
+          src={figBellingham}
+          alt=""
+          aria-hidden
+          className="hidden md:block absolute -top-4 right-0 h-44 lg:h-52 object-contain pointer-events-none drop-shadow-2xl"
+        />
       </header>
 
       {/* Countdown */}
