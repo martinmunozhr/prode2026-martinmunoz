@@ -111,6 +111,46 @@ function MisPronosticosPage() {
   const finished = playable.filter((m) => m.status === "finished");
   const myCount = Object.keys(preds).length;
 
+  // Agrupar pendientes por día
+  const dayBuckets = useMemo<DayBucket[]>(() => {
+    const map = new Map<string, DayBucket>();
+    pending.forEach((m) => {
+      const d = new Date(m.date);
+      const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const k = dayKey(local);
+      const existing = map.get(k);
+      const hasPred = !!preds[m.id];
+      if (existing) {
+        existing.count += 1;
+        if (hasPred) existing.predicted += 1;
+      } else {
+        map.set(k, { key: k, date: local, count: 1, predicted: hasPred ? 1 : 0 });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [pending, preds]);
+
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+
+  // Auto-seleccionar el primer día con partidos sin pronosticar, o el primer día disponible
+  useEffect(() => {
+    if (dayBuckets.length === 0) {
+      setSelectedDay(null);
+      return;
+    }
+    if (selectedDay && dayBuckets.find((d) => d.key === selectedDay)) return;
+    const firstUndone = dayBuckets.find((d) => d.predicted < d.count);
+    setSelectedDay((firstUndone ?? dayBuckets[0]).key);
+  }, [dayBuckets, selectedDay]);
+
+  const dayMatches = useMemo(() => {
+    if (!selectedDay) return [];
+    return pending.filter((m) => {
+      const d = new Date(m.date);
+      return dayKey(new Date(d.getFullYear(), d.getMonth(), d.getDate())) === selectedDay;
+    });
+  }, [pending, selectedDay]);
+
   const totalPoints = useMemo(() => {
     let pts = 0;
     finished.forEach((m) => {
