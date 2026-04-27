@@ -15,6 +15,7 @@ import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as IntercambiosRouteImport } from './routes/intercambios'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as FixtureRouteImport } from './routes/fixture'
 import { Route as FiguritasRouteImport } from './routes/figuritas'
@@ -26,6 +27,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as EquiposEquipoIdRouteImport } from './routes/equipos.$equipoId'
 import { Route as AdminSyncRouteImport } from './routes/admin.sync'
+import { Route as AdminSobresRouteImport } from './routes/admin.sobres'
 import { Route as AdminPredictorRouteImport } from './routes/admin.predictor'
 import { Route as AdminPartidosRouteImport } from './routes/admin.partidos'
 import { Route as AdminJugadoresRouteImport } from './routes/admin.jugadores'
@@ -60,6 +62,11 @@ const MisPronosticosRoute = MisPronosticosRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntercambiosRoute = IntercambiosRouteImport.update({
+  id: '/intercambios',
+  path: '/intercambios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InsightsRoute = InsightsRouteImport.update({
@@ -117,6 +124,11 @@ const AdminSyncRoute = AdminSyncRouteImport.update({
   path: '/sync',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSobresRoute = AdminSobresRouteImport.update({
+  id: '/sobres',
+  path: '/sobres',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPredictorRoute = AdminPredictorRouteImport.update({
   id: '/predictor',
   path: '/predictor',
@@ -153,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/figuritas': typeof FiguritasRoute
   '/fixture': typeof FixtureRoute
   '/insights': typeof InsightsRoute
+  '/intercambios': typeof IntercambiosRoute
   '/login': typeof LoginRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
   '/perfil': typeof PerfilRoute
@@ -163,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
+  '/admin/sobres': typeof AdminSobresRoute
   '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -176,6 +190,7 @@ export interface FileRoutesByTo {
   '/figuritas': typeof FiguritasRoute
   '/fixture': typeof FixtureRoute
   '/insights': typeof InsightsRoute
+  '/intercambios': typeof IntercambiosRoute
   '/login': typeof LoginRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
   '/perfil': typeof PerfilRoute
@@ -186,6 +201,7 @@ export interface FileRoutesByTo {
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
+  '/admin/sobres': typeof AdminSobresRoute
   '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin': typeof AdminIndexRoute
@@ -201,6 +217,7 @@ export interface FileRoutesById {
   '/figuritas': typeof FiguritasRoute
   '/fixture': typeof FixtureRoute
   '/insights': typeof InsightsRoute
+  '/intercambios': typeof IntercambiosRoute
   '/login': typeof LoginRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
   '/perfil': typeof PerfilRoute
@@ -211,6 +228,7 @@ export interface FileRoutesById {
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
+  '/admin/sobres': typeof AdminSobresRoute
   '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -227,6 +245,7 @@ export interface FileRouteTypes {
     | '/figuritas'
     | '/fixture'
     | '/insights'
+    | '/intercambios'
     | '/login'
     | '/mis-pronosticos'
     | '/perfil'
@@ -237,6 +256,7 @@ export interface FileRouteTypes {
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
+    | '/admin/sobres'
     | '/admin/sync'
     | '/equipos/$equipoId'
     | '/admin/'
@@ -250,6 +270,7 @@ export interface FileRouteTypes {
     | '/figuritas'
     | '/fixture'
     | '/insights'
+    | '/intercambios'
     | '/login'
     | '/mis-pronosticos'
     | '/perfil'
@@ -260,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
+    | '/admin/sobres'
     | '/admin/sync'
     | '/equipos/$equipoId'
     | '/admin'
@@ -274,6 +296,7 @@ export interface FileRouteTypes {
     | '/figuritas'
     | '/fixture'
     | '/insights'
+    | '/intercambios'
     | '/login'
     | '/mis-pronosticos'
     | '/perfil'
@@ -284,6 +307,7 @@ export interface FileRouteTypes {
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
+    | '/admin/sobres'
     | '/admin/sync'
     | '/equipos/$equipoId'
     | '/admin/'
@@ -299,6 +323,7 @@ export interface RootRouteChildren {
   FiguritasRoute: typeof FiguritasRoute
   FixtureRoute: typeof FixtureRoute
   InsightsRoute: typeof InsightsRoute
+  IntercambiosRoute: typeof IntercambiosRoute
   LoginRoute: typeof LoginRoute
   MisPronosticosRoute: typeof MisPronosticosRoute
   PerfilRoute: typeof PerfilRoute
@@ -350,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/intercambios': {
+      id: '/intercambios'
+      path: '/intercambios'
+      fullPath: '/intercambios'
+      preLoaderRoute: typeof IntercambiosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/insights': {
@@ -429,6 +461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSyncRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sobres': {
+      id: '/admin/sobres'
+      path: '/sobres'
+      fullPath: '/admin/sobres'
+      preLoaderRoute: typeof AdminSobresRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/predictor': {
       id: '/admin/predictor'
       path: '/predictor'
@@ -472,6 +511,7 @@ interface AdminRouteChildren {
   AdminJugadoresRoute: typeof AdminJugadoresRoute
   AdminPartidosRoute: typeof AdminPartidosRoute
   AdminPredictorRoute: typeof AdminPredictorRoute
+  AdminSobresRoute: typeof AdminSobresRoute
   AdminSyncRoute: typeof AdminSyncRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -481,6 +521,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminJugadoresRoute: AdminJugadoresRoute,
   AdminPartidosRoute: AdminPartidosRoute,
   AdminPredictorRoute: AdminPredictorRoute,
+  AdminSobresRoute: AdminSobresRoute,
   AdminSyncRoute: AdminSyncRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -507,6 +548,7 @@ const rootRouteChildren: RootRouteChildren = {
   FiguritasRoute: FiguritasRoute,
   FixtureRoute: FixtureRoute,
   InsightsRoute: InsightsRoute,
+  IntercambiosRoute: IntercambiosRoute,
   LoginRoute: LoginRoute,
   MisPronosticosRoute: MisPronosticosRoute,
   PerfilRoute: PerfilRoute,

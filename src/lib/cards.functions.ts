@@ -129,3 +129,26 @@ export const rejectTradeFn = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+const SimulatePackSchema = z.object({
+  packType: z.enum(["comun", "raro", "epico", "legendario"]),
+  iterations: z.number().int().min(1).max(10000).default(100),
+});
+
+export const simulatePackFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => SimulatePackSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    // Verificar admin
+    const { data: roles } = await supabase
+      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (!roles) throw new Error("Solo admin");
+
+    const { data: result, error } = await supabase.rpc("simulate_pack", {
+      _pack_type: data.packType as PackType,
+      _iterations: data.iterations,
+    });
+    if (error) throw new Error(error.message);
+    return { result: (result ?? []) as { rarity: CardRarity; count: number }[] };
+  });
