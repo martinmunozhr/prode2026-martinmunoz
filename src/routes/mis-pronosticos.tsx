@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MatchCard } from "@/components/match-card";
 import { GoalscorerPicker } from "@/components/goalscorer-picker";
+import { DayPickerStrip, dayKey, type DayBucket } from "@/components/day-picker-strip";
 import { getTeam, type Match } from "@/lib/mock-data";
 import { calcMatchPoints } from "@/lib/scoring";
-import { Target, Clock, Lock, LogIn, Info, Trophy } from "lucide-react";
+import { Target, Clock, Lock, LogIn, Info, Trophy, CalendarDays } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,6 +111,46 @@ function MisPronosticosPage() {
   const finished = playable.filter((m) => m.status === "finished");
   const myCount = Object.keys(preds).length;
 
+  // Agrupar pendientes por día
+  const dayBuckets = useMemo<DayBucket[]>(() => {
+    const map = new Map<string, DayBucket>();
+    pending.forEach((m) => {
+      const d = new Date(m.date);
+      const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const k = dayKey(local);
+      const existing = map.get(k);
+      const hasPred = !!preds[m.id];
+      if (existing) {
+        existing.count += 1;
+        if (hasPred) existing.predicted += 1;
+      } else {
+        map.set(k, { key: k, date: local, count: 1, predicted: hasPred ? 1 : 0 });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [pending, preds]);
+
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+
+  // Auto-seleccionar el primer día con partidos sin pronosticar, o el primer día disponible
+  useEffect(() => {
+    if (dayBuckets.length === 0) {
+      setSelectedDay(null);
+      return;
+    }
+    if (selectedDay && dayBuckets.find((d) => d.key === selectedDay)) return;
+    const firstUndone = dayBuckets.find((d) => d.predicted < d.count);
+    setSelectedDay((firstUndone ?? dayBuckets[0]).key);
+  }, [dayBuckets, selectedDay]);
+
+  const dayMatches = useMemo(() => {
+    if (!selectedDay) return [];
+    return pending.filter((m) => {
+      const d = new Date(m.date);
+      return dayKey(new Date(d.getFullYear(), d.getMonth(), d.getDate())) === selectedDay;
+    });
+  }, [pending, selectedDay]);
+
   const totalPoints = useMemo(() => {
     let pts = 0;
     finished.forEach((m) => {
@@ -179,44 +220,75 @@ function MisPronosticosPage() {
 
       <section className="mb-12">
         <div className="flex items-center gap-2 mb-5">
-          <Clock className="h-5 w-5 text-accent" />
-          <h2 className="font-display text-2xl tracking-wider">Pendientes</h2>
-          <span className="ml-auto text-xs text-muted-foreground">{pending.length} partidos</span>
+          <CalendarDays className="h-5 w-5 text-accent" />
+          <h2 className="font-display text-2xl tracking-wider">Por jornada</h2>
+          <span className="ml-auto text-xs text-muted-foreground">
+            {pending.length} partidos en {dayBuckets.length} {dayBuckets.length === 1 ? "día" : "días"}
+          </span>
         </div>
+
         {pending.length === 0 ? (
-          <div className="text-sm text-muted-foreground border border-border/40 rounded-xl p-6 text-center">
-            No hay partidos pendientes ahora mismo.
+          <div className="rounded-2xl border border-border/40 bg-gradient-card p-10 text-center">
+            <CalendarDays className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
+            <h3 className="font-display text-2xl tracking-wide">Todavía no hay partidos cargados</h3>
+            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+              El fixture del Mundial 2026 se confirma tras el sorteo final. Apenas estén disponibles los partidos, vas a poder pronosticar día por día desde acá.
+            </p>
+            <Link to="/fixture" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl border border-border text-xs font-bold uppercase tracking-wider hover:border-primary/40">
+              Ver fixture
+            </Link>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-4">
-            {pending.map((m) => {
-              const home = getTeam(m.homeId);
-              const away = getTeam(m.awayId);
-              const pred = preds[m.id];
-              return (
-                <div key={m.id} className="space-y-0">
-                  <MatchCard
-                    match={m}
-                    editable
-                    initialPrediction={pred ?? null}
-                    onSave={(h, a) => savePrediction(m.id, h, a)}
-                  />
-                  {pred && home && away && (
-                    <GoalscorerPicker
-                      matchId={m.id}
-                      homeId={m.homeId}
-                      awayId={m.awayId}
-                      homeName={home.name}
-                      awayName={away.name}
-                      predHome={pred.home}
-                      predAway={pred.away}
-                      locked={false}
+          <>
+            <DayPickerStrip
+              days={dayBuckets}
+              selected={selectedDay}
+              onSelect={setSelectedDay}
+            />
+
+            {selectedDay && (
+              <DayHeader dayKeyValue={selectedDay} count={dayMatches.length} />
+            )}
+
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+              {dayMatches.map((m) => {
+                const home = getTeam(m.homeId);
+                const away = getTeam(m.awayId);
+                const pred = preds[m.id];
+                return (
+                  <div key={m.id} className="space-y-0">
+                    <MatchCard
+                      match={m}
+                      editable
+                      initialPrediction={pred ?? null}
+                      onSave={(h, a) => savePrediction(m.id, h, a)}
                     />
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                    {home && away && (
+                      pred ? (
+                        <GoalscorerPicker
+                          matchId={m.id}
+                          homeId={m.homeId}
+                          awayId={m.awayId}
+                          homeName={home.name}
+                          awayName={away.name}
+                          predHome={pred.home}
+                          predAway={pred.away}
+                          locked={false}
+                        />
+                      ) : (
+                        <div className="mt-3 rounded-lg border border-dashed border-border/50 bg-secondary/20 px-3 py-2 text-[11px] text-muted-foreground flex items-center gap-2">
+                          <Trophy className="h-3.5 w-3.5 text-accent shrink-0" />
+                          <span>
+                            Guardá el marcador y vas a poder elegir <strong>goleadores</strong> (suman +1 punto extra cada uno)
+                          </span>
+                        </div>
+                      )
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </section>
 
@@ -271,6 +343,30 @@ function InfoBanner() {
 }
 
 
+function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number }) {
+  // dayKeyValue is "YYYY-MM-DD" — parse as local
+  const [y, m, d] = dayKeyValue.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const formatted = new Intl.DateTimeFormat("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(date);
+  // capitalize first letter
+  const label = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  return (
+    <div className="mt-5 flex items-end justify-between gap-3 flex-wrap">
+      <div>
+        <div className="text-[10px] uppercase tracking-widest text-accent font-bold">Jornada</div>
+        <h3 className="font-display text-2xl md:text-3xl tracking-tight">{label}</h3>
+      </div>
+      <div className="text-xs text-muted-foreground">
+        {count} {count === 1 ? "partido" : "partidos"} para pronosticar
+      </div>
+    </div>
+  );
+}
+
 function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: string; label: string; tone: "primary" | "accent" | "muted" }) {
   const colors = {
     primary: "text-primary",
@@ -285,3 +381,4 @@ function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: 
     </div>
   );
 }
+

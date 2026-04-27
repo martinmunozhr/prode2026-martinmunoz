@@ -264,5 +264,8 @@ export function getGroupStandings(group: string) {
       if (f > c) pg++; else if (f === c) pe++; else pp++;
     });
     return { team: t, pj, pg, pe, pp, gf, gc, dg: gf - gc, pts: pg * 3 + pe };
-  }).sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
+  }).sort(
+    // Stable order: pts → DG → GF → team id (alphabetical) so SSR and client match
+    (a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf || a.team.id.localeCompare(b.team.id),
+  );
 }

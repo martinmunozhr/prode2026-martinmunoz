@@ -5,12 +5,15 @@ import { cn } from "@/lib/utils";
 
 export function GroupTable({ group }: { group: string }) {
   const rows = getGroupStandings(group);
+  const noMatchesYet = rows.every((r) => r.pj === 0);
 
   return (
     <div className="bg-gradient-card border border-border/50 rounded-2xl overflow-hidden shadow-card-sport">
       <div className="px-4 py-3 bg-secondary/40 border-b border-border/50 flex items-center justify-between">
         <h3 className="font-display text-xl tracking-wider">Grupo {group}</h3>
-        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Top 2 + mejores 3eros</span>
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          {noMatchesYet ? "Aún no se jugó" : "Top 2 + mejores 3eros"}
+        </span>
       </div>
       <table className="w-full text-sm">
         <thead>
