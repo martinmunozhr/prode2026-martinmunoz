@@ -81,6 +81,14 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
             </span>
           )}
           <span className="text-muted-foreground/70">{match.stage}</span>
+          {STAGE_MULTIPLIER[match.stage] > 1 && (
+            <span
+              title={`Los puntos en esta fase se multiplican x${STAGE_MULTIPLIER[match.stage]}`}
+              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 border border-accent/40 text-accent text-[10px] font-bold"
+            >
+              <Zap className="h-2.5 w-2.5" />x{STAGE_MULTIPLIER[match.stage]}
+            </span>
+          )}
         </div>
         {isLive && (
           <span className="flex items-center gap-1.5 text-xs font-bold uppercase text-alert">
