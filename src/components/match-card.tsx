@@ -26,10 +26,11 @@ function fmtDate(iso: string) {
 }
 
 export function MatchCard({ match, editable, initialPrediction, onSave }: Props) {
-  const home = getTeam(match.homeId)!;
-  const away = getTeam(match.awayId)!;
+  const home = getTeam(match.homeId) ?? { id: match.homeId, name: "Por definir", code: "TBD", flag: "⏳", group: "?", confederation: "OFC" as const };
+  const away = getTeam(match.awayId) ?? { id: match.awayId, name: "Por definir", code: "TBD", flag: "⏳", group: "?", confederation: "OFC" as const };
   const isFinished = match.status === "finished";
   const isLive = match.status === "live";
+  const isTbd = match.homeId === "tbd" || match.awayId === "tbd";
 
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
