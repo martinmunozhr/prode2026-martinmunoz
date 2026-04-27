@@ -5,6 +5,8 @@ import { GroupTable } from "@/components/group-table";
 import { groupLetters } from "@/lib/mock-data";
 import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
+import figMbappe from "@/assets/figuras/mbappe.png";
+import figVinicius from "@/assets/figuras/vinicius.png";
 
 const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
 type Stage = typeof STAGES[number];
@@ -41,10 +43,16 @@ function FixturePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <header className="mb-8">
+      <header className="relative mb-8 overflow-visible">
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Calendario</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Fixture</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl">12 grupos de 4 equipos. Los 2 mejores de cada grupo + los 8 mejores terceros pasan a dieciseisavos.</p>
+        <img
+          src={figMbappe}
+          alt=""
+          aria-hidden
+          className="hidden md:block absolute -top-6 right-0 h-48 lg:h-56 object-contain pointer-events-none drop-shadow-2xl"
+        />
       </header>
 
       {/* Stage selector */}
@@ -88,8 +96,20 @@ function FixturePage() {
           </div>
 
           <div className="grid lg:grid-cols-[1fr_1.4fr] gap-6">
-            <div>
+            <div className="space-y-6">
               <GroupTable group={activeGroup} />
+              <div className="hidden lg:flex relative rounded-2xl border border-border/40 bg-gradient-card overflow-hidden min-h-[340px] items-end justify-center p-4">
+                <img
+                  src={figVinicius}
+                  alt=""
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 mx-auto h-[320px] object-contain pointer-events-none drop-shadow-2xl"
+                />
+                <div className="relative z-10 text-center pb-2">
+                  <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Tu próximo movimiento</div>
+                  <div className="font-display text-lg leading-tight mt-1">¿Quién pasa de fase?</div>
+                </div>
+              </div>
             </div>
             <div className="space-y-4">
               <h2 className="font-display text-2xl tracking-wider">Partidos del Grupo {activeGroup}</h2>
