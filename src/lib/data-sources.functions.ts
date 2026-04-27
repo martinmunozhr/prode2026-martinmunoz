@@ -42,7 +42,12 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
     const unmatched: string[] = [];
     const errors: string[] = [];
 
-    for (const t of teams) {
+    // Process teams in parallel batches to avoid worker timeout (default ~30s).
+    const CONCURRENCY = 8;
+    const queue = [...teams];
+
+    type TeamRow = { id: string; name: string; code: string };
+    async function processTeam(t: TeamRow) {
       try {
         let squad: WC2026SquadResponse | null = null;
         try {
@@ -66,7 +71,7 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
         const players = squad?.players ?? squad?.squad ?? [];
         if (players.length === 0) {
           unmatched.push(t.name);
-          continue;
+          return;
         }
         teamsMatched++;
 
@@ -87,6 +92,15 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
         unmatched.push(t.name);
       }
     }
+
+    const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+      while (queue.length > 0) {
+        const t = queue.shift();
+        if (!t) break;
+        await processTeam(t);
+      }
+    });
+    await Promise.all(workers);
 
     if (inserted === 0) {
       const sample = errors[0] ?? "no se pudo obtener ningún roster";
