@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReglasRouteImport } from './routes/reglas'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as PerfilRouteImport } from './routes/perfil'
@@ -27,6 +28,11 @@ import { Route as AdminPredictorRouteImport } from './routes/admin.predictor'
 import { Route as AdminPartidosRouteImport } from './routes/admin.partidos'
 import { Route as AdminJugadoresRouteImport } from './routes/admin.jugadores'
 
+const ReglasRoute = ReglasRouteImport.update({
+  id: '/reglas',
+  path: '/reglas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
   path: '/registro',
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
+  '/reglas': typeof ReglasRoute
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
+  '/reglas': typeof ReglasRoute
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
+  '/reglas': typeof ReglasRoute
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/ranking'
     | '/registro'
+    | '/reglas'
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/ranking'
     | '/registro'
+    | '/reglas'
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/ranking'
     | '/registro'
+    | '/reglas'
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
@@ -241,10 +253,18 @@ export interface RootRouteChildren {
   PerfilRoute: typeof PerfilRoute
   RankingRoute: typeof RankingRoute
   RegistroRoute: typeof RegistroRoute
+  ReglasRoute: typeof ReglasRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reglas': {
+      id: '/reglas'
+      path: '/reglas'
+      fullPath: '/reglas'
+      preLoaderRoute: typeof ReglasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/registro': {
       id: '/registro'
       path: '/registro'
@@ -408,7 +428,17 @@ const rootRouteChildren: RootRouteChildren = {
   PerfilRoute: PerfilRoute,
   RankingRoute: RankingRoute,
   RegistroRoute: RegistroRoute,
+  ReglasRoute: ReglasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
