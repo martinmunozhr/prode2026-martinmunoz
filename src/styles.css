@@ -313,15 +313,15 @@ html.light body {
   .animate-card-reveal { animation: none; opacity: 1; transform: none; }
 }
 
-/* Native <select> dropdown options: ensure readable contrast in dark theme.
+/* Native <select> dropdown options: ensure readable contrast in both themes.
    Without this, some OS render the open menu with white-on-white text. */
 select option,
 select optgroup {
-  background-color: hsl(0 0% 12%);
-  color: hsl(0 0% 96%);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
 }
-select option:checked,
-select option:hover {
-  background-color: oklch(0.82 0.22 145 / 0.25);
-  color: hsl(0 0% 100%);
+select option:checked {
+  background-color: color-mix(in oklab, var(--primary) 22%, transparent);
+  color: var(--foreground);
+  font-weight: 600;
 }
