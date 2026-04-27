@@ -98,7 +98,20 @@ function BolaDeCristalPage() {
   };
 
   if (authLoading || loading) {
-    return <div className="container mx-auto px-4 py-20 text-center text-muted-foreground">Cargando...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
+        <header className="mb-8">
+          <div className="h-3 w-40 bg-accent/20 rounded animate-pulse" />
+          <div className="h-12 w-64 bg-muted/40 rounded mt-3 animate-pulse" />
+        </header>
+        <div className="h-20 mb-8 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />
+        <div className="space-y-4">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-28 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
