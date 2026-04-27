@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { matches: upcoming, loading: loadingMatches } = useUpcomingLiveMatches(3);
   const { ranking: liveRanking, loading: loadingRanking } = useLiveRanking();
   const top3 = liveRanking.slice(0, 3);
@@ -42,13 +42,23 @@ function HomePage() {
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
               Inscripciones abiertas
             </div>
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight">
-              EL PRODE
-              <br />
-              <span className="text-gradient-pitch">DEL MUNDIAL</span>
-              <br />
-              2026.
-            </h1>
+            <div className="relative">
+              <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight">
+                EL PRODE
+                <br />
+                <span className="text-gradient-pitch">DEL MUNDIAL</span>
+                <br />
+                2026.
+              </h1>
+              <img
+                src={trofeo2026}
+                alt=""
+                aria-hidden
+                className="hidden sm:block absolute -top-6 -right-2 md:-right-6 lg:-right-2 h-32 md:h-44 lg:h-52 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] rotate-[8deg]"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
             <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-xl">
               48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado, sumá puntos y escalá en el ranking global.
             </p>
@@ -84,12 +94,6 @@ function HomePage() {
                 fetchPriority="high"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-              <img
-                src={trofeo2026}
-                alt=""
-                aria-hidden
-                className="absolute right-2 top-4 h-40 md:h-52 object-contain pointer-events-none drop-shadow-2xl"
-               loading="lazy" decoding="async" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Quién levantará la copa</div>
                 <div className="font-display text-2xl tracking-tight">Tu pronóstico también suma.</div>
@@ -160,7 +164,7 @@ function HomePage() {
         )}
       </section>
 
-      {!user && (
+      {!authLoading && !user && (
         <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
           <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
           <img src={figHaaland} alt="" aria-hidden className="hidden md:block absolute -right-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
