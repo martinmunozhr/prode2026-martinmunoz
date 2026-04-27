@@ -65,6 +65,62 @@ export type Database = {
         }
         Relationships: []
       }
+      challenges: {
+        Row: {
+          bonus_points: number | null
+          challenger_id: string
+          challenger_points: number | null
+          created_at: string
+          id: string
+          is_draw: boolean
+          opponent_id: string
+          opponent_points: number | null
+          resolved_at: string | null
+          round_id: string
+          status: Database["public"]["Enums"]["challenge_status"]
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          bonus_points?: number | null
+          challenger_id: string
+          challenger_points?: number | null
+          created_at?: string
+          id?: string
+          is_draw?: boolean
+          opponent_id: string
+          opponent_points?: number | null
+          resolved_at?: string | null
+          round_id: string
+          status?: Database["public"]["Enums"]["challenge_status"]
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          bonus_points?: number | null
+          challenger_id?: string
+          challenger_points?: number | null
+          created_at?: string
+          id?: string
+          is_draw?: boolean
+          opponent_id?: string
+          opponent_points?: number | null
+          resolved_at?: string | null
+          round_id?: string
+          status?: Database["public"]["Enums"]["challenge_status"]
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenges_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crystal_ball: {
         Row: {
           campeon_id: string | null
@@ -212,6 +268,7 @@ export type Database = {
           home_score: number | null
           id: string
           match_date: string
+          round_id: string | null
           stadium: string
           stage: Database["public"]["Enums"]["match_stage"]
           status: Database["public"]["Enums"]["match_status"]
@@ -227,6 +284,7 @@ export type Database = {
           home_score?: number | null
           id: string
           match_date: string
+          round_id?: string | null
           stadium: string
           stage: Database["public"]["Enums"]["match_stage"]
           status?: Database["public"]["Enums"]["match_status"]
@@ -242,6 +300,7 @@ export type Database = {
           home_score?: number | null
           id?: string
           match_date?: string
+          round_id?: string | null
           stadium?: string
           stage?: Database["public"]["Enums"]["match_stage"]
           status?: Database["public"]["Enums"]["match_status"]
@@ -260,6 +319,13 @@ export type Database = {
             columns: ["home_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
             referencedColumns: ["id"]
           },
         ]
@@ -423,6 +489,42 @@ export type Database = {
         }
         Relationships: []
       }
+      rounds: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          group_matchday: number | null
+          id: string
+          name: string
+          sort_order: number
+          stage: Database["public"]["Enums"]["match_stage"]
+          starts_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          group_matchday?: number | null
+          id: string
+          name: string
+          sort_order: number
+          stage: Database["public"]["Enums"]["match_stage"]
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          group_matchday?: number | null
+          id?: string
+          name?: string
+          sort_order?: number
+          stage?: Database["public"]["Enums"]["match_stage"]
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       teams: {
         Row: {
           code: string
@@ -564,6 +666,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_round_finished: { Args: { _round_id: string }; Returns: boolean }
+      points_for_user_in_round: {
+        Args: { _round_id: string; _user_id: string }
+        Returns: number
+      }
       predict_match: {
         Args: { _away_id: string; _home_id: string }
         Returns: {
@@ -576,6 +683,8 @@ export type Database = {
         Args: { _match_id: string }
         Returns: undefined
       }
+      refresh_round_dates: { Args: { _round_id: string }; Returns: undefined }
+      resolve_challenge: { Args: { _challenge_id: string }; Returns: undefined }
       stage_multiplier: {
         Args: { _stage: Database["public"]["Enums"]["match_stage"] }
         Returns: number
@@ -583,6 +692,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      challenge_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "resolved"
+        | "cancelled"
       match_stage:
         | "Grupos"
         | "Dieciseisavos"
@@ -720,6 +835,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      challenge_status: [
+        "pending",
+        "accepted",
+        "rejected",
+        "resolved",
+        "cancelled",
+      ],
       match_stage: [
         "Grupos",
         "Dieciseisavos",
