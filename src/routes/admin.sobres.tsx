@@ -27,7 +27,7 @@ function AdminSobres() {
   const run = async () => {
     setRunning(true);
     try {
-      const r = await simulatePackFn({ data: { packType, iterations: iter } });
+      const r = await simulatePackFn({ data: { packType, iterations: iter }, headers: await authHeaders() });
       setResult(r.result);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error en la simulación");
