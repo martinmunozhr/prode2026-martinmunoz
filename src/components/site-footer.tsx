@@ -13,8 +13,10 @@ export function SiteFooter() {
         <p className="font-display text-base tracking-wider">
           PRODE MUNDIAL <span className="text-primary">2026</span>
         </p>
-        <div className="flex items-center gap-2">
-          <span>Desarrollado por Martín Muñoz</span>
+        <div className="flex items-center gap-3">
+          <span className="text-foreground/90 font-medium">
+            Desarrollado por <span className="text-primary font-semibold">Martín Muñoz</span>
+          </span>
           <TooltipProvider delayDuration={200}>
             <nav aria-label="Enlaces del autor" className="flex items-center gap-2">
               <Tooltip>
