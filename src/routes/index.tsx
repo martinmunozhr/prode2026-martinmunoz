@@ -5,19 +5,8 @@ import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
-import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
-import figMessi from "@/assets/figuras/messi.jpg";
-import figMbappe from "@/assets/figuras/mbappe.jpg";
-import figVinicius from "@/assets/figuras/vinicius.jpg";
-import figHaaland from "@/assets/figuras/haaland.jpg";
-
-const FIGURAS = [
-  { img: figMessi, name: "Lionel Messi", country: "Argentina", flag: "🇦🇷" },
-  { img: figMbappe, name: "Kylian Mbappé", country: "Francia", flag: "🇫🇷" },
-  { img: figVinicius, name: "Vinícius Jr.", country: "Brasil", flag: "🇧🇷" },
-  { img: figHaaland, name: "Erling Haaland", country: "Noruega", flag: "🇳🇴" },
-];
 
 export const Route = createFileRoute("/")({
   head: () => ({
