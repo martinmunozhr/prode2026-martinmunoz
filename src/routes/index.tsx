@@ -5,8 +5,19 @@ import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
-import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles, Star } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
+import figMessi from "@/assets/figuras/messi.jpg";
+import figMbappe from "@/assets/figuras/mbappe.jpg";
+import figVinicius from "@/assets/figuras/vinicius.jpg";
+import figHaaland from "@/assets/figuras/haaland.jpg";
+
+const FIGURAS = [
+  { img: figMessi, name: "Lionel Messi", country: "Argentina", flag: "🇦🇷" },
+  { img: figMbappe, name: "Kylian Mbappé", country: "Francia", flag: "🇫🇷" },
+  { img: figVinicius, name: "Vinícius Jr.", country: "Brasil", flag: "🇧🇷" },
+  { img: figHaaland, name: "Erling Haaland", country: "Noruega", flag: "🇳🇴" },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -119,6 +130,29 @@ function HomePage() {
             {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
           </div>
         )}
+      </section>
+
+      <section className="mt-14">
+        <SectionHeader
+          eyebrow="Las figuras"
+          title="Estrellas del Mundial"
+          action={<Link to="/equipos" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Ver álbum <ArrowRight className="h-4 w-4" /></Link>}
+        />
+        <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {FIGURAS.map((f) => (
+            <div key={f.name} className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-border/50 bg-gradient-card shadow-elevated">
+              <img src={f.img} alt={f.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                <div className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-primary font-bold">
+                  <Star className="h-3 w-3" /> Figura
+                </div>
+                <div className="font-display text-base sm:text-lg leading-tight mt-0.5">{f.name}</div>
+                <div className="text-xs text-muted-foreground">{f.flag} {f.country}</div>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mt-14">
