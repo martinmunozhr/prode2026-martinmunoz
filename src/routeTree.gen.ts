@@ -18,6 +18,7 @@ import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as FixtureRouteImport } from './routes/fixture'
 import { Route as EquiposRouteImport } from './routes/equipos'
 import { Route as BolaDeCristalRouteImport } from './routes/bola-de-cristal'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EquiposEquipoIdRouteImport } from './routes/equipos.$equipoId'
 
@@ -66,6 +67,11 @@ const BolaDeCristalRoute = BolaDeCristalRouteImport.update({
   path: '/bola-de-cristal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,6 +85,7 @@ const EquiposEquipoIdRoute = EquiposEquipoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   BolaDeCristalRoute: typeof BolaDeCristalRoute
   EquiposRoute: typeof EquiposRouteWithChildren
   FixtureRoute: typeof FixtureRoute
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BolaDeCristalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -267,6 +287,7 @@ const EquiposRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   BolaDeCristalRoute: BolaDeCristalRoute,
   EquiposRoute: EquiposRouteWithChildren,
   FixtureRoute: FixtureRoute,
@@ -280,3 +301,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
