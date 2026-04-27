@@ -20,7 +20,12 @@ import { Route as EquiposRouteImport } from './routes/equipos'
 import { Route as BolaDeCristalRouteImport } from './routes/bola-de-cristal'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as EquiposEquipoIdRouteImport } from './routes/equipos.$equipoId'
+import { Route as AdminSyncRouteImport } from './routes/admin.sync'
+import { Route as AdminPredictorRouteImport } from './routes/admin.predictor'
+import { Route as AdminPartidosRouteImport } from './routes/admin.partidos'
+import { Route as AdminJugadoresRouteImport } from './routes/admin.jugadores'
 
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
@@ -77,15 +82,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const EquiposEquipoIdRoute = EquiposEquipoIdRouteImport.update({
   id: '/$equipoId',
   path: '/$equipoId',
   getParentRoute: () => EquiposRoute,
 } as any)
+const AdminSyncRoute = AdminSyncRouteImport.update({
+  id: '/sync',
+  path: '/sync',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPredictorRoute = AdminPredictorRouteImport.update({
+  id: '/predictor',
+  path: '/predictor',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPartidosRoute = AdminPartidosRouteImport.update({
+  id: '/partidos',
+  path: '/partidos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminJugadoresRoute = AdminJugadoresRouteImport.update({
+  id: '/jugadores',
+  path: '/jugadores',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
@@ -95,11 +125,15 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
+  '/admin/jugadores': typeof AdminJugadoresRoute
+  '/admin/partidos': typeof AdminPartidosRoute
+  '/admin/predictor': typeof AdminPredictorRoute
+  '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
@@ -109,12 +143,17 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
+  '/admin/jugadores': typeof AdminJugadoresRoute
+  '/admin/partidos': typeof AdminPartidosRoute
+  '/admin/predictor': typeof AdminPredictorRoute
+  '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/equipos': typeof EquiposRouteWithChildren
   '/fixture': typeof FixtureRoute
@@ -124,7 +163,12 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRoute
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
+  '/admin/jugadores': typeof AdminJugadoresRoute
+  '/admin/partidos': typeof AdminPartidosRoute
+  '/admin/predictor': typeof AdminPredictorRoute
+  '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,11 +184,15 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/ranking'
     | '/registro'
+    | '/admin/jugadores'
+    | '/admin/partidos'
+    | '/admin/predictor'
+    | '/admin/sync'
     | '/equipos/$equipoId'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/bola-de-cristal'
     | '/equipos'
     | '/fixture'
@@ -154,7 +202,12 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/ranking'
     | '/registro'
+    | '/admin/jugadores'
+    | '/admin/partidos'
+    | '/admin/predictor'
+    | '/admin/sync'
     | '/equipos/$equipoId'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -168,12 +221,17 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/ranking'
     | '/registro'
+    | '/admin/jugadores'
+    | '/admin/partidos'
+    | '/admin/predictor'
+    | '/admin/sync'
     | '/equipos/$equipoId'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   BolaDeCristalRoute: typeof BolaDeCristalRoute
   EquiposRoute: typeof EquiposRouteWithChildren
   FixtureRoute: typeof FixtureRoute
@@ -264,6 +322,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/equipos/$equipoId': {
       id: '/equipos/$equipoId'
       path: '/$equipoId'
@@ -271,8 +336,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquiposEquipoIdRouteImport
       parentRoute: typeof EquiposRoute
     }
+    '/admin/sync': {
+      id: '/admin/sync'
+      path: '/sync'
+      fullPath: '/admin/sync'
+      preLoaderRoute: typeof AdminSyncRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/predictor': {
+      id: '/admin/predictor'
+      path: '/predictor'
+      fullPath: '/admin/predictor'
+      preLoaderRoute: typeof AdminPredictorRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/partidos': {
+      id: '/admin/partidos'
+      path: '/partidos'
+      fullPath: '/admin/partidos'
+      preLoaderRoute: typeof AdminPartidosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/jugadores': {
+      id: '/admin/jugadores'
+      path: '/jugadores'
+      fullPath: '/admin/jugadores'
+      preLoaderRoute: typeof AdminJugadoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminJugadoresRoute: typeof AdminJugadoresRoute
+  AdminPartidosRoute: typeof AdminPartidosRoute
+  AdminPredictorRoute: typeof AdminPredictorRoute
+  AdminSyncRoute: typeof AdminSyncRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminJugadoresRoute: AdminJugadoresRoute,
+  AdminPartidosRoute: AdminPartidosRoute,
+  AdminPredictorRoute: AdminPredictorRoute,
+  AdminSyncRoute: AdminSyncRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface EquiposRouteChildren {
   EquiposEquipoIdRoute: typeof EquiposEquipoIdRoute
@@ -287,7 +398,7 @@ const EquiposRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   BolaDeCristalRoute: BolaDeCristalRoute,
   EquiposRoute: EquiposRouteWithChildren,
   FixtureRoute: FixtureRoute,
