@@ -19,33 +19,47 @@ import {
 export const syncSquadsWC2026 = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch (e) {
+      return { ok: false as const, error: e instanceof Error ? e.message : "Forbidden" };
+    }
 
-    const { data: teams } = await supabaseAdmin.from("teams").select("id, name, code");
-    if (!teams || teams.length === 0) return { ok: false, error: "No hay equipos cargados" };
+    if (!process.env.WC2026_API_KEY) {
+      return { ok: false as const, error: "WC2026_API_KEY no está configurada en el servidor" };
+    }
+
+    const { data: teams, error: teamsErr } = await supabaseAdmin
+      .from("teams")
+      .select("id, name, code");
+    if (teamsErr) return { ok: false as const, error: `DB: ${teamsErr.message}` };
+    if (!teams || teams.length === 0)
+      return { ok: false as const, error: "No hay equipos cargados" };
 
     let inserted = 0;
     let teamsMatched = 0;
     let calls = 0;
     const unmatched: string[] = [];
+    const errors: string[] = [];
 
     for (const t of teams) {
       try {
-        // Try by code first, then by id; the API may use either.
         let squad: WC2026SquadResponse | null = null;
         try {
           squad = await wc2026Fetch<WC2026SquadResponse>(
             `/v1/teams/${encodeURIComponent(t.code)}/squad`,
           );
           calls++;
-        } catch {
+        } catch (e1) {
           try {
             squad = await wc2026Fetch<WC2026SquadResponse>(
               `/v1/teams/${encodeURIComponent(t.id)}/squad`,
             );
             calls++;
-          } catch {
+          } catch (e2) {
             squad = null;
+            const msg = e2 instanceof Error ? e2.message : String(e2);
+            if (errors.length < 3) errors.push(`${t.name}: ${msg}`);
           }
         }
 
@@ -74,6 +88,16 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
       }
     }
 
+    if (inserted === 0) {
+      const sample = errors[0] ?? "no se pudo obtener ningún roster";
+      await logSync("squads_wc2026", "failed", calls, { unmatched, errors }, sample);
+      return {
+        ok: false as const,
+        error: `WC2026 API no devolvió plantillas. Detalle: ${sample}`,
+        unmatched,
+      };
+    }
+
     await supabaseAdmin.from("app_settings").upsert(
       {
         key: "squads_locked",
@@ -84,20 +108,23 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
       { onConflict: "key" },
     );
 
-    await logSync("squads_wc2026", inserted > 0 ? "success" : "partial", calls, {
-      inserted,
-      teamsMatched,
-      unmatched,
-    });
+    await logSync("squads_wc2026", "success", calls, { inserted, teamsMatched, unmatched });
 
-    return { ok: true, inserted, teamsMatched, unmatched, requestsUsed: calls };
+    return { ok: true as const, inserted, teamsMatched, unmatched, requestsUsed: calls };
   });
 
 // ---------------- WC2026: SYNC RESULTS ----------------
 export const syncResultsWC2026 = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch (e) {
+      return { ok: false as const, error: e instanceof Error ? e.message : "Forbidden" };
+    }
+    if (!process.env.WC2026_API_KEY) {
+      return { ok: false as const, error: "WC2026_API_KEY no está configurada" };
+    }
 
     let updated = 0;
     let calls = 0;
@@ -196,7 +223,15 @@ export const importRosterText = createServerFn({ method: "POST" })
   )
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch (e) {
+      return {
+        ok: false as const,
+        error: e instanceof Error ? e.message : "Forbidden",
+        inserted: 0,
+      };
+    }
 
     const { data: team, error: teamErr } = await supabaseAdmin
       .from("teams")
@@ -246,6 +281,10 @@ export const previewRosterText = createServerFn({ method: "POST" })
   })
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch {
+      return { players: [] as ReturnType<typeof parseRosterText> };
+    }
     return { players: parseRosterText(data.text) };
   });

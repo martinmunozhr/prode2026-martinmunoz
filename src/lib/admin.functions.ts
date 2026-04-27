@@ -15,10 +15,14 @@ import {
 import { assertAdmin, norm } from "@/lib/admin.helpers.server";
 
 // ---------------- REMAINING QUOTA ----------------
-export const getApiQuota = createServerFn({ method: "GET" })
+export const getApiQuota = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch {
+      return { used: 0, limit: 100, date: new Date().toISOString().slice(0, 10) };
+    }
     return getRemainingRequests();
   });
 
@@ -37,11 +41,15 @@ type ApiSquadResp = {
 export const syncSquads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch (e) {
+      return { ok: false as const, error: e instanceof Error ? e.message : "Forbidden" };
+    }
 
     const { used, limit } = await getRemainingRequests();
     const { data: teams } = await supabaseAdmin.from("teams").select("id, name, code");
-    if (!teams) return { ok: false, error: "no teams" };
+    if (!teams) return { ok: false as const, error: "no teams" };
 
     const remaining = limit - used;
     if (remaining < teams.length + 1) {
