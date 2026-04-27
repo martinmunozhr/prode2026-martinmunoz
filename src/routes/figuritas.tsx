@@ -99,7 +99,7 @@ function SobresTab({ balance }: { balance: number }) {
   const handleOpen = async (packType: PackType) => {
     setOpening(packType);
     try {
-      const { cards } = await openPackFn({ data: { packType } });
+      const { cards } = await openPackFn({ data: { packType }, headers: await authHeaders() });
       setReveal(cards);
       toast.success("¡Sobre abierto!");
     } catch (err) {
