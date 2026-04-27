@@ -24,6 +24,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user, profile, signOut, loading } = useAuth();
   const { isAdmin } = useIsAdmin();
+  const { balance } = useCoins();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
