@@ -7,6 +7,7 @@ import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
 import figMbappe from "@/assets/figuras/mbappe.png";
 import figVinicius from "@/assets/figuras/vinicius.png";
+import figJulian from "@/assets/figuras/julian.png";
 
 const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
 type Stage = typeof STAGES[number];
@@ -44,6 +45,12 @@ function FixturePage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <header className="relative mb-8 overflow-visible">
+        <img
+          src={figJulian}
+          alt=""
+          aria-hidden
+          className="hidden xl:block absolute -top-3 left-0 h-40 object-contain pointer-events-none drop-shadow-2xl"
+        />
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Calendario</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Fixture</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl">12 grupos de 4 equipos. Los 2 mejores de cada grupo + los 8 mejores terceros pasan a dieciseisavos.</p>
