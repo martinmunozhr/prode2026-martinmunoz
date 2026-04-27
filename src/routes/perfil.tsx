@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { AvatarColorPicker, AVATAR_COLORS } from "@/components/avatar-color-picker";
-import { teams } from "@/lib/mock-data";
 import { toast } from "sonner";
-import { User as UserIcon, LogIn, Save } from "lucide-react";
+import { LogIn, Save } from "lucide-react";
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({
@@ -20,13 +19,11 @@ export const Route = createFileRoute("/perfil")({
 function PerfilPage() {
   const { user, profile, loading } = useAuth();
   const [color, setColor] = useState("violet");
-  const [favTeam, setFavTeam] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setColor(profile.avatar_color || "violet");
-      setFavTeam(profile.favorite_team_id ?? "");
     }
   }, [profile]);
 
@@ -35,7 +32,7 @@ function PerfilPage() {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ avatar_color: color, favorite_team_id: favTeam || null })
+      .update({ avatar_color: color })
       .eq("id", user.id);
     setSaving(false);
     if (error) toast.error("No se pudo guardar: " + error.message);
@@ -104,20 +101,6 @@ function PerfilPage() {
         <section className="mb-8">
           <h2 className="font-display text-xl tracking-wider mb-3">Color de avatar</h2>
           <AvatarColorPicker value={color} onChange={setColor} />
-        </section>
-
-        <section className="mb-8">
-          <h2 className="font-display text-xl tracking-wider mb-3">Equipo favorito</h2>
-          <select
-            value={favTeam}
-            onChange={(e) => setFavTeam(e.target.value)}
-            className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary"
-          >
-            <option value="">Sin elegir</option>
-            {teams.map((t) => (
-              <option key={t.id} value={t.id}>{t.code} — {t.name}</option>
-            ))}
-          </select>
         </section>
 
         <button
