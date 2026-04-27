@@ -426,11 +426,15 @@ function IntercambiosTab() {
       <ArrowLeftRight className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
       <h3 className="font-display text-2xl">Intercambios entre participantes</h3>
       <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-        Próximamente vas a poder ofrecer tus repetidas a otros usuarios y pedirles las que te faltan.
-        Por ahora, reciclá tus repetidas en la pestaña de colección para ganar monedas y carta garantizada cada 10 reciclajes.
+        Ofrecé tus repetidas a otros usuarios y pediles las que te faltan. Los intercambios funcionan con cartas múltiples por cada lado.
       </p>
+      <div className="mt-6 flex flex-wrap gap-3 justify-center">
+        <Link to="/intercambios" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-sm shadow-glow-pitch hover:scale-105 transition-transform">
+          <ArrowLeftRight className="h-4 w-4" /> Ir a intercambios
+        </Link>
+      </div>
       <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pitch/10 border border-pitch/40 text-pitch text-xs font-bold uppercase tracking-widest">
-        <Trash2 className="h-3.5 w-3.5" /> Mientras tanto: reciclaje generoso 75% + 1 garantizada cada 10
+        <Trash2 className="h-3.5 w-3.5" /> Reciclaje generoso 75% + 1 garantizada cada 10
       </div>
     </div>
   );
