@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Shield, Calendar, Users, Activity, BarChart3, Trophy } from "lucide-react";
+import { Shield, Calendar, Users, Activity, BarChart3, Trophy, Package } from "lucide-react";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useAuth } from "@/contexts/auth-context";
 
