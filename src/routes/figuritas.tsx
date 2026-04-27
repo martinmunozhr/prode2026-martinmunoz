@@ -370,7 +370,7 @@ function ColeccionTab() {
   const handleRecycle = async (playerId: string) => {
     setRecycling(playerId);
     try {
-      const r = await recycleCardFn({ data: { playerId } });
+      const r = await recycleCardFn({ data: { playerId }, headers: await authHeaders() });
       toast.success(`+${r.refund} monedas (${RARITY_LABEL[r.rarity]})`);
       if (r.bonus_player_id && r.bonus_rarity) {
         toast.success(`🎉 ¡Carta garantizada ${RARITY_LABEL[r.bonus_rarity]}!`);
