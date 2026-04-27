@@ -44,9 +44,9 @@ function HomePage() {
             </div>
             <div className="relative">
               <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight">
-                EL PRODE
+                PRODE
                 <br />
-                <span className="text-gradient-pitch">DEL MUNDIAL</span>
+                <span className="text-gradient-pitch">MUNDIAL</span>
                 <br />
                 2026.
               </h1>
