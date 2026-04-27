@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Trophy, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, X, Trophy, LogOut, User as UserIcon, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
@@ -18,6 +19,7 @@ const links = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user, profile, signOut, loading } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -59,6 +61,16 @@ export function SiteHeader() {
             <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
           ) : user ? (
             <>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-accent/15 border border-accent/40 text-accent hover:bg-accent/25 transition-colors"
+                  title="Panel admin"
+                >
+                  <Shield className="h-4 w-4" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Admin</span>
+                </Link>
+              )}
               <Link
                 to="/perfil"
                 className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/40 border border-border/30 hover:border-primary/40 transition-colors"
