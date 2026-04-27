@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { FutCard } from "@/components/fut-card";
 import { RARITY_LABEL, type CardRarity } from "@/lib/cards";
 import { acceptTradeFn, proposeTradeFn, rejectTradeFn } from "@/lib/cards.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
