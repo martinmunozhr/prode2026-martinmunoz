@@ -3,7 +3,8 @@ import { CountdownHero } from "@/components/countdown-hero";
 import { MatchCard } from "@/components/match-card";
 import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
-import { getUpcomingMatches, ranking } from "@/lib/mock-data";
+import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
+import { ranking as fallbackRanking } from "@/lib/mock-data";
 import { ArrowRight, Trophy, Users, Zap, Target } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -19,8 +20,9 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const upcoming = getUpcomingMatches(3);
-  const top3 = ranking.slice(0, 3);
+  const { matches: upcoming } = useUpcomingLiveMatches(3);
+  const { ranking: liveRanking } = useLiveRanking();
+  const top3 = liveRanking.length > 0 ? liveRanking.slice(0, 3) : fallbackRanking.slice(0, 3);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-14">
