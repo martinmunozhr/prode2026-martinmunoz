@@ -184,13 +184,39 @@ function SobresTab({ balance }: { balance: number }) {
 
 function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => void }) {
   const [step, setStep] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const showAll = step >= cards.length;
+  const current = !showAll ? cards[step] : null;
+
+  // Reset flip on each new card
+  useEffect(() => { setFlipped(false); }, [step]);
+
+  const advance = () => {
+    if (!flipped) { setFlipped(true); return; }
+    setStep((s) => s + 1);
+  };
+
+  const skipAll = () => setStep(cards.length);
+
   return (
     <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-md flex items-center justify-center p-4 overflow-auto">
-      <div className="max-w-5xl w-full">
+      {/* Glow especial para legendarios */}
+      {current?.rarity === "legendario" && flipped && (
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,oklch(0.7_0.24_295/0.35),transparent_60%)] animate-pulse" />
+      )}
+      {current?.rarity === "epico" && flipped && (
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,oklch(0.78_0.18_75/0.25),transparent_65%)]" />
+      )}
+
+      <div className="max-w-5xl w-full relative">
         <div className="text-center mb-6">
           <div className="text-[11px] uppercase tracking-widest text-accent font-bold">¡Sobre abierto!</div>
           <h2 className="font-display text-4xl mt-1">{showAll ? "Tu botín" : `Carta ${step + 1} de ${cards.length}`}</h2>
+          {!showAll && (
+            <button onClick={skipAll} className="text-xs text-muted-foreground hover:text-foreground mt-2 underline underline-offset-4">
+              Saltar animación
+            </button>
+          )}
         </div>
 
         {showAll ? (
@@ -210,7 +236,7 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
                   />
                   {c.is_new && (
                     <span className="absolute -top-2 -left-2 z-30 px-2 py-0.5 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch">
-                      Nueva!
+                      ¡Nueva!
                     </span>
                   )}
                   {c.is_duplicate && (
@@ -221,34 +247,70 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
                 </div>
               ))}
             </div>
-            <div className="text-center mt-6">
+            <div className="text-center mt-6 flex gap-3 justify-center">
+              <Link to="/intercambios" className="px-5 py-2.5 rounded-lg border border-border text-sm font-bold uppercase tracking-wider hover:bg-muted/40">
+                Ir a intercambios
+              </Link>
               <button onClick={onClose} className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch">
                 Listo
               </button>
             </div>
           </>
-        ) : (
+        ) : current ? (
           <button
-            onClick={() => setStep((s) => s + 1)}
-            className="block mx-auto"
+            onClick={advance}
+            className="block mx-auto group"
             aria-label="Revelar siguiente carta"
+            style={{ perspective: "1200px" }}
           >
-            <div className="w-64">
-              <FutCard
-                name={cards[step].player_name}
-                teamId={cards[step].team_id}
-                position={cards[step].position.slice(0, 3).toUpperCase()}
-                jerseyNumber={cards[step].jersey_number}
-                club={cards[step].club}
-                rarity={cards[step].rarity}
-                size="lg"
-              />
+            <div
+              className="w-64 transition-transform duration-700"
+              style={{
+                transformStyle: "preserve-3d",
+                transform: flipped ? "rotateY(0deg)" : "rotateY(180deg)",
+              }}
+            >
+              {flipped ? (
+                <div key={step} className="animate-card-flip">
+                  <FutCard
+                    name={current.player_name}
+                    teamId={current.team_id}
+                    position={current.position.slice(0, 3).toUpperCase()}
+                    jerseyNumber={current.jersey_number}
+                    club={current.club}
+                    rarity={current.rarity}
+                    size="lg"
+                  />
+                  {current.is_new && (
+                    <div className="text-center mt-3">
+                      <span className="inline-block px-3 py-1 rounded-full bg-pitch text-pitch-foreground text-xs font-bold uppercase tracking-wider shadow-glow-pitch">
+                        ¡Nueva en tu álbum!
+                      </span>
+                    </div>
+                  )}
+                  {current.is_duplicate && (
+                    <div className="text-center mt-3">
+                      <span className="inline-block px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs font-bold uppercase tracking-wider border border-border">
+                        Repetida — reciclala por monedas
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="aspect-[3/4.2] w-full rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-zinc-900 via-purple-950 to-zinc-900 flex items-center justify-center shadow-elevated relative overflow-hidden">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,oklch(0.7_0.24_295/0.3),transparent_50%)]" />
+                  <Sparkles className="h-20 w-20 text-accent animate-pulse" />
+                  <div className="absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-widest text-white/70">
+                    Tocá para revelar
+                  </div>
+                </div>
+              )}
             </div>
             <div className="text-center mt-4 text-xs text-muted-foreground uppercase tracking-widest">
-              Tocá para continuar
+              {flipped ? "Tocá para continuar" : "Tocá la carta"}
             </div>
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   );
