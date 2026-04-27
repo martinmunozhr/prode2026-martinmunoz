@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { FutCard } from "@/components/fut-card";
 import { RARITY_LABEL, type CardRarity } from "@/lib/cards";
 import { acceptTradeFn, proposeTradeFn, rejectTradeFn } from "@/lib/cards.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -165,7 +166,7 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
   const handleAccept = async (id: string) => {
     setBusy(id);
     try {
-      await acceptTradeFn({ data: { tradeId: id } });
+      await acceptTradeFn({ data: { tradeId: id }, headers: await authHeaders() });
       toast.success("¡Intercambio aceptado! Las figuritas ya están en tu álbum.");
       await load();
     } catch (e) {
@@ -176,7 +177,7 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
   const handleReject = async (id: string) => {
     setBusy(id);
     try {
-      await rejectTradeFn({ data: { tradeId: id } });
+      await rejectTradeFn({ data: { tradeId: id }, headers: await authHeaders() });
       toast.success("Intercambio cancelado");
       await load();
     } catch (e) {
@@ -398,6 +399,7 @@ function NuevoTradeTab() {
           offer: Object.entries(offer).map(([playerId, quantity]) => ({ playerId, quantity })),
           request: Object.entries(request).map(([playerId, quantity]) => ({ playerId, quantity })),
         },
+        headers: await authHeaders(),
       });
       toast.success("¡Propuesta enviada!");
       setOffer({}); setRequest({}); setMessage("");

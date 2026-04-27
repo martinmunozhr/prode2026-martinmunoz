@@ -7,6 +7,7 @@ import { useCoins } from "@/hooks/use-coins";
 import { FutCard } from "@/components/fut-card";
 import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
 import { openPackFn, recycleCardFn, type OpenedCard } from "@/lib/cards.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { teams as MOCK_TEAMS } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -98,7 +99,7 @@ function SobresTab({ balance }: { balance: number }) {
   const handleOpen = async (packType: PackType) => {
     setOpening(packType);
     try {
-      const { cards } = await openPackFn({ data: { packType } });
+      const { cards } = await openPackFn({ data: { packType }, headers: await authHeaders() });
       setReveal(cards);
       toast.success("¡Sobre abierto!");
     } catch (err) {
@@ -369,7 +370,7 @@ function ColeccionTab() {
   const handleRecycle = async (playerId: string) => {
     setRecycling(playerId);
     try {
-      const r = await recycleCardFn({ data: { playerId } });
+      const r = await recycleCardFn({ data: { playerId }, headers: await authHeaders() });
       toast.success(`+${r.refund} monedas (${RARITY_LABEL[r.rarity]})`);
       if (r.bonus_player_id && r.bonus_rarity) {
         toast.success(`🎉 ¡Carta garantizada ${RARITY_LABEL[r.bonus_rarity]}!`);

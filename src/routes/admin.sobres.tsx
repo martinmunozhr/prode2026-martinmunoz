@@ -5,6 +5,7 @@ import { simulatePackFn } from "@/lib/cards.functions";
 import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { authHeaders } from "@/lib/auth-headers";
 
 export const Route = createFileRoute("/admin/sobres")({
   component: AdminSobres,
@@ -26,7 +27,7 @@ function AdminSobres() {
   const run = async () => {
     setRunning(true);
     try {
-      const r = await simulatePackFn({ data: { packType, iterations: iter } });
+      const r = await simulatePackFn({ data: { packType, iterations: iter }, headers: await authHeaders() });
       setResult(r.result);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error en la simulación");
