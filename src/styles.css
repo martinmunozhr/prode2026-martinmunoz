@@ -172,25 +172,64 @@
 }
 
 .light {
-  --background: oklch(0.98 0.01 290);
+  --background: oklch(0.985 0.008 290);
   --foreground: oklch(0.18 0.05 290);
+
+  --surface: oklch(1 0 0);
+  --surface-elevated: oklch(0.99 0.005 290);
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.05 290);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.05 290);
-  --primary: oklch(0.55 0.25 295);
+
+  /* Stronger primary for AA contrast on white backgrounds */
+  --primary: oklch(0.5 0.25 295);
   --primary-foreground: oklch(0.99 0.005 290);
-  --secondary: oklch(0.94 0.03 290);
-  --secondary-foreground: oklch(0.18 0.05 290);
-  --muted: oklch(0.94 0.02 290);
-  --muted-foreground: oklch(0.45 0.04 288);
-  --accent: oklch(0.62 0.24 340);
+
+  --secondary: oklch(0.93 0.03 290);
+  --secondary-foreground: oklch(0.22 0.06 290);
+
+  --muted: oklch(0.95 0.015 290);
+  /* Darker for AA on white */
+  --muted-foreground: oklch(0.42 0.05 288);
+
+  --accent: oklch(0.55 0.26 340);
   --accent-foreground: oklch(0.99 0.005 290);
-  --destructive: oklch(0.55 0.25 25);
+
+  --destructive: oklch(0.52 0.26 25);
   --destructive-foreground: oklch(0.99 0.005 290);
-  --border: oklch(0 0 0 / 12%);
-  --input: oklch(0 0 0 / 8%);
-  --ring: oklch(0.55 0.25 295);
+
+  /* Solid borders/inputs for visibility on white */
+  --border: oklch(0.86 0.02 290);
+  --input: oklch(0.97 0.01 290);
+  --ring: oklch(0.5 0.25 295);
+
+  /* Re-tone gradients for light mode (originally dark) */
+  --gradient-hero: linear-gradient(135deg, oklch(0.96 0.04 290) 0%, oklch(0.92 0.08 295) 50%, oklch(0.93 0.07 320) 100%);
+  --gradient-card: linear-gradient(160deg, oklch(1 0 0) 0%, oklch(0.97 0.015 290) 100%);
+
+  --shadow-card: 0 4px 16px -4px oklch(0.3 0.1 290 / 0.12), 0 1px 3px -1px oklch(0.3 0.1 290 / 0.08);
+  --shadow-elevated: 0 16px 40px -12px oklch(0.3 0.1 290 / 0.18);
+
+  --sidebar: oklch(0.99 0.005 290);
+  --sidebar-foreground: oklch(0.18 0.05 290);
+  --sidebar-primary: oklch(0.5 0.25 295);
+  --sidebar-primary-foreground: oklch(0.99 0.005 290);
+  --sidebar-accent: oklch(0.95 0.015 290);
+  --sidebar-accent-foreground: oklch(0.22 0.06 290);
+  --sidebar-border: oklch(0.86 0.02 290);
+  --sidebar-ring: oklch(0.5 0.25 295);
+}
+
+/* Light theme: tone down the heavy radial-gradient body backdrop and switch color-scheme so native widgets render light. */
+html.light {
+  color-scheme: light;
+}
+html.light body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.7 0.18 295 / 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 110%, oklch(0.7 0.2 340 / 0.08), transparent 60%);
 }
 
 @layer base {
