@@ -1,15 +1,17 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Trophy, LogOut, User as UserIcon, Shield } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { ThemeToggle } from "@/components/theme-toggle";
+import logoMundial from "@/assets/logo-mundial-2026.png";
 
 const links = [
   { to: "/" as const, label: "Inicio", exact: true },
   { to: "/fixture" as const, label: "Fixture", exact: false },
   { to: "/mis-pronosticos" as const, label: "Pronósticos", exact: false },
+  { to: "/desafios" as const, label: "Desafíos", exact: false },
   { to: "/bola-de-cristal" as const, label: "Bola", exact: false },
   { to: "/ranking" as const, label: "Ranking", exact: false },
   { to: "/equipos" as const, label: "Álbum", exact: false },
@@ -32,10 +34,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-pitch shadow-glow-pitch">
-            <Trophy className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div className="font-display text-2xl tracking-wide leading-none">
+          <img src={logoMundial} alt="Mundial 2026" className="h-10 w-10 object-contain" />
+          <div className="font-display text-xl sm:text-2xl tracking-wide leading-none">
             <span className="text-foreground">PRODE</span>
             <span className="text-gradient-pitch ml-1">2026</span>
           </div>
