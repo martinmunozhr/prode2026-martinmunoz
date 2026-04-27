@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Trophy, Target, CheckCircle2, Zap, Sparkles, Lock, Star } from "lucide-react";
-import pelota from "@/assets/elementos/pelota.png";
+import pelota from "@/assets/elementos/pelota.webp";
 
 export const Route = createFileRoute("/reglas")({
   head: () => ({

@@ -6,11 +6,11 @@ import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
 import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
-import heroChampion from "@/assets/hero-champion.jpg";
-import figMessi from "@/assets/figuras/messi.png";
-import figHaaland from "@/assets/figuras/haaland.png";
-import trofeo2026 from "@/assets/elementos/trofeo.png";
-import messiTrofeo from "@/assets/elementos/messi-trofeo.png";
+import heroChampion from "@/assets/hero-champion.webp";
+import figMessi from "@/assets/figuras/messi.webp";
+import figHaaland from "@/assets/figuras/haaland.webp";
+import trofeo2026 from "@/assets/elementos/trofeo.webp";
+import messiTrofeo from "@/assets/elementos/messi-trofeo.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({

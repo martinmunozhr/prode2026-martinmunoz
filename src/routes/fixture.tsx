@@ -5,8 +5,8 @@ import { GroupTable } from "@/components/group-table";
 import { groupLetters } from "@/lib/mock-data";
 import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
-import figMbappe from "@/assets/figuras/mbappe.png";
-import figVinicius from "@/assets/figuras/vinicius.png";
+import figMbappe from "@/assets/figuras/mbappe.webp";
+import figVinicius from "@/assets/figuras/vinicius.webp";
 
 const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
 type Stage = typeof STAGES[number];

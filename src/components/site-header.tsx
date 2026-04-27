@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { ThemeToggle } from "@/components/theme-toggle";
-import logoMundial from "@/assets/logo-mundial-2026.png";
+import logoMundial from "@/assets/logo-mundial-2026.webp";
 
 const links = [
   { to: "/" as const, label: "Inicio", exact: true },

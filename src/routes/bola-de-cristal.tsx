@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { teams } from "@/lib/mock-data";
-import figYamal from "@/assets/figuras/yamal.png";
+import figYamal from "@/assets/figuras/yamal.webp";
 import { isCrystalBallLocked, WORLD_CUP_KICKOFF, crystalBallPoints } from "@/lib/scoring";
 import { Sparkles, Lock, LogIn, Trophy, Save } from "lucide-react";
 import { toast } from "sonner";

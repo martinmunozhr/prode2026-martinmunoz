@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RankingRow } from "@/components/ranking-row";
 import { useLiveRanking, type LiveRankingEntry } from "@/lib/live-data";
 import { Trophy, Medal, Award, Users } from "lucide-react";
-import figRonaldo from "@/assets/figuras/ronaldo.png";
+import figRonaldo from "@/assets/figuras/ronaldo.webp";
 
 export const Route = createFileRoute("/ranking")({
   head: () => ({
