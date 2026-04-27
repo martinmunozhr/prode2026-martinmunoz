@@ -17,6 +17,7 @@ import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as FixtureRouteImport } from './routes/fixture'
+import { Route as FiguritasRouteImport } from './routes/figuritas'
 import { Route as EquiposRouteImport } from './routes/equipos'
 import { Route as DesafiosRouteImport } from './routes/desafios'
 import { Route as BolaDeCristalRouteImport } from './routes/bola-de-cristal'
@@ -69,6 +70,11 @@ const InsightsRoute = InsightsRouteImport.update({
 const FixtureRoute = FixtureRouteImport.update({
   id: '/fixture',
   path: '/fixture',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FiguritasRoute = FiguritasRouteImport.update({
+  id: '/figuritas',
+  path: '/figuritas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EquiposRoute = EquiposRouteImport.update({
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/desafios': typeof DesafiosRoute
   '/equipos': typeof EquiposRouteWithChildren
+  '/figuritas': typeof FiguritasRoute
   '/fixture': typeof FixtureRoute
   '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/desafios': typeof DesafiosRoute
   '/equipos': typeof EquiposRouteWithChildren
+  '/figuritas': typeof FiguritasRoute
   '/fixture': typeof FixtureRoute
   '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/bola-de-cristal': typeof BolaDeCristalRoute
   '/desafios': typeof DesafiosRoute
   '/equipos': typeof EquiposRouteWithChildren
+  '/figuritas': typeof FiguritasRoute
   '/fixture': typeof FixtureRoute
   '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/bola-de-cristal'
     | '/desafios'
     | '/equipos'
+    | '/figuritas'
     | '/fixture'
     | '/insights'
     | '/login'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/bola-de-cristal'
     | '/desafios'
     | '/equipos'
+    | '/figuritas'
     | '/fixture'
     | '/insights'
     | '/login'
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/bola-de-cristal'
     | '/desafios'
     | '/equipos'
+    | '/figuritas'
     | '/fixture'
     | '/insights'
     | '/login'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   BolaDeCristalRoute: typeof BolaDeCristalRoute
   DesafiosRoute: typeof DesafiosRoute
   EquiposRoute: typeof EquiposRouteWithChildren
+  FiguritasRoute: typeof FiguritasRoute
   FixtureRoute: typeof FixtureRoute
   InsightsRoute: typeof InsightsRoute
   LoginRoute: typeof LoginRoute
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       path: '/fixture'
       fullPath: '/fixture'
       preLoaderRoute: typeof FixtureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/figuritas': {
+      id: '/figuritas'
+      path: '/figuritas'
+      fullPath: '/figuritas'
+      preLoaderRoute: typeof FiguritasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/equipos': {
@@ -484,6 +504,7 @@ const rootRouteChildren: RootRouteChildren = {
   BolaDeCristalRoute: BolaDeCristalRoute,
   DesafiosRoute: DesafiosRoute,
   EquiposRoute: EquiposRouteWithChildren,
+  FiguritasRoute: FiguritasRoute,
   FixtureRoute: FixtureRoute,
   InsightsRoute: InsightsRoute,
   LoginRoute: LoginRoute,

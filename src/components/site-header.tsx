@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, LogOut, User as UserIcon, Shield } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Shield, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { useCoins } from "@/hooks/use-coins";
 import { ThemeToggle } from "@/components/theme-toggle";
 import logoMundial from "@/assets/logo-mundial-2026.webp";
 
@@ -14,7 +15,8 @@ const links = [
   { to: "/desafios" as const, label: "Desafíos", exact: false },
   { to: "/bola-de-cristal" as const, label: "Bola", exact: false },
   { to: "/ranking" as const, label: "Ranking", exact: false },
-  { to: "/equipos" as const, label: "Álbum", exact: false },
+  { to: "/figuritas" as const, label: "Figuritas", exact: false },
+  { to: "/equipos" as const, label: "Equipos", exact: false },
   { to: "/reglas" as const, label: "Reglas", exact: false },
 ];
 
