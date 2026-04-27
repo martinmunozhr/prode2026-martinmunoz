@@ -7,7 +7,6 @@ import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
 import figMbappe from "@/assets/figuras/mbappe.png";
 import figVinicius from "@/assets/figuras/vinicius.png";
-import figJulian from "@/assets/figuras/julian.png";
 
 const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
 type Stage = typeof STAGES[number];
