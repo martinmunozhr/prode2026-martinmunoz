@@ -1,7 +1,17 @@
 import { Match, getTeam } from "@/lib/mock-data";
 import { Flag } from "@/components/flag";
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Clock, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
+
+const STAGE_MULTIPLIER: Record<Match["stage"], number> = {
+  Grupos: 1,
+  Dieciseisavos: 1,
+  Octavos: 1.5,
+  Cuartos: 2,
+  Semifinal: 2.5,
+  "Tercer Puesto": 2,
+  Final: 3,
+};
 
 type Props = {
   match: Match;
