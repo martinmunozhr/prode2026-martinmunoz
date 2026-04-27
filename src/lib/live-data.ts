@@ -76,16 +76,18 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const [profilesRes, predsRes, cbRes] = await Promise.all([
+      const [profilesRes, predsRes, cbRes, gspRes] = await Promise.all([
         supabase.from("profiles").select("id, username, avatar_color, favorite_team_id"),
         supabase.from("predictions").select("user_id, points_earned, home_score, away_score, match_id"),
         supabase.from("crystal_ball").select("user_id, points_earned"),
+        supabase.from("goalscorer_predictions").select("user_id, points_earned"),
       ]);
 
       if (cancelled) return;
       const profiles = profilesRes.data ?? [];
       const preds = predsRes.data ?? [];
       const cbs = cbRes.data ?? [];
+      const gsps = gspRes.data ?? [];
 
       // Resolve match outcomes for exact/partial counters
       const { data: finishedMatches } = await supabase
@@ -117,6 +119,11 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
         cur.points += c.points_earned ?? 0;
         stats.set(c.user_id, cur);
       }
+      for (const g of gsps) {
+        const cur = stats.get(g.user_id) ?? { points: 0, exact: 0, partial: 0 };
+        cur.points += g.points_earned ?? 0;
+        stats.set(g.user_id, cur);
+      }
 
       const teamFlag = new Map(catalogTeams.map((t) => [t.id, t.flag]));
 
@@ -140,6 +147,20 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
       setLoading(false);
     };
     load();
+
+    // Realtime: re-aggregate on any score-affecting change
+    const ch = supabase
+      .channel("ranking-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "predictions" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "crystal_ball" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "goalscorer_predictions" }, load)
+      .subscribe();
+
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(ch);
+    };
   }, []);
 
   return { ranking: data, loading };
