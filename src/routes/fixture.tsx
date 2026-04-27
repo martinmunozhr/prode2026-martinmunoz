@@ -54,7 +54,7 @@ function FixturePage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute right-0 bottom-0 h-[110%] object-contain object-bottom pointer-events-none drop-shadow-2xl"
-        / loading="lazy" decoding="async">
+         loading="lazy" decoding="async" />
       </header>
 
       {/* Stage selector */}
@@ -106,7 +106,7 @@ function FixturePage() {
                   alt=""
                   aria-hidden
                   className="absolute inset-x-0 bottom-0 mx-auto h-[320px] object-contain pointer-events-none drop-shadow-2xl"
-                / loading="lazy" decoding="async">
+                 loading="lazy" decoding="async" />
                 <div className="relative z-10 text-center pb-2">
                   <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Tu próximo movimiento</div>
                   <div className="font-display text-lg leading-tight mt-1">¿Quién pasa de fase?</div>
