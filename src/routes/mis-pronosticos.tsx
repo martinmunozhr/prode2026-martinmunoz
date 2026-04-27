@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MatchCard } from "@/components/match-card";
-import type { Match } from "@/lib/mock-data";
+import { GoalscorerPicker } from "@/components/goalscorer-picker";
+import { getTeam, type Match } from "@/lib/mock-data";
 import { calcMatchPoints } from "@/lib/scoring";
-import { Target, Clock, Lock, LogIn } from "lucide-react";
+import { Target, Clock, Lock, LogIn, Info, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -158,6 +159,8 @@ function MisPronosticosPage() {
         <StatCard icon={<Target />} value={String(totalPoints)} label="Puntos totales" tone="primary" />
       </div>
 
+      <InfoBanner />
+
       <section className="mb-12">
         <div className="flex items-center gap-2 mb-5">
           <Clock className="h-5 w-5 text-accent" />
@@ -170,15 +173,33 @@ function MisPronosticosPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
-            {pending.map((m) => (
-              <MatchCard
-                key={m.id}
-                match={m}
-                editable
-                initialPrediction={preds[m.id] ?? null}
-                onSave={(h, a) => savePrediction(m.id, h, a)}
-              />
-            ))}
+            {pending.map((m) => {
+              const home = getTeam(m.homeId);
+              const away = getTeam(m.awayId);
+              const pred = preds[m.id];
+              return (
+                <div key={m.id} className="space-y-0">
+                  <MatchCard
+                    match={m}
+                    editable
+                    initialPrediction={pred ?? null}
+                    onSave={(h, a) => savePrediction(m.id, h, a)}
+                  />
+                  {pred && home && away && (
+                    <GoalscorerPicker
+                      matchId={m.id}
+                      homeId={m.homeId}
+                      awayId={m.awayId}
+                      homeName={home.name}
+                      awayName={away.name}
+                      predHome={pred.home}
+                      predAway={pred.away}
+                      locked={false}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
@@ -204,6 +225,35 @@ function MisPronosticosPage() {
     </div>
   );
 }
+
+function InfoBanner() {
+  return (
+    <div className="mb-8 rounded-2xl border border-border/50 bg-gradient-card p-5 shadow-card-sport">
+      <div className="flex items-start gap-3">
+        <div className="h-9 w-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+          <Info className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <div className="text-[11px] uppercase tracking-widest font-bold text-primary">Cómo se juega</div>
+          <h3 className="font-display text-xl mt-0.5">Reglas en 30 segundos</h3>
+          <ul className="mt-3 grid md:grid-cols-2 gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
+            <li>✅ <strong>1 punto</strong> si acertás el resultado (ganador o empate)</li>
+            <li>🎯 <strong>3 puntos</strong> si acertás el marcador exacto</li>
+            <li>⚽ <strong>+1 extra</strong> por cada goleador acertado (opcional)</li>
+            <li>🔥 <strong>Multiplica</strong> en mata-mata: x1.5 a x3 en la Final</li>
+          </ul>
+          <Link
+            to="/reglas"
+            className="inline-flex items-center gap-1 mt-3 text-xs font-bold uppercase tracking-wider text-primary hover:underline"
+          >
+            <Trophy className="h-3 w-3" /> Ver reglas completas
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: string; label: string; tone: "primary" | "accent" | "muted" }) {
   const colors = {

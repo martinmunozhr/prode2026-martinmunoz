@@ -12,8 +12,8 @@ const links = [
   { to: "/mis-pronosticos" as const, label: "Pronósticos", exact: false },
   { to: "/bola-de-cristal" as const, label: "Bola", exact: false },
   { to: "/ranking" as const, label: "Ranking", exact: false },
-  { to: "/insights" as const, label: "Insights", exact: false },
   { to: "/equipos" as const, label: "Álbum", exact: false },
+  { to: "/reglas" as const, label: "Reglas", exact: false },
 ];
 
 export function SiteHeader() {

@@ -107,6 +107,42 @@ export type Database = {
         }
         Relationships: []
       }
+      goalscorer_predictions: {
+        Row: {
+          created_at: string
+          goals_predicted: number
+          id: string
+          match_id: string
+          player_id: string
+          points_earned: number | null
+          team_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          goals_predicted?: number
+          id?: string
+          match_id: string
+          player_id: string
+          points_earned?: number | null
+          team_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          goals_predicted?: number
+          id?: string
+          match_id?: string
+          player_id?: string
+          points_earned?: number | null
+          team_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       match_events: {
         Row: {
           created_at: string
@@ -535,6 +571,10 @@ export type Database = {
           home_score: number
           probability: number
         }[]
+      }
+      recalc_goalscorer_points: {
+        Args: { _match_id: string }
+        Returns: undefined
       }
       stage_multiplier: {
         Args: { _stage: Database["public"]["Enums"]["match_stage"] }
