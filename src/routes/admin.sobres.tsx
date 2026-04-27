@@ -33,6 +33,8 @@ function AdminSobres() {
   const [packType, setPackType] = useState<PackType>("epico");
   const [iter, setIter] = useState<number>(500);
   const [running, setRunning] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [reveal, setReveal] = useState<SimCard[] | null>(null);
   const [result, setResult] = useState<{ rarity: CardRarity; count: number }[] | null>(null);
 
   const run = async () => {
@@ -44,6 +46,18 @@ function AdminSobres() {
       toast.error(e instanceof Error ? e.message : "Error en la simulación");
     } finally {
       setRunning(false);
+    }
+  };
+
+  const openOne = async () => {
+    setOpening(true);
+    try {
+      const r = await simulateOpenPackFn({ data: { packType }, headers: await authHeaders() });
+      setReveal(r.cards as SimCard[]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error abriendo sobre");
+    } finally {
+      setOpening(false);
     }
   };
 
