@@ -104,8 +104,10 @@ function MisPronosticosPage() {
     toast.success("Pronóstico guardado");
   };
 
-  const pending = matches.filter((m) => m.status === "scheduled");
-  const finished = matches.filter((m) => m.status === "finished");
+  // Filtrar partidos con equipos TBD (fase final aún por definir)
+  const playable = matches.filter((m) => m.homeId !== "tbd" && m.awayId !== "tbd");
+  const pending = playable.filter((m) => m.status === "scheduled");
+  const finished = playable.filter((m) => m.status === "finished");
   const myCount = Object.keys(preds).length;
 
   const totalPoints = useMemo(() => {

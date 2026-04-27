@@ -27,6 +27,7 @@ import { Route as AdminSyncRouteImport } from './routes/admin.sync'
 import { Route as AdminPredictorRouteImport } from './routes/admin.predictor'
 import { Route as AdminPartidosRouteImport } from './routes/admin.partidos'
 import { Route as AdminJugadoresRouteImport } from './routes/admin.jugadores'
+import { Route as AdminAwardsRouteImport } from './routes/admin.awards'
 import { Route as ApiPublicCronSyncResultsRouteImport } from './routes/api.public.cron.sync-results'
 
 const ReglasRoute = ReglasRouteImport.update({
@@ -119,6 +120,11 @@ const AdminJugadoresRoute = AdminJugadoresRouteImport.update({
   path: '/jugadores',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAwardsRoute = AdminAwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicCronSyncResultsRoute =
   ApiPublicCronSyncResultsRouteImport.update({
     id: '/api/public/cron/sync-results',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
   '/reglas': typeof ReglasRoute
+  '/admin/awards': typeof AdminAwardsRoute
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
   '/reglas': typeof ReglasRoute
+  '/admin/awards': typeof AdminAwardsRoute
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/ranking': typeof RankingRoute
   '/registro': typeof RegistroRoute
   '/reglas': typeof ReglasRoute
+  '/admin/awards': typeof AdminAwardsRoute
   '/admin/jugadores': typeof AdminJugadoresRoute
   '/admin/partidos': typeof AdminPartidosRoute
   '/admin/predictor': typeof AdminPredictorRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/registro'
     | '/reglas'
+    | '/admin/awards'
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/registro'
     | '/reglas'
+    | '/admin/awards'
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/registro'
     | '/reglas'
+    | '/admin/awards'
     | '/admin/jugadores'
     | '/admin/partidos'
     | '/admin/predictor'
@@ -398,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminJugadoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/awards': {
+      id: '/admin/awards'
+      path: '/awards'
+      fullPath: '/admin/awards'
+      preLoaderRoute: typeof AdminAwardsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/cron/sync-results': {
       id: '/api/public/cron/sync-results'
       path: '/api/public/cron/sync-results'
@@ -409,6 +428,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAwardsRoute: typeof AdminAwardsRoute
   AdminJugadoresRoute: typeof AdminJugadoresRoute
   AdminPartidosRoute: typeof AdminPartidosRoute
   AdminPredictorRoute: typeof AdminPredictorRoute
@@ -417,6 +437,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAwardsRoute: AdminAwardsRoute,
   AdminJugadoresRoute: AdminJugadoresRoute,
   AdminPartidosRoute: AdminPartidosRoute,
   AdminPredictorRoute: AdminPredictorRoute,

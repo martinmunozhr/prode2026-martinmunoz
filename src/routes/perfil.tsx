@@ -74,8 +74,8 @@ function PerfilPage() {
 
       <div className="bg-gradient-card border border-border/50 rounded-3xl p-6 md:p-8 shadow-elevated mb-6">
         <div className="flex items-center gap-4 mb-8">
-          <div className={`h-20 w-20 rounded-full flex items-center justify-center text-white shadow-elevated ${colorClass}`}>
-            <UserIcon className="h-10 w-10" />
+          <div className={`h-20 w-20 rounded-full flex items-center justify-center text-white shadow-elevated font-display text-3xl tracking-wider ${colorClass}`}>
+            {(profile?.username ?? user.email ?? "?").charAt(0).toUpperCase()}
           </div>
           <div>
             <div className="font-display text-3xl tracking-wide">{profile?.username ?? "—"}</div>

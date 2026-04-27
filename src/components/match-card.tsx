@@ -26,10 +26,11 @@ function fmtDate(iso: string) {
 }
 
 export function MatchCard({ match, editable, initialPrediction, onSave }: Props) {
-  const home = getTeam(match.homeId)!;
-  const away = getTeam(match.awayId)!;
+  const home = getTeam(match.homeId) ?? { id: match.homeId, name: "Por definir", code: "TBD", flag: "⏳", group: "?", confederation: "OFC" as const };
+  const away = getTeam(match.awayId) ?? { id: match.awayId, name: "Por definir", code: "TBD", flag: "⏳", group: "?", confederation: "OFC" as const };
   const isFinished = match.status === "finished";
   const isLive = match.status === "live";
+  const isTbd = match.homeId === "tbd" || match.awayId === "tbd";
 
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
@@ -95,14 +96,14 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
             <div className="font-display text-4xl md:text-5xl tabular-nums text-primary">
               {match.homeScore} <span className="text-muted-foreground/50">-</span> {match.awayScore}
             </div>
-          ) : editable ? (
+          ) : editable && !isTbd ? (
             <div className="flex items-center gap-2">
               <ScoreInput label={`Goles ${home.name}`} value={pred.home} onChange={(v) => { setPred({ ...pred, home: v }); setSaved(false); }} />
               <span className="text-muted-foreground font-display text-2xl" aria-hidden>:</span>
               <ScoreInput label={`Goles ${away.name}`} value={pred.away} onChange={(v) => { setPred({ ...pred, away: v }); setSaved(false); }} />
             </div>
           ) : (
-            <div className="font-display text-3xl text-muted-foreground/70">VS</div>
+            <div className="font-display text-3xl text-muted-foreground/70">{isTbd ? "TBD" : "VS"}</div>
           )}
           {!isFinished && (
             <div className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -125,7 +126,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           <MapPin className="h-3 w-3" />
           <span>{match.stadium} · {match.city}</span>
         </div>
-        {editable && (
+        {editable && !isTbd && (
           <button
             onClick={handleSave}
             disabled={saving}

@@ -239,3 +239,77 @@ export const predictMatch = createServerFn({ method: "GET" })
     if (error) return { ok: false, error: error.message, predictions: [] };
     return { ok: true, predictions: rows ?? [] };
   });
+
+// ---------------- MATCH EVENTS (goalscorers) ----------------
+export const addMatchEvent = createServerFn({ method: "POST" })
+  .inputValidator((data: { matchId: string; teamId: string; playerId: string | null; playerName: string; eventType: "Goal" | "Yellow Card" | "Red Card"; minute: number | null }) => data)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin.from("match_events").insert({
+      match_id: data.matchId,
+      team_id: data.teamId,
+      player_id: data.playerId,
+      player_name: data.playerName,
+      event_type: data.eventType,
+      minute: data.minute,
+    });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+export const deleteMatchEvent = createServerFn({ method: "POST" })
+  .inputValidator((data: { eventId: string }) => data)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin.from("match_events").delete().eq("id", data.eventId);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+// ---------------- TOURNAMENT AWARDS ----------------
+export const updateAwards = createServerFn({ method: "POST" })
+  .inputValidator((data: {
+    campeon_id: string | null;
+    subcampeon_id: string | null;
+    tercer_puesto_id: string | null;
+    fair_play_id: string | null;
+    goleador_nombre: string | null;
+    mejor_jugador_nombre: string | null;
+    mejor_arquero_nombre: string | null;
+    finalized: boolean;
+  }) => data)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin
+      .from("tournament_awards")
+      .update({ ...data, updated_at: new Date().toISOString() })
+      .eq("id", 1);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+// ---------------- RECALC ALL POINTS (nuclear button) ----------------
+export const recalcAllPoints = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    // Re-trigger handle_match_result for every finished match by touching updated_at
+    const { data: finished, error: e1 } = await supabaseAdmin
+      .from("matches")
+      .select("id")
+      .eq("status", "finished");
+    if (e1) return { ok: false, error: e1.message };
+    let count = 0;
+    for (const m of finished ?? []) {
+      const { error } = await supabaseAdmin
+        .from("matches")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", m.id);
+      if (!error) count++;
+    }
+    return { ok: true, recalculated: count };
+  });
+
