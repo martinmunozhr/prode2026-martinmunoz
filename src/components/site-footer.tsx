@@ -9,11 +9,11 @@ export function SiteFooter() {
       <h2 id="site-footer-heading" className="sr-only">
         Pie de página
       </h2>
-      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground text-center md:text-left">
         <p className="font-display text-base tracking-wider">
           PRODE MUNDIAL <span className="text-primary">2026</span>
         </p>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
           <span className="text-foreground/90 font-medium">
             Desarrollado por <span className="text-primary font-semibold">Martín Muñoz</span>
           </span>
