@@ -367,6 +367,7 @@ function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number 
   );
 }
 
+function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: string; label: string; tone: "primary" | "accent" | "muted" }) {
   const colors = {
     primary: "text-primary",
     accent: "text-accent",
@@ -380,3 +381,4 @@ function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number 
     </div>
   );
 }
+
