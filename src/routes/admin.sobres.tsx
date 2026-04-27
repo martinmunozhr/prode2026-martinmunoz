@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Package, BarChart3, Sparkles } from "lucide-react";
-import { simulatePackFn } from "@/lib/cards.functions";
+import { Loader2, Package, BarChart3, Sparkles, PackageOpen } from "lucide-react";
+import { simulatePackFn, simulateOpenPackFn } from "@/lib/cards.functions";
 import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
+import { FutCard } from "@/components/fut-card";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { authHeaders } from "@/lib/auth-headers";
@@ -10,6 +11,16 @@ import { authHeaders } from "@/lib/auth-headers";
 export const Route = createFileRoute("/admin/sobres")({
   component: AdminSobres,
 });
+
+type SimCard = {
+  player_id: string;
+  rarity: CardRarity;
+  player_name: string;
+  team_id: string;
+  position: string;
+  jersey_number: number | null;
+  club: string | null;
+};
 
 const RARITY_COLOR: Record<CardRarity, string> = {
   comun: "bg-zinc-500",
