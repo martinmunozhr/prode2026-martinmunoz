@@ -159,8 +159,7 @@ function genGroupMatches(): Match[] {
       const stadium = stadiums[(gi + idx) % stadiums.length];
       const day = dayOffset + Math.floor(idx / 2);
       const hour = (idx % 2 === 0) ? 18 : 21;
-      // Some matches have results to demo scoring
-      const isPast = day < 4;
+      // Pre-tournament: every match scheduled, no scores. Real results come from Supabase.
       out.push({
         id: `m${id++}`,
         homeId: ts[p[0]].id,
@@ -170,9 +169,7 @@ function genGroupMatches(): Match[] {
         city: stadium.city,
         stage: "Grupos",
         group: g,
-        status: isPast ? "finished" : "scheduled",
-        homeScore: isPast ? Math.floor(Math.random() * 4) : undefined,
-        awayScore: isPast ? Math.floor(Math.random() * 3) : undefined,
+        status: "scheduled",
       });
     });
     dayOffset += 3;
