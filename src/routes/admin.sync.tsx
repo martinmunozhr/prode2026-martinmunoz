@@ -250,18 +250,18 @@ function AdminSync() {
           <Globe className="h-4 w-4" /> Fuente: WC2026 API
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-xl border border-border/50 bg-card/40 p-5">
+          <div className="rounded-xl border border-border/50 bg-card/40 p-5 opacity-70">
             <h3 className="font-bold uppercase tracking-wider">Plantillas WC2026</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Importa squads desde la API oficial de WC2026 (sin límite de quota local). Requiere
-              que la API exponga el roster de cada selección.
+              La WC2026 API <strong>no expone rosters</strong> (solo equipos, grupos, partidos y
+              estadios). Para cargar plantillas usá <strong>API-Football</strong> arriba o el{" "}
+              <strong>importador manual</strong> de abajo.
             </p>
             <button
-              disabled={running !== null}
-              onClick={() => runSync("wc-squads")}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-secondary text-secondary-foreground font-bold uppercase tracking-wider text-sm disabled:opacity-50"
+              disabled
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-muted text-muted-foreground font-bold uppercase tracking-wider text-sm cursor-not-allowed"
             >
-              {running === "wc-squads" ? "Importando..." : "Importar desde WC2026"}
+              No disponible
             </button>
           </div>
 

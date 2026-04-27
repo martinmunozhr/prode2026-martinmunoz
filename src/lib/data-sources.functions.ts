@@ -144,25 +144,30 @@ export const syncResultsWC2026 = createServerFn({ method: "POST" })
     let calls = 0;
 
     try {
-      // Pull a window of fixtures (today ± 1 day)
-      const dates: string[] = [];
-      const now = Date.now();
-      for (let d = -1; d <= 1; d++) {
-        dates.push(new Date(now + d * 86400_000).toISOString().slice(0, 10));
-      }
-
-      type FixtureList = { fixtures?: WC2026Fixture[] } | WC2026Fixture[];
-      const all: WC2026Fixture[] = [];
-      for (const day of dates) {
-        try {
-          const r = await wc2026Fetch<FixtureList>(`/v1/fixtures?date=${day}`);
-          calls++;
-          const list = Array.isArray(r) ? r : (r.fixtures ?? []);
-          all.push(...list);
-        } catch {
-          // ignore single-day failures
-        }
-      }
+      // WC2026 API exposes /matches (full list). We pull once and filter locally.
+      type MatchApi = {
+        id?: number | string;
+        home_team?: string;
+        away_team?: string;
+        home_score?: number | null;
+        away_score?: number | null;
+        status?: string;
+        kickoff_utc?: string;
+        group_name?: string | null;
+        round?: string;
+      };
+      type MatchList = { matches?: MatchApi[] } | MatchApi[];
+      const r = await wc2026Fetch<MatchList>(`/matches`);
+      calls++;
+      const all = (Array.isArray(r) ? r : (r.matches ?? [])).map<WC2026Fixture>((m) => ({
+        id: m.id,
+        date: m.kickoff_utc,
+        status: m.status,
+        homeTeam: { name: m.home_team },
+        awayTeam: { name: m.away_team },
+        homeScore: m.home_score ?? null,
+        awayScore: m.away_score ?? null,
+      }));
 
       const { data: matches } = await supabaseAdmin
         .from("matches")
