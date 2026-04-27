@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthProvider } from "@/contexts/auth-context";
 import { Toaster } from "@/components/ui/sonner";
+import { OnboardingModal } from "@/components/onboarding-modal";
 
 import appCss from "../styles.css?url";
 
@@ -94,6 +95,7 @@ function RootComponent() {
         </main>
         <SiteFooter />
         <Toaster />
+        <OnboardingModal />
       </div>
     </AuthProvider>
   );
