@@ -5,10 +5,23 @@ import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
-import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles, Star } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
 import figMessi from "@/assets/figuras/messi.png";
+import figMbappe from "@/assets/figuras/mbappe.png";
+import figVinicius from "@/assets/figuras/vinicius.png";
 import figHaaland from "@/assets/figuras/haaland.png";
+import figBellingham from "@/assets/figuras/bellingham.png";
+import figRonaldo from "@/assets/figuras/ronaldo.png";
+
+const FIGURAS = [
+  { img: figMessi, name: "Messi", country: "Argentina", flag: "🇦🇷" },
+  { img: figMbappe, name: "Mbappé", country: "Francia", flag: "🇫🇷" },
+  { img: figVinicius, name: "Vinícius Jr.", country: "Brasil", flag: "🇧🇷" },
+  { img: figHaaland, name: "Haaland", country: "Noruega", flag: "🇳🇴" },
+  { img: figBellingham, name: "Bellingham", country: "Inglaterra", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  { img: figRonaldo, name: "Ronaldo", country: "Portugal", flag: "🇵🇹" },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
