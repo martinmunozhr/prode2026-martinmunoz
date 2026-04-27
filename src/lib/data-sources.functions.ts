@@ -117,7 +117,14 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
 export const syncResultsWC2026 = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch (e) {
+      return { ok: false as const, error: e instanceof Error ? e.message : "Forbidden" };
+    }
+    if (!process.env.WC2026_API_KEY) {
+      return { ok: false as const, error: "WC2026_API_KEY no está configurada" };
+    }
 
     let updated = 0;
     let calls = 0;
