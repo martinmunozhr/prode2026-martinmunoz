@@ -27,6 +27,7 @@ import { Route as AdminSyncRouteImport } from './routes/admin.sync'
 import { Route as AdminPredictorRouteImport } from './routes/admin.predictor'
 import { Route as AdminPartidosRouteImport } from './routes/admin.partidos'
 import { Route as AdminJugadoresRouteImport } from './routes/admin.jugadores'
+import { Route as ApiPublicCronSyncResultsRouteImport } from './routes/api.public.cron.sync-results'
 
 const ReglasRoute = ReglasRouteImport.update({
   id: '/reglas',
@@ -118,6 +119,12 @@ const AdminJugadoresRoute = AdminJugadoresRouteImport.update({
   path: '/jugadores',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicCronSyncResultsRoute =
+  ApiPublicCronSyncResultsRouteImport.update({
+    id: '/api/public/cron/sync-results',
+    path: '/api/public/cron/sync-results',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/cron/sync-results': typeof ApiPublicCronSyncResultsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,6 +165,7 @@ export interface FileRoutesByTo {
   '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/cron/sync-results': typeof ApiPublicCronSyncResultsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,6 +187,7 @@ export interface FileRoutesById {
   '/admin/sync': typeof AdminSyncRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/cron/sync-results': typeof ApiPublicCronSyncResultsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/admin/sync'
     | '/equipos/$equipoId'
     | '/admin/'
+    | '/api/public/cron/sync-results'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/admin/sync'
     | '/equipos/$equipoId'
     | '/admin'
+    | '/api/public/cron/sync-results'
   id:
     | '__root__'
     | '/'
@@ -239,6 +251,7 @@ export interface FileRouteTypes {
     | '/admin/sync'
     | '/equipos/$equipoId'
     | '/admin/'
+    | '/api/public/cron/sync-results'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -254,6 +267,7 @@ export interface RootRouteChildren {
   RankingRoute: typeof RankingRoute
   RegistroRoute: typeof RegistroRoute
   ReglasRoute: typeof ReglasRoute
+  ApiPublicCronSyncResultsRoute: typeof ApiPublicCronSyncResultsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -384,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminJugadoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/cron/sync-results': {
+      id: '/api/public/cron/sync-results'
+      path: '/api/public/cron/sync-results'
+      fullPath: '/api/public/cron/sync-results'
+      preLoaderRoute: typeof ApiPublicCronSyncResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -429,6 +450,7 @@ const rootRouteChildren: RootRouteChildren = {
   RankingRoute: RankingRoute,
   RegistroRoute: RegistroRoute,
   ReglasRoute: ReglasRoute,
+  ApiPublicCronSyncResultsRoute: ApiPublicCronSyncResultsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
