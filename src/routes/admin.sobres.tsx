@@ -111,14 +111,22 @@ function AdminSobres() {
           />
           <p className="text-[10px] text-muted-foreground mt-1">Total cartas a simular: {(iter * pack.cards).toLocaleString()}</p>
         </div>
-        <div className="flex items-end">
+        <div className="flex items-end gap-2">
           <button
             onClick={run}
             disabled={running}
-            className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-xs shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50"
           >
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
             Simular
+          </button>
+          <button
+            onClick={openOne}
+            disabled={opening}
+            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-accent/50 bg-accent/10 text-accent font-bold uppercase tracking-wider text-xs hover:bg-accent/20 transition-colors disabled:opacity-50"
+          >
+            {opening ? <Loader2 className="h-4 w-4 animate-spin" /> : <PackageOpen className="h-4 w-4" />}
+            Abrir 1 sobre
           </button>
         </div>
       </div>
