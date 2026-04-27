@@ -343,7 +343,30 @@ function InfoBanner() {
 }
 
 
-function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: string; label: string; tone: "primary" | "accent" | "muted" }) {
+function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number }) {
+  // dayKeyValue is "YYYY-MM-DD" — parse as local
+  const [y, m, d] = dayKeyValue.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const formatted = new Intl.DateTimeFormat("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(date);
+  // capitalize first letter
+  const label = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  return (
+    <div className="mt-5 flex items-end justify-between gap-3 flex-wrap">
+      <div>
+        <div className="text-[10px] uppercase tracking-widest text-accent font-bold">Jornada</div>
+        <h3 className="font-display text-2xl md:text-3xl tracking-tight">{label}</h3>
+      </div>
+      <div className="text-xs text-muted-foreground">
+        {count} {count === 1 ? "partido" : "partidos"} para pronosticar
+      </div>
+    </div>
+  );
+}
+
   const colors = {
     primary: "text-primary",
     accent: "text-accent",
