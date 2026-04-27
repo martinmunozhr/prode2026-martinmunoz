@@ -64,6 +64,14 @@ export function SiteHeader() {
             <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
           ) : user ? (
             <>
+              <Link
+                to="/figuritas"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-gradient-trophy text-trophy-foreground font-bold shadow-glow-trophy hover:scale-105 transition-transform"
+                title="Tus monedas"
+              >
+                <Coins className="h-4 w-4" />
+                <span className="text-sm tabular-nums">{balance ?? "—"}</span>
+              </Link>
               {isAdmin && (
                 <Link
                   to="/admin"
