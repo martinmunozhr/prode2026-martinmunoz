@@ -177,7 +177,7 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
   const handleReject = async (id: string) => {
     setBusy(id);
     try {
-      await rejectTradeFn({ data: { tradeId: id } });
+      await rejectTradeFn({ data: { tradeId: id }, headers: await authHeaders() });
       toast.success("Intercambio cancelado");
       await load();
     } catch (e) {
