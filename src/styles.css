@@ -273,3 +273,16 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-card-reveal { animation: none; opacity: 1; transform: none; }
 }
+
+/* Native <select> dropdown options: ensure readable contrast in dark theme.
+   Without this, some OS render the open menu with white-on-white text. */
+select option,
+select optgroup {
+  background-color: hsl(0 0% 12%);
+  color: hsl(0 0% 96%);
+}
+select option:checked,
+select option:hover {
+  background-color: oklch(0.82 0.22 145 / 0.25);
+  color: hsl(0 0% 100%);
+}
