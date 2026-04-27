@@ -17,6 +17,7 @@ export function SiteFooter() {
           <span className="text-foreground/90 font-medium">
             Desarrollado por <span className="text-primary font-semibold">Martín Muñoz</span>
           </span>
+          <TooltipProvider delayDuration={200}>
             <nav aria-label="Enlaces del autor" className="flex items-center gap-2">
               <Tooltip>
                 <TooltipTrigger asChild>
