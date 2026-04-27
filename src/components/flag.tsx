@@ -4,16 +4,53 @@ import { cn } from "@/lib/utils";
 // Map team id (our internal ids) → ISO 3166-1 alpha-2 country code used by flag-icons.
 // Special-case GB-ENG for England (uses sub-region code).
 const ID_TO_ISO2: Record<string, string> = {
-  mex: "mx", can: "ca", usa: "us",
-  arg: "ar", bra: "br", uru: "uy", col: "co", ecu: "ec", par: "py", ven: "ve",
-  fra: "fr", esp: "es", ing: "gb-eng", ger: "de", ita: "it", por: "pt",
-  ned: "nl", bel: "be", cro: "hr", den: "dk", sui: "ch", pol: "pl",
-  aut: "at", tur: "tr", ser: "rs", nor: "no",
-  crc: "cr", pan: "pa", jam: "jm",
-  jpn: "jp", kor: "kr", aus: "au", irn: "ir", ksa: "sa", qat: "qa",
-  uae: "ae", irq: "iq",
-  mar: "ma", sen: "sn", egy: "eg", nga: "ng", civ: "ci", alg: "dz",
-  cmr: "cm", gha: "gh", tun: "tn", rsa: "za",
+  mex: "mx",
+  can: "ca",
+  usa: "us",
+  arg: "ar",
+  bra: "br",
+  uru: "uy",
+  col: "co",
+  ecu: "ec",
+  par: "py",
+  ven: "ve",
+  fra: "fr",
+  esp: "es",
+  ing: "gb-eng",
+  ger: "de",
+  ita: "it",
+  por: "pt",
+  ned: "nl",
+  bel: "be",
+  cro: "hr",
+  den: "dk",
+  sui: "ch",
+  pol: "pl",
+  aut: "at",
+  tur: "tr",
+  ser: "rs",
+  nor: "no",
+  crc: "cr",
+  pan: "pa",
+  jam: "jm",
+  jpn: "jp",
+  kor: "kr",
+  aus: "au",
+  irn: "ir",
+  ksa: "sa",
+  qat: "qa",
+  uae: "ae",
+  irq: "iq",
+  mar: "ma",
+  sen: "sn",
+  egy: "eg",
+  nga: "ng",
+  civ: "ci",
+  alg: "dz",
+  cmr: "cm",
+  gha: "gh",
+  tun: "tn",
+  rsa: "za",
   nzl: "nz",
 };
 
@@ -66,8 +103,20 @@ export function Flag({ teamId, iso2, shape = "rect", className, alt }: FlagProps
       )}
       style={
         shape === "rect"
-          ? { width: "1.5em", height: "1.125em", lineHeight: 1, backgroundSize: "cover", backgroundPosition: "center" }
-          : { width: "1.5em", height: "1.5em", lineHeight: 1, backgroundSize: "cover", backgroundPosition: "center" }
+          ? {
+              width: "1.5em",
+              height: "1.125em",
+              lineHeight: 1,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : {
+              width: "1.5em",
+              height: "1.5em",
+              lineHeight: 1,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
       }
     />
   );

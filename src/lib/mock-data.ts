@@ -17,7 +17,14 @@ export type Match = {
   date: string; // ISO
   stadium: string;
   city: string;
-  stage: "Grupos" | "Dieciseisavos" | "Octavos" | "Cuartos" | "Semifinal" | "Tercer Puesto" | "Final";
+  stage:
+    | "Grupos"
+    | "Dieciseisavos"
+    | "Octavos"
+    | "Cuartos"
+    | "Semifinal"
+    | "Tercer Puesto"
+    | "Final";
   group?: string;
   homeScore?: number;
   awayScore?: number;
@@ -56,7 +63,14 @@ export const teams: Team[] = [
   // Anfitriones (Grupo A)
   { id: "mex", name: "México", code: "MEX", flag: "🇲🇽", group: "A", confederation: "CONCACAF" },
   { id: "can", name: "Canadá", code: "CAN", flag: "🇨🇦", group: "A", confederation: "CONCACAF" },
-  { id: "usa", name: "Estados Unidos", code: "USA", flag: "🇺🇸", group: "B", confederation: "CONCACAF" },
+  {
+    id: "usa",
+    name: "Estados Unidos",
+    code: "USA",
+    flag: "🇺🇸",
+    group: "B",
+    confederation: "CONCACAF",
+  },
   // Sudamérica
   { id: "arg", name: "Argentina", code: "ARG", flag: "🇦🇷", group: "C", confederation: "CONMEBOL" },
   { id: "bra", name: "Brasil", code: "BRA", flag: "🇧🇷", group: "D", confederation: "CONMEBOL" },
@@ -151,14 +165,17 @@ function genGroupMatches(): Match[] {
     if (ts.length < 4) return;
     // 6 partidos por grupo: 0v1, 2v3, 0v2, 1v3, 0v3, 1v2
     const pairs: [number, number][] = [
-      [0, 1], [2, 3],
-      [0, 2], [1, 3],
-      [0, 3], [1, 2],
+      [0, 1],
+      [2, 3],
+      [0, 2],
+      [1, 3],
+      [0, 3],
+      [1, 2],
     ];
     pairs.forEach((p, idx) => {
       const stadium = stadiums[(gi + idx) % stadiums.length];
       const day = dayOffset + Math.floor(idx / 2);
-      const hour = (idx % 2 === 0) ? 18 : 21;
+      const hour = idx % 2 === 0 ? 18 : 21;
       // Pre-tournament: every match scheduled, no scores. Real results come from Supabase.
       out.push({
         id: `m${id++}`,
@@ -193,15 +210,111 @@ export function getUpcomingMatches(limit = 5): Match[] {
 
 // Roster genérico de 26 jugadores
 const positions: Player["position"][] = [
-  "POR", "POR", "POR",
-  "DEF", "DEF", "DEF", "DEF", "DEF", "DEF", "DEF", "DEF",
-  "MED", "MED", "MED", "MED", "MED", "MED", "MED", "MED",
-  "DEL", "DEL", "DEL", "DEL", "DEL", "DEL", "DEL",
+  "POR",
+  "POR",
+  "POR",
+  "DEF",
+  "DEF",
+  "DEF",
+  "DEF",
+  "DEF",
+  "DEF",
+  "DEF",
+  "DEF",
+  "MED",
+  "MED",
+  "MED",
+  "MED",
+  "MED",
+  "MED",
+  "MED",
+  "MED",
+  "DEL",
+  "DEL",
+  "DEL",
+  "DEL",
+  "DEL",
+  "DEL",
+  "DEL",
 ];
 
-const firstNames = ["Lucas", "Mateo", "Diego", "Carlos", "Marco", "Luis", "Juan", "Pedro", "Pablo", "Sergio", "Andrés", "Rafael", "Nicolás", "Kevin", "Adrián", "Hugo", "Iván", "Daniel", "Bruno", "Tomás", "Joaquín", "Maximiliano", "Emilio", "Felipe", "Gonzalo", "Federico"];
-const lastNames = ["Silva", "Rodríguez", "García", "Martínez", "López", "Sánchez", "Pérez", "Fernández", "Torres", "Ramírez", "Morales", "Castro", "Vargas", "Romero", "Herrera", "Mendoza", "Cruz", "Ortiz", "Reyes", "Jiménez", "Aguilar", "Delgado", "Núñez", "Peña", "Cabrera", "Vega"];
-const clubs = ["Real Madrid", "Barcelona", "Manchester City", "Liverpool", "Bayern Munich", "PSG", "Inter", "Milan", "Juventus", "Atlético Madrid", "Chelsea", "Arsenal", "Borussia Dortmund", "Napoli", "Tottenham", "Boca Juniors", "River Plate", "Flamengo", "Palmeiras"];
+const firstNames = [
+  "Lucas",
+  "Mateo",
+  "Diego",
+  "Carlos",
+  "Marco",
+  "Luis",
+  "Juan",
+  "Pedro",
+  "Pablo",
+  "Sergio",
+  "Andrés",
+  "Rafael",
+  "Nicolás",
+  "Kevin",
+  "Adrián",
+  "Hugo",
+  "Iván",
+  "Daniel",
+  "Bruno",
+  "Tomás",
+  "Joaquín",
+  "Maximiliano",
+  "Emilio",
+  "Felipe",
+  "Gonzalo",
+  "Federico",
+];
+const lastNames = [
+  "Silva",
+  "Rodríguez",
+  "García",
+  "Martínez",
+  "López",
+  "Sánchez",
+  "Pérez",
+  "Fernández",
+  "Torres",
+  "Ramírez",
+  "Morales",
+  "Castro",
+  "Vargas",
+  "Romero",
+  "Herrera",
+  "Mendoza",
+  "Cruz",
+  "Ortiz",
+  "Reyes",
+  "Jiménez",
+  "Aguilar",
+  "Delgado",
+  "Núñez",
+  "Peña",
+  "Cabrera",
+  "Vega",
+];
+const clubs = [
+  "Real Madrid",
+  "Barcelona",
+  "Manchester City",
+  "Liverpool",
+  "Bayern Munich",
+  "PSG",
+  "Inter",
+  "Milan",
+  "Juventus",
+  "Atlético Madrid",
+  "Chelsea",
+  "Arsenal",
+  "Borussia Dortmund",
+  "Napoli",
+  "Tottenham",
+  "Boca Juniors",
+  "River Plate",
+  "Flamengo",
+  "Palmeiras",
+];
 
 function rarityFor(idx: number): Player["rarity"] {
   if (idx === 9 || idx === 19) return "legendary"; // 10 y 20 = estrellas
@@ -237,20 +350,33 @@ export const ranking: RankingEntry[] = [];
 
 export function getGroupStandings(group: string) {
   const ts = getTeamsByGroup(group);
-  return ts.map((t) => {
-    const ms = matches.filter((m) => m.group === group && (m.homeId === t.id || m.awayId === t.id) && m.status === "finished");
-    let pj = 0, pg = 0, pe = 0, pp = 0, gf = 0, gc = 0;
-    ms.forEach((m) => {
-      pj++;
-      const isHome = m.homeId === t.id;
-      const f = isHome ? (m.homeScore ?? 0) : (m.awayScore ?? 0);
-      const c = isHome ? (m.awayScore ?? 0) : (m.homeScore ?? 0);
-      gf += f; gc += c;
-      if (f > c) pg++; else if (f === c) pe++; else pp++;
-    });
-    return { team: t, pj, pg, pe, pp, gf, gc, dg: gf - gc, pts: pg * 3 + pe };
-  }).sort(
-    // Stable order: pts → DG → GF → team id (alphabetical) so SSR and client match
-    (a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf || a.team.id.localeCompare(b.team.id),
-  );
+  return ts
+    .map((t) => {
+      const ms = matches.filter(
+        (m) =>
+          m.group === group && (m.homeId === t.id || m.awayId === t.id) && m.status === "finished",
+      );
+      let pj = 0,
+        pg = 0,
+        pe = 0,
+        pp = 0,
+        gf = 0,
+        gc = 0;
+      ms.forEach((m) => {
+        pj++;
+        const isHome = m.homeId === t.id;
+        const f = isHome ? (m.homeScore ?? 0) : (m.awayScore ?? 0);
+        const c = isHome ? (m.awayScore ?? 0) : (m.homeScore ?? 0);
+        gf += f;
+        gc += c;
+        if (f > c) pg++;
+        else if (f === c) pe++;
+        else pp++;
+      });
+      return { team: t, pj, pg, pe, pp, gf, gc, dg: gf - gc, pts: pg * 3 + pe };
+    })
+    .sort(
+      // Stable order: pts → DG → GF → team id (alphabetical) so SSR and client match
+      (a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf || a.team.id.localeCompare(b.team.id),
+    );
 }

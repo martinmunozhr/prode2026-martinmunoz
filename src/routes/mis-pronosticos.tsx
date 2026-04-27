@@ -14,7 +14,10 @@ export const Route = createFileRoute("/mis-pronosticos")({
   head: () => ({
     meta: [
       { title: "Mis Pronósticos — Prode Mundial 2026" },
-      { name: "description", content: "Cargá tus pronósticos para los próximos partidos del Mundial 2026." },
+      {
+        name: "description",
+        content: "Cargá tus pronósticos para los próximos partidos del Mundial 2026.",
+      },
       { property: "og:title", content: "Mis Pronósticos" },
       { property: "og:description", content: "Tu panel de pronósticos del Mundial 2026." },
     ],
@@ -86,7 +89,9 @@ function MisPronosticosPage() {
       setPreds(predMap);
       setLoading(false);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [user, authLoading]);
 
   const savePrediction = async (matchId: string, home: number, away: number) => {
@@ -95,7 +100,7 @@ function MisPronosticosPage() {
       .from("predictions")
       .upsert(
         { user_id: user.id, match_id: matchId, home_score: home, away_score: away },
-        { onConflict: "user_id,match_id" }
+        { onConflict: "user_id,match_id" },
       );
     if (error) {
       toast.error("No se pudo guardar: " + error.message);
@@ -156,7 +161,11 @@ function MisPronosticosPage() {
     finished.forEach((m) => {
       const p = preds[m.id];
       if (!p || m.homeScore == null || m.awayScore == null) return;
-      pts += calcMatchPoints({ home: p.home, away: p.away }, { home: m.homeScore, away: m.awayScore }, m.stage);
+      pts += calcMatchPoints(
+        { home: p.home, away: p.away },
+        { home: m.homeScore, away: m.awayScore },
+        m.stage,
+      );
     });
     return Math.round(pts);
   }, [finished, preds]);
@@ -171,12 +180,18 @@ function MisPronosticosPage() {
         </header>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-24 rounded-xl bg-gradient-card border border-border/50 animate-pulse" />
+            <div
+              key={i}
+              className="h-24 rounded-xl bg-gradient-card border border-border/50 animate-pulse"
+            />
           ))}
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-56 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />
+            <div
+              key={i}
+              className="h-56 rounded-2xl bg-gradient-card border border-border/50 animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -191,10 +206,22 @@ function MisPronosticosPage() {
             <LogIn className="h-7 w-7 text-primary-foreground" />
           </div>
           <h1 className="font-display text-4xl tracking-tight">Ingresá para pronosticar</h1>
-          <p className="mt-3 text-muted-foreground">Necesitás una cuenta para cargar y guardar tus pronósticos.</p>
+          <p className="mt-3 text-muted-foreground">
+            Necesitás una cuenta para cargar y guardar tus pronósticos.
+          </p>
           <div className="mt-6 flex gap-3 justify-center">
-            <Link to="/login" className="px-5 py-2.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider">Ingresar</Link>
-            <Link to="/registro" className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch">Sumate gratis</Link>
+            <Link
+              to="/login"
+              className="px-5 py-2.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider"
+            >
+              Ingresar
+            </Link>
+            <Link
+              to="/registro"
+              className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
+            >
+              Sumate gratis
+            </Link>
           </div>
         </div>
       </div>
@@ -206,14 +233,26 @@ function MisPronosticosPage() {
       <header className="mb-8">
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Tu juego</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Mis Pronósticos</h1>
-        <p className="mt-2 text-muted-foreground">Cargá tus marcadores antes del inicio de cada partido.</p>
+        <p className="mt-2 text-muted-foreground">
+          Cargá tus marcadores antes del inicio de cada partido.
+        </p>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
         <StatCard icon={<Target />} value={String(myCount)} label="Cargados" tone="primary" />
-        <StatCard icon={<Clock />} value={String(pending.length)} label="Pendientes" tone="accent" />
+        <StatCard
+          icon={<Clock />}
+          value={String(pending.length)}
+          label="Pendientes"
+          tone="accent"
+        />
         <StatCard icon={<Lock />} value={String(finished.length)} label="Cerrados" tone="muted" />
-        <StatCard icon={<Target />} value={String(totalPoints)} label="Puntos totales" tone="primary" />
+        <StatCard
+          icon={<Target />}
+          value={String(totalPoints)}
+          label="Puntos totales"
+          tone="primary"
+        />
       </div>
 
       <InfoBanner />
@@ -223,32 +262,33 @@ function MisPronosticosPage() {
           <CalendarDays className="h-5 w-5 text-accent" />
           <h2 className="font-display text-2xl tracking-wider">Por jornada</h2>
           <span className="ml-auto text-xs text-muted-foreground">
-            {pending.length} partidos en {dayBuckets.length} {dayBuckets.length === 1 ? "día" : "días"}
+            {pending.length} partidos en {dayBuckets.length}{" "}
+            {dayBuckets.length === 1 ? "día" : "días"}
           </span>
         </div>
 
         {pending.length === 0 ? (
           <div className="rounded-2xl border border-border/40 bg-gradient-card p-10 text-center">
             <CalendarDays className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
-            <h3 className="font-display text-2xl tracking-wide">Todavía no hay partidos cargados</h3>
+            <h3 className="font-display text-2xl tracking-wide">
+              Todavía no hay partidos cargados
+            </h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-              El fixture del Mundial 2026 se confirma tras el sorteo final. Apenas estén disponibles los partidos, vas a poder pronosticar día por día desde acá.
+              El fixture del Mundial 2026 se confirma tras el sorteo final. Apenas estén disponibles
+              los partidos, vas a poder pronosticar día por día desde acá.
             </p>
-            <Link to="/fixture" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl border border-border text-xs font-bold uppercase tracking-wider hover:border-primary/40">
+            <Link
+              to="/fixture"
+              className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl border border-border text-xs font-bold uppercase tracking-wider hover:border-primary/40"
+            >
               Ver fixture
             </Link>
           </div>
         ) : (
           <>
-            <DayPickerStrip
-              days={dayBuckets}
-              selected={selectedDay}
-              onSelect={setSelectedDay}
-            />
+            <DayPickerStrip days={dayBuckets} selected={selectedDay} onSelect={setSelectedDay} />
 
-            {selectedDay && (
-              <DayHeader dayKeyValue={selectedDay} count={dayMatches.length} />
-            )}
+            {selectedDay && <DayHeader dayKeyValue={selectedDay} count={dayMatches.length} />}
 
             <div className="grid md:grid-cols-2 gap-4 mt-4">
               {dayMatches.map((m) => {
@@ -263,8 +303,9 @@ function MisPronosticosPage() {
                       initialPrediction={pred ?? null}
                       onSave={(h, a) => savePrediction(m.id, h, a)}
                     />
-                    {home && away && (
-                      pred ? (
+                    {home &&
+                      away &&
+                      (pred ? (
                         <GoalscorerPicker
                           matchId={m.id}
                           homeId={m.homeId}
@@ -279,11 +320,11 @@ function MisPronosticosPage() {
                         <div className="mt-3 rounded-lg border border-dashed border-border/50 bg-secondary/20 px-3 py-2 text-[11px] text-muted-foreground flex items-center gap-2">
                           <Trophy className="h-3.5 w-3.5 text-accent shrink-0" />
                           <span>
-                            Guardá el marcador y vas a poder elegir <strong>goleadores</strong> (suman +1 punto extra cada uno)
+                            Guardá el marcador y vas a poder elegir <strong>goleadores</strong>{" "}
+                            (suman +1 punto extra cada uno)
                           </span>
                         </div>
-                      )
-                    )}
+                      ))}
                   </div>
                 );
               })}
@@ -322,13 +363,23 @@ function InfoBanner() {
           <Info className="h-4 w-4 text-primary" />
         </div>
         <div className="flex-1">
-          <div className="text-[11px] uppercase tracking-widest font-bold text-primary">Cómo se juega</div>
+          <div className="text-[11px] uppercase tracking-widest font-bold text-primary">
+            Cómo se juega
+          </div>
           <h3 className="font-display text-xl mt-0.5">Reglas en 30 segundos</h3>
           <ul className="mt-3 grid md:grid-cols-2 gap-x-6 gap-y-1.5 text-sm text-muted-foreground">
-            <li>✅ <strong>1 punto</strong> si acertás el resultado (ganador o empate)</li>
-            <li>🎯 <strong>3 puntos</strong> si acertás el marcador exacto</li>
-            <li>⚽ <strong>+1 extra</strong> por cada goleador acertado (opcional)</li>
-            <li>🔥 <strong>Multiplica</strong> en mata-mata: x1.5 a x3 en la Final</li>
+            <li>
+              ✅ <strong>1 punto</strong> si acertás el resultado (ganador o empate)
+            </li>
+            <li>
+              🎯 <strong>3 puntos</strong> si acertás el marcador exacto
+            </li>
+            <li>
+              ⚽ <strong>+1 extra</strong> por cada goleador acertado (opcional)
+            </li>
+            <li>
+              🔥 <strong>Multiplica</strong> en mata-mata: x1.5 a x3 en la Final
+            </li>
           </ul>
           <Link
             to="/reglas"
@@ -341,7 +392,6 @@ function InfoBanner() {
     </div>
   );
 }
-
 
 function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number }) {
   // dayKeyValue is "YYYY-MM-DD" — parse as local
@@ -367,14 +417,30 @@ function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number 
   );
 }
 
-function StatCard({ icon, value, label, tone }: { icon: React.ReactNode; value: string; label: string; tone: "primary" | "accent" | "muted" }) {
-  const toneClass = tone === "primary" ? "text-primary" : tone === "accent" ? "text-accent" : "text-muted-foreground";
+function StatCard({
+  icon,
+  value,
+  label,
+  tone,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  tone: "primary" | "accent" | "muted";
+}) {
+  const toneClass =
+    tone === "primary"
+      ? "text-primary"
+      : tone === "accent"
+        ? "text-accent"
+        : "text-muted-foreground";
   return (
     <div className="bg-gradient-card border border-border/50 rounded-xl p-4 shadow-card-sport">
       <div className={toneClass}>{icon}</div>
       <div className="font-display text-3xl mt-2 tabular-nums">{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">{label}</div>
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">
+        {label}
+      </div>
     </div>
   );
 }
-

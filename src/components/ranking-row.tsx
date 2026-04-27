@@ -5,9 +5,13 @@ import { cn } from "@/lib/utils";
 export function RankingRow({ entry, highlight }: { entry: RankingEntry; highlight?: boolean }) {
   const isPodium = entry.position <= 3;
   const podiumColor =
-    entry.position === 1 ? "text-accent" :
-    entry.position === 2 ? "text-muted-foreground" :
-    entry.position === 3 ? "text-orange-400" : "";
+    entry.position === 1
+      ? "text-accent"
+      : entry.position === 2
+        ? "text-muted-foreground"
+        : entry.position === 3
+          ? "text-orange-400"
+          : "";
 
   return (
     <div
@@ -16,7 +20,12 @@ export function RankingRow({ entry, highlight }: { entry: RankingEntry; highligh
         highlight && "border-primary/50 shadow-glow-pitch",
       )}
     >
-      <div className={cn("font-display text-2xl md:text-3xl text-center tabular-nums", isPodium ? podiumColor : "text-muted-foreground")}>
+      <div
+        className={cn(
+          "font-display text-2xl md:text-3xl text-center tabular-nums",
+          isPodium ? podiumColor : "text-muted-foreground",
+        )}
+      >
         {entry.position}
       </div>
 

@@ -52,7 +52,9 @@ export const syncSquads = createServerFn({ method: "POST" })
     }
 
     // 1) Fetch league teams once to map our team_id -> api team id
-    const leagueTeams = await apiFootballFetch<{ team: { id: number; name: string; code: string | null } }>("/teams", {
+    const leagueTeams = await apiFootballFetch<{
+      team: { id: number; name: string; code: string | null };
+    }>("/teams", {
       league: WORLD_CUP_LEAGUE_ID,
       season: WORLD_CUP_SEASON,
     });
@@ -64,7 +66,9 @@ export const syncSquads = createServerFn({ method: "POST" })
 
     for (const t of teams) {
       const api = leagueTeams.response.find(
-        (r) => norm(r.team.name) === norm(t.name) || (r.team.code && r.team.code.toUpperCase() === t.code.toUpperCase()),
+        (r) =>
+          norm(r.team.name) === norm(t.name) ||
+          (r.team.code && r.team.code.toUpperCase() === t.code.toUpperCase()),
       );
       if (!api) {
         unmatched.push(t.name);
@@ -73,7 +77,9 @@ export const syncSquads = createServerFn({ method: "POST" })
       teamsMatched++;
 
       try {
-        const squad = await apiFootballFetch<ApiSquadResp>("/players/squads", { team: api.team.id });
+        const squad = await apiFootballFetch<ApiSquadResp>("/players/squads", {
+          team: api.team.id,
+        });
         requestsUsed++;
         const players = squad.response[0]?.players ?? [];
 
@@ -100,7 +106,15 @@ export const syncSquads = createServerFn({ method: "POST" })
 
     await supabaseAdmin
       .from("app_settings")
-      .upsert({ key: "squads_locked", value: true as never, is_public: true, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      .upsert(
+        {
+          key: "squads_locked",
+          value: true as never,
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "key" },
+      );
 
     await logSync("squads", inserted > 0 ? "success" : "partial", requestsUsed, {
       inserted,
@@ -141,7 +155,9 @@ export const syncResults = createServerFn({ method: "POST" })
       });
       requestsUsed++;
 
-      const { data: matches } = await supabaseAdmin.from("matches").select("id, home_id, away_id, match_date");
+      const { data: matches } = await supabaseAdmin
+        .from("matches")
+        .select("id, home_id, away_id, match_date");
 
       const teamMap = new Map<string, string>(); // norm(name) -> teams.id
       const { data: allTeams } = await supabaseAdmin.from("teams").select("id, name");
@@ -163,7 +179,9 @@ export const syncResults = createServerFn({ method: "POST" })
         if (!ourMatch) continue;
 
         const status =
-          fx.fixture.status.short === "FT" || fx.fixture.status.short === "AET" || fx.fixture.status.short === "PEN"
+          fx.fixture.status.short === "FT" ||
+          fx.fixture.status.short === "AET" ||
+          fx.fixture.status.short === "PEN"
             ? "finished"
             : ["1H", "2H", "HT", "ET", "P", "BT", "LIVE"].includes(fx.fixture.status.short)
               ? "live"
@@ -193,7 +211,14 @@ export const syncResults = createServerFn({ method: "POST" })
 
 // ---------------- MANUAL SCORE OVERRIDE ----------------
 export const updateMatchManually = createServerFn({ method: "POST" })
-  .inputValidator((data: { matchId: string; homeScore: number; awayScore: number; status: "scheduled" | "live" | "finished" }) => data)
+  .inputValidator(
+    (data: {
+      matchId: string;
+      homeScore: number;
+      awayScore: number;
+      status: "scheduled" | "live" | "finished";
+    }) => data,
+  )
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
@@ -224,7 +249,16 @@ export const predictMatch = createServerFn({ method: "GET" })
 
 // ---------------- MATCH EVENTS (goalscorers) ----------------
 export const addMatchEvent = createServerFn({ method: "POST" })
-  .inputValidator((data: { matchId: string; teamId: string; playerId: string | null; playerName: string; eventType: "Goal" | "Yellow Card" | "Red Card"; minute: number | null }) => data)
+  .inputValidator(
+    (data: {
+      matchId: string;
+      teamId: string;
+      playerId: string | null;
+      playerName: string;
+      eventType: "Goal" | "Yellow Card" | "Red Card";
+      minute: number | null;
+    }) => data,
+  )
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
@@ -252,16 +286,18 @@ export const deleteMatchEvent = createServerFn({ method: "POST" })
 
 // ---------------- TOURNAMENT AWARDS ----------------
 export const updateAwards = createServerFn({ method: "POST" })
-  .inputValidator((data: {
-    campeon_id: string | null;
-    subcampeon_id: string | null;
-    tercer_puesto_id: string | null;
-    fair_play_id: string | null;
-    goleador_nombre: string | null;
-    mejor_jugador_nombre: string | null;
-    mejor_arquero_nombre: string | null;
-    finalized: boolean;
-  }) => data)
+  .inputValidator(
+    (data: {
+      campeon_id: string | null;
+      subcampeon_id: string | null;
+      tercer_puesto_id: string | null;
+      fair_play_id: string | null;
+      goleador_nombre: string | null;
+      mejor_jugador_nombre: string | null;
+      mejor_arquero_nombre: string | null;
+      finalized: boolean;
+    }) => data,
+  )
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
@@ -294,4 +330,3 @@ export const recalcAllPoints = createServerFn({ method: "POST" })
     }
     return { ok: true, recalculated: count };
   });
-

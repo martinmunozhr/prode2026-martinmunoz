@@ -14,7 +14,9 @@ function NotFoundComponent() {
       <div className="flex-1 flex items-center justify-center px-4 py-20">
         <div className="max-w-md text-center">
           <div className="font-display text-9xl text-gradient-pitch">404</div>
-          <h2 className="mt-4 font-display text-3xl tracking-wider text-foreground">Página no encontrada</h2>
+          <h2 className="mt-4 font-display text-3xl tracking-wider text-foreground">
+            Página no encontrada
+          </h2>
           <p className="mt-2 text-sm text-muted-foreground">
             La página que buscás no existe o fue movida.
           </p>
@@ -40,9 +42,16 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#1a0d2e" },
       { title: "Prode Mundial 2026" },
-      { name: "description", content: "El prode del Mundial 2026. Pronosticá los 104 partidos y competí en el ranking global." },
+      {
+        name: "description",
+        content:
+          "El prode del Mundial 2026. Pronosticá los 104 partidos y competí en el ranking global.",
+      },
       { property: "og:title", content: "Prode Mundial 2026" },
-      { property: "og:description", content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos." },
+      {
+        property: "og:description",
+        content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_AR" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -51,7 +60,10 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&family=Oswald:wght@700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,

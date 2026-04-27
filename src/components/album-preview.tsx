@@ -6,7 +6,9 @@ import { ArrowRight, BookOpen } from "lucide-react";
 const FEATURED = ["arg", "bra", "fra", "esp", "ing", "por"];
 
 export function AlbumPreview() {
-  const featured = FEATURED.map((id) => teams.find((t) => t.id === id)).filter(Boolean) as typeof teams;
+  const featured = FEATURED.map((id) => teams.find((t) => t.id === id)).filter(
+    Boolean,
+  ) as typeof teams;
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-card p-6 md:p-10">

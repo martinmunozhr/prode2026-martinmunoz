@@ -3,11 +3,24 @@ import { Flag, teamIdToIso2 } from "@/components/flag";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const rarityStyles: Record<Player["rarity"], { ring: string; bg: string; label: string; stars: number }> = {
+const rarityStyles: Record<
+  Player["rarity"],
+  { ring: string; bg: string; label: string; stars: number }
+> = {
   common: { ring: "border-border/50", bg: "bg-gradient-card", label: "Común", stars: 1 },
   rare: { ring: "border-secondary/60", bg: "bg-gradient-card", label: "Rara", stars: 2 },
-  epic: { ring: "border-accent/60 shadow-glow-trophy", bg: "bg-gradient-card", label: "Épica", stars: 3 },
-  legendary: { ring: "border-primary/70 shadow-glow-pitch", bg: "bg-gradient-holo animate-holo", label: "Leyenda", stars: 4 },
+  epic: {
+    ring: "border-accent/60 shadow-glow-trophy",
+    bg: "bg-gradient-card",
+    label: "Épica",
+    stars: 3,
+  },
+  legendary: {
+    ring: "border-primary/70 shadow-glow-pitch",
+    bg: "bg-gradient-holo animate-holo",
+    label: "Leyenda",
+    stars: 4,
+  },
 };
 
 const positionColor: Record<Player["position"], string> = {
@@ -17,7 +30,19 @@ const positionColor: Record<Player["position"], string> = {
   DEL: "text-alert",
 };
 
-export function PlayerCard({ player, teamId, teamFlag, onClick, animationDelay }: { player: Player; teamId?: string; teamFlag?: string; onClick?: () => void; animationDelay?: number }) {
+export function PlayerCard({
+  player,
+  teamId,
+  teamFlag,
+  onClick,
+  animationDelay,
+}: {
+  player: Player;
+  teamId?: string;
+  teamFlag?: string;
+  onClick?: () => void;
+  animationDelay?: number;
+}) {
   const r = rarityStyles[player.rarity];
   const isLegendary = player.rarity === "legendary";
 
@@ -39,10 +64,20 @@ export function PlayerCard({ player, teamId, teamFlag, onClick, animationDelay }
 
       {/* Header: number + position */}
       <div className="flex items-start justify-between relative z-10">
-        <div className={cn("font-display text-3xl leading-none", isLegendary ? "text-background" : "text-foreground")}>
+        <div
+          className={cn(
+            "font-display text-3xl leading-none",
+            isLegendary ? "text-background" : "text-foreground",
+          )}
+        >
           {player.number}
         </div>
-        <div className={cn("text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-background/40 backdrop-blur", positionColor[player.position])}>
+        <div
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-background/40 backdrop-blur",
+            positionColor[player.position],
+          )}
+        >
           {player.position}
         </div>
       </div>
@@ -50,9 +85,20 @@ export function PlayerCard({ player, teamId, teamFlag, onClick, animationDelay }
       {/* Avatar — bandera SVG del país */}
       <div className="flex-1 flex items-center justify-center relative z-10">
         {teamId && teamIdToIso2(teamId) ? (
-          <Flag teamId={teamId} className={cn("text-6xl md:text-7xl transition-transform group-hover:scale-110 !rounded-md shadow-lg", isLegendary && "drop-shadow-2xl")} />
+          <Flag
+            teamId={teamId}
+            className={cn(
+              "text-6xl md:text-7xl transition-transform group-hover:scale-110 !rounded-md shadow-lg",
+              isLegendary && "drop-shadow-2xl",
+            )}
+          />
         ) : (
-          <div className={cn("text-6xl md:text-7xl transition-transform group-hover:scale-110", isLegendary && "drop-shadow-2xl")}>
+          <div
+            className={cn(
+              "text-6xl md:text-7xl transition-transform group-hover:scale-110",
+              isLegendary && "drop-shadow-2xl",
+            )}
+          >
             {teamFlag}
           </div>
         )}
@@ -60,10 +106,20 @@ export function PlayerCard({ player, teamId, teamFlag, onClick, animationDelay }
 
       {/* Name + club */}
       <div className="relative z-10 text-center">
-        <div className={cn("font-display text-sm md:text-base leading-tight uppercase tracking-wide truncate", isLegendary ? "text-background" : "text-foreground")}>
+        <div
+          className={cn(
+            "font-display text-sm md:text-base leading-tight uppercase tracking-wide truncate",
+            isLegendary ? "text-background" : "text-foreground",
+          )}
+        >
           {player.name}
         </div>
-        <div className={cn("text-[10px] uppercase tracking-wider mt-0.5 truncate", isLegendary ? "text-background/80" : "text-muted-foreground")}>
+        <div
+          className={cn(
+            "text-[10px] uppercase tracking-wider mt-0.5 truncate",
+            isLegendary ? "text-background/80" : "text-muted-foreground",
+          )}
+        >
           {player.club}
         </div>
       </div>
@@ -73,7 +129,16 @@ export function PlayerCard({ player, teamId, teamFlag, onClick, animationDelay }
         {Array.from({ length: r.stars }).map((_, i) => (
           <Star
             key={i}
-            className={cn("h-3 w-3 fill-current", isLegendary ? "text-background" : player.rarity === "epic" ? "text-accent" : player.rarity === "rare" ? "text-secondary-foreground" : "text-muted-foreground")}
+            className={cn(
+              "h-3 w-3 fill-current",
+              isLegendary
+                ? "text-background"
+                : player.rarity === "epic"
+                  ? "text-accent"
+                  : player.rarity === "rare"
+                    ? "text-secondary-foreground"
+                    : "text-muted-foreground",
+            )}
           />
         ))}
       </div>

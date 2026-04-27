@@ -11,7 +11,10 @@ export const Route = createFileRoute("/perfil")({
   head: () => ({
     meta: [
       { title: "Mi Perfil — Prode Mundial 2026" },
-      { name: "description", content: "Personalizá tu perfil del prode: avatar, equipo favorito y datos de cuenta." },
+      {
+        name: "description",
+        content: "Personalizá tu perfil del prode: avatar, equipo favorito y datos de cuenta.",
+      },
     ],
   }),
   component: PerfilPage,
@@ -71,8 +74,18 @@ function PerfilPage() {
           </div>
           <h1 className="font-display text-4xl tracking-tight">Ingresá para ver tu perfil</h1>
           <div className="mt-6 flex gap-3 justify-center">
-            <Link to="/login" className="px-5 py-2.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider">Ingresar</Link>
-            <Link to="/registro" className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch">Sumate</Link>
+            <Link
+              to="/login"
+              className="px-5 py-2.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider"
+            >
+              Ingresar
+            </Link>
+            <Link
+              to="/registro"
+              className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
+            >
+              Sumate
+            </Link>
           </div>
         </div>
       </div>
@@ -84,13 +97,17 @@ function PerfilPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
       <header className="mb-10">
-        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Tu cuenta</div>
+        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">
+          Tu cuenta
+        </div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Mi Perfil</h1>
       </header>
 
       <div className="bg-gradient-card border border-border/50 rounded-3xl p-6 md:p-8 shadow-elevated mb-6">
         <div className="flex items-center gap-4 mb-8">
-          <div className={`h-20 w-20 rounded-full flex items-center justify-center text-white shadow-elevated font-display text-3xl tracking-wider ${colorClass}`}>
+          <div
+            className={`h-20 w-20 rounded-full flex items-center justify-center text-white shadow-elevated font-display text-3xl tracking-wider ${colorClass}`}
+          >
             {(profile?.username ?? user.email ?? "?").charAt(0).toUpperCase()}
           </div>
           <div>
@@ -114,8 +131,12 @@ function PerfilPage() {
       </div>
 
       <section className="mb-8">
-        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Tu progreso</div>
-        <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-1 mb-5">Logros y monedas</h2>
+        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">
+          Tu progreso
+        </div>
+        <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-1 mb-5">
+          Logros y monedas
+        </h2>
         <AchievementsPanel userId={user.id} />
       </section>
     </div>

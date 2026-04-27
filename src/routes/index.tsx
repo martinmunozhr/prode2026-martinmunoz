@@ -16,9 +16,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Prode Mundial 2026 — Pronosticá cada partido" },
-      { name: "description", content: "Sumate al prode del Mundial 2026. Pronosticá los 104 partidos, competí en el ranking global y armá tu álbum de figuritas." },
+      {
+        name: "description",
+        content:
+          "Sumate al prode del Mundial 2026. Pronosticá los 104 partidos, competí en el ranking global y armá tu álbum de figuritas.",
+      },
       { property: "og:title", content: "Prode Mundial 2026" },
-      { property: "og:description", content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos." },
+      {
+        property: "og:description",
+        content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos.",
+      },
     ],
   }),
   component: HomePage,
@@ -60,19 +67,29 @@ function HomePage() {
               />
             </div>
             <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-xl">
-              48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado, sumá puntos y escalá en el ranking global.
+              48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado,
+              sumá puntos y escalá en el ranking global.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               {user ? (
-                <Link to="/mis-pronosticos" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                <Link
+                  to="/mis-pronosticos"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
+                >
                   Ir a mis pronósticos <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
-                <Link to="/registro" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                <Link
+                  to="/registro"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
+                >
                   Sumate al prode <ArrowRight className="h-4 w-4" />
                 </Link>
               )}
-              <Link to="/fixture" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors">
+              <Link
+                to="/fixture"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors"
+              >
                 Ver fixture
               </Link>
             </div>
@@ -95,13 +112,19 @@ function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
-                <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Quién levantará la copa</div>
-                <div className="font-display text-2xl tracking-tight">Tu pronóstico también suma.</div>
+                <div className="text-[10px] uppercase tracking-widest text-primary font-bold">
+                  Quién levantará la copa
+                </div>
+                <div className="font-display text-2xl tracking-tight">
+                  Tu pronóstico también suma.
+                </div>
               </div>
             </div>
             <div>
               <div className="text-center mb-3">
-                <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">Inicio del Mundial</div>
+                <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">
+                  Inicio del Mundial
+                </div>
                 <div className="font-display text-2xl text-foreground mt-1">11 · JUN · 2026</div>
               </div>
               <CountdownHero />
@@ -114,23 +137,38 @@ function HomePage() {
         <SectionHeader
           eyebrow="Calendario"
           title="Próximos partidos"
-          action={<Link to="/fixture" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Ver todos <ArrowRight className="h-4 w-4" /></Link>}
+          action={
+            <Link
+              to="/fixture"
+              className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1"
+            >
+              Ver todos <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
         />
         {loadingMatches ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {[0, 1, 2].map((i) => <div key={i} className="h-44 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />)}
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-44 rounded-2xl bg-gradient-card border border-border/50 animate-pulse"
+              />
+            ))}
           </div>
         ) : upcoming.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-border/40 bg-gradient-card p-8 text-center">
             <CalendarClock className="h-10 w-10 mx-auto text-accent mb-3" />
             <h3 className="font-display text-2xl tracking-wide">El sorteo todavía no se realizó</h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-              Apenas se confirmen los partidos del Mundial 2026 vas a poder verlos acá y empezar a pronosticar.
+              Apenas se confirmen los partidos del Mundial 2026 vas a poder verlos acá y empezar a
+              pronosticar.
             </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
+            {upcoming.map((m) => (
+              <MatchCard key={m.id} match={m} />
+            ))}
           </div>
         )}
       </section>
@@ -143,23 +181,38 @@ function HomePage() {
         <SectionHeader
           eyebrow="Competencia"
           title="Top del ranking"
-          action={<Link to="/ranking" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Tabla completa <ArrowRight className="h-4 w-4" /></Link>}
+          action={
+            <Link
+              to="/ranking"
+              className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1"
+            >
+              Tabla completa <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
         />
         {loadingRanking ? (
           <div className="mt-6 space-y-2">
-            {[0, 1, 2].map((i) => <div key={i} className="h-16 rounded-xl bg-gradient-card border border-border/50 animate-pulse" />)}
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-16 rounded-xl bg-gradient-card border border-border/50 animate-pulse"
+              />
+            ))}
           </div>
         ) : top3.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-border/40 bg-gradient-card p-8 text-center">
             <Sparkles className="h-10 w-10 mx-auto text-primary mb-3" />
             <h3 className="font-display text-2xl tracking-wide">Sé el primero en el ranking</h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-              Cuando arranquen los partidos y los jugadores carguen sus pronósticos, las posiciones aparecerán acá en tiempo real.
+              Cuando arranquen los partidos y los jugadores carguen sus pronósticos, las posiciones
+              aparecerán acá en tiempo real.
             </p>
           </div>
         ) : (
           <div className="mt-6 space-y-2">
-            {top3.map((e) => <RankingRow key={e.position} entry={e} highlight={e.position === 1} />)}
+            {top3.map((e) => (
+              <RankingRow key={e.position} entry={e} highlight={e.position === 1} />
+            ))}
           </div>
         )}
       </section>
@@ -167,14 +220,43 @@ function HomePage() {
       {!authLoading && !user && (
         <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
           <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
-          <img src={figHaaland} alt="" aria-hidden className="hidden md:block absolute -right-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
-          <img src={messiTrofeo} alt="" aria-hidden className="hidden md:block absolute -left-10 -bottom-4 h-72 lg:h-80 object-contain opacity-95 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
-          <img src={figMessi} alt="" aria-hidden className="md:hidden absolute -left-8 -bottom-2 h-48 object-contain opacity-90 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
+          <img
+            src={figHaaland}
+            alt=""
+            aria-hidden
+            className="hidden md:block absolute -right-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src={messiTrofeo}
+            alt=""
+            aria-hidden
+            className="hidden md:block absolute -left-10 -bottom-4 h-72 lg:h-80 object-contain opacity-95 pointer-events-none drop-shadow-2xl"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src={figMessi}
+            alt=""
+            aria-hidden
+            className="md:hidden absolute -left-8 -bottom-2 h-48 object-contain opacity-90 pointer-events-none drop-shadow-2xl"
+            loading="lazy"
+            decoding="async"
+          />
           <div className="relative max-w-xl mx-auto">
             <Target className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
-            <p className="mt-3 text-muted-foreground">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
-            <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight">
+              ¿Listo para demostrar que sabés?
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48
+              selecciones.
+            </p>
+            <Link
+              to="/registro"
+              className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
+            >
               Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -194,11 +276,21 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
   );
 }
 
-function SectionHeader({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
+function SectionHeader({
+  eyebrow,
+  title,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">{eyebrow}</div>
+        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">
+          {eyebrow}
+        </div>
         <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-1">{title}</h2>
       </div>
       {action}

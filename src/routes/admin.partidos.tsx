@@ -31,20 +31,31 @@ function AdminPartidos() {
     setLoading(true);
     const { data } = await supabase
       .from("matches")
-      .select("*, home:teams!matches_home_id_fkey(name, flag), away:teams!matches_away_id_fkey(name, flag)")
+      .select(
+        "*, home:teams!matches_home_id_fkey(name, flag), away:teams!matches_away_id_fkey(name, flag)",
+      )
       .order("match_date");
     setMatches((data as MatchRow[] | null) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const filtered = matches.filter((m) => filter === "all" || m.status === filter);
 
-  const save = async (m: MatchRow, hs: number, as_: number, st: "scheduled" | "live" | "finished") => {
+  const save = async (
+    m: MatchRow,
+    hs: number,
+    as_: number,
+    st: "scheduled" | "live" | "finished",
+  ) => {
     setSavingId(m.id);
     try {
-      const r = await updateFn({ data: { matchId: m.id, homeScore: hs, awayScore: as_, status: st } });
+      const r = await updateFn({
+        data: { matchId: m.id, homeScore: hs, awayScore: as_, status: st },
+      });
       if (r.ok) {
         toast.success("Partido actualizado. Recalculando puntos...");
         await load();
@@ -64,10 +75,18 @@ function AdminPartidos() {
             key={f}
             onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-colors ${
-              filter === f ? "bg-primary text-primary-foreground" : "bg-muted/40 text-muted-foreground hover:text-foreground"
+              filter === f
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted/40 text-muted-foreground hover:text-foreground"
             }`}
           >
-            {f === "all" ? "Todos" : f === "scheduled" ? "Próximos" : f === "live" ? "En vivo" : "Finalizados"}
+            {f === "all"
+              ? "Todos"
+              : f === "scheduled"
+                ? "Próximos"
+                : f === "live"
+                  ? "En vivo"
+                  : "Finalizados"}
           </button>
         ))}
       </div>
@@ -95,7 +114,11 @@ function AdminPartidos() {
 }
 
 function MatchRow({
-  match, saving, onSave, onToggle, expanded,
+  match,
+  saving,
+  onSave,
+  onToggle,
+  expanded,
 }: {
   match: MatchRow;
   saving: boolean;
@@ -111,18 +134,41 @@ function MatchRow({
     <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-2 items-center px-3 py-2 text-sm">
       <div className="min-w-0">
         <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
-          {new Date(match.match_date).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })} · {match.stage}
+          {new Date(match.match_date).toLocaleString("es-AR", {
+            dateStyle: "short",
+            timeStyle: "short",
+          })}{" "}
+          · {match.stage}
         </div>
         <div className="font-semibold truncate">
-          {match.home?.flag} {match.home?.name ?? match.home_id} vs {match.away?.name ?? match.away_id} {match.away?.flag}
+          {match.home?.flag} {match.home?.name ?? match.home_id} vs{" "}
+          {match.away?.name ?? match.away_id} {match.away?.flag}
         </div>
       </div>
       <div className="flex items-center gap-1">
-        <input type="number" min={0} max={20} value={hs} onChange={(e) => setHs(Number(e.target.value))} className="w-12 rounded bg-muted/40 px-2 py-1 text-center" />
+        <input
+          type="number"
+          min={0}
+          max={20}
+          value={hs}
+          onChange={(e) => setHs(Number(e.target.value))}
+          className="w-12 rounded bg-muted/40 px-2 py-1 text-center"
+        />
         <span>-</span>
-        <input type="number" min={0} max={20} value={as_} onChange={(e) => setAs(Number(e.target.value))} className="w-12 rounded bg-muted/40 px-2 py-1 text-center" />
+        <input
+          type="number"
+          min={0}
+          max={20}
+          value={as_}
+          onChange={(e) => setAs(Number(e.target.value))}
+          className="w-12 rounded bg-muted/40 px-2 py-1 text-center"
+        />
       </div>
-      <select value={st} onChange={(e) => setSt(e.target.value as "scheduled" | "live" | "finished")} className="rounded bg-muted/40 px-2 py-1 text-xs">
+      <select
+        value={st}
+        onChange={(e) => setSt(e.target.value as "scheduled" | "live" | "finished")}
+        className="rounded bg-muted/40 px-2 py-1 text-xs"
+      >
         <option value="scheduled">Pendiente</option>
         <option value="live">En vivo</option>
         <option value="finished">Final</option>
@@ -134,7 +180,11 @@ function MatchRow({
       >
         {saving ? "..." : "Guardar"}
       </button>
-      <button onClick={onToggle} className="p-1.5 rounded hover:bg-muted/40" title="Ver eventos / goleadores">
+      <button
+        onClick={onToggle}
+        className="p-1.5 rounded hover:bg-muted/40"
+        title="Ver eventos / goleadores"
+      >
         {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
       </button>
     </div>
@@ -152,14 +202,20 @@ function EventsPanel({ match }: { match: MatchRow }) {
     setLoading(true);
     const [evRes, plRes] = await Promise.all([
       supabase.from("match_events").select("*").eq("match_id", match.id).order("minute"),
-      supabase.from("players").select("id,name,team_id,jersey_number").in("team_id", [match.home_id, match.away_id]).order("jersey_number"),
+      supabase
+        .from("players")
+        .select("id,name,team_id,jersey_number")
+        .in("team_id", [match.home_id, match.away_id])
+        .order("jersey_number"),
     ]);
     setEvents((evRes.data as EventRow[] | null) ?? []);
     setPlayers((plRes.data as PlayerRow[] | null) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, [match.id]);
+  useEffect(() => {
+    load();
+  }, [match.id]);
 
   const homePlayers = players.filter((p) => p.team_id === match.home_id);
   const awayPlayers = players.filter((p) => p.team_id === match.away_id);
@@ -172,9 +228,17 @@ function EventsPanel({ match }: { match: MatchRow }) {
     } else toast.error(r.error ?? "Error");
   };
 
-  const add = async (teamId: string, playerId: string | null, playerName: string, type: "Goal" | "Yellow Card" | "Red Card", minute: number | null) => {
+  const add = async (
+    teamId: string,
+    playerId: string | null,
+    playerName: string,
+    type: "Goal" | "Yellow Card" | "Red Card",
+    minute: number | null,
+  ) => {
     if (!playerName.trim()) return toast.error("Falta nombre del jugador");
-    const r = await addFn({ data: { matchId: match.id, teamId, playerId, playerName, eventType: type, minute } });
+    const r = await addFn({
+      data: { matchId: match.id, teamId, playerId, playerName, eventType: type, minute },
+    });
     if (r.ok) {
       toast.success("Evento agregado");
       load();
@@ -186,7 +250,8 @@ function EventsPanel({ match }: { match: MatchRow }) {
       <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold flex items-center gap-2">
         <Trophy className="h-3 w-3" /> Eventos del partido
         <span className="font-normal normal-case tracking-normal text-[11px] text-muted-foreground/70">
-          — Cargá los goles para que se calculen los puntos extra de goleadores. Las tarjetas son informativas.
+          — Cargá los goles para que se calculen los puntos extra de goleadores. Las tarjetas son
+          informativas.
         </span>
       </div>
 
@@ -203,9 +268,16 @@ function EventsPanel({ match }: { match: MatchRow }) {
                     {e.event_type === "Goal" ? "⚽" : e.event_type === "Yellow Card" ? "🟨" : "🟥"}
                   </span>
                   <span className="flex-1 truncate">
-                    {e.player_name} <span className="text-muted-foreground">({e.team_id === match.home_id ? match.home?.name : match.away?.name})</span>
+                    {e.player_name}{" "}
+                    <span className="text-muted-foreground">
+                      ({e.team_id === match.home_id ? match.home?.name : match.away?.name})
+                    </span>
                   </span>
-                  <button onClick={() => remove(e.id)} className="p-1 rounded hover:bg-destructive/20 text-destructive" aria-label="Borrar">
+                  <button
+                    onClick={() => remove(e.id)}
+                    className="p-1 rounded hover:bg-destructive/20 text-destructive"
+                    aria-label="Borrar"
+                  >
                     <X className="h-3 w-3" />
                   </button>
                 </li>
@@ -236,12 +308,21 @@ function EventsPanel({ match }: { match: MatchRow }) {
 }
 
 function AddEventForm({
-  teamId, teamName, players, onAdd,
+  teamId,
+  teamName,
+  players,
+  onAdd,
 }: {
   teamId: string;
   teamName: string;
   players: PlayerRow[];
-  onAdd: (teamId: string, playerId: string | null, playerName: string, type: "Goal" | "Yellow Card" | "Red Card", minute: number | null) => void;
+  onAdd: (
+    teamId: string,
+    playerId: string | null,
+    playerName: string,
+    type: "Goal" | "Yellow Card" | "Red Card",
+    minute: number | null,
+  ) => void;
 }) {
   const [playerId, setPlayerId] = useState("");
   const [customName, setCustomName] = useState("");
@@ -261,11 +342,16 @@ function AddEventForm({
       <div className="text-[11px] font-bold uppercase tracking-widest">{teamName}</div>
       <div className="grid grid-cols-[1fr_60px_auto] gap-1.5 items-center">
         {players.length > 0 ? (
-          <select value={playerId} onChange={(e) => setPlayerId(e.target.value)} className="rounded bg-muted/40 px-2 py-1 text-xs min-w-0">
+          <select
+            value={playerId}
+            onChange={(e) => setPlayerId(e.target.value)}
+            className="rounded bg-muted/40 px-2 py-1 text-xs min-w-0"
+          >
             <option value="">Elegí jugador...</option>
             {players.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.jersey_number ? `#${p.jersey_number} ` : ""}{p.name}
+                {p.jersey_number ? `#${p.jersey_number} ` : ""}
+                {p.name}
               </option>
             ))}
           </select>
@@ -286,7 +372,11 @@ function AddEventForm({
           onChange={(e) => setMinute(e.target.value)}
           className="rounded bg-muted/40 px-2 py-1 text-xs text-center"
         />
-        <select value={type} onChange={(e) => setType(e.target.value as typeof type)} className="rounded bg-muted/40 px-2 py-1 text-xs">
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value as typeof type)}
+          className="rounded bg-muted/40 px-2 py-1 text-xs"
+        >
           <option value="Goal">⚽ Gol</option>
           <option value="Yellow Card">🟨 TA</option>
           <option value="Red Card">🟥 TR</option>

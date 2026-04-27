@@ -13,9 +13,16 @@ export const Route = createFileRoute("/bola-de-cristal")({
   head: () => ({
     meta: [
       { title: "Bola de Cristal — Prode Mundial 2026" },
-      { name: "description", content: "Predicciones del torneo: campeón, goleador, mejor jugador, mejor arquero y fair play." },
+      {
+        name: "description",
+        content:
+          "Predicciones del torneo: campeón, goleador, mejor jugador, mejor arquero y fair play.",
+      },
       { property: "og:title", content: "Bola de Cristal — Mundial 2026" },
-      { property: "og:description", content: "Pronosticá lo grande del Mundial 2026 antes del pitazo inicial." },
+      {
+        property: "og:description",
+        content: "Pronosticá lo grande del Mundial 2026 antes del pitazo inicial.",
+      },
     ],
   }),
   component: BolaDeCristalPage,
@@ -61,19 +68,26 @@ function BolaDeCristalPage() {
   }, []);
 
   useEffect(() => {
-    if (authLoading || !user) { setLoading(false); return; }
+    if (authLoading || !user) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     (async () => {
       const { data: row } = await supabase
         .from("crystal_ball")
-        .select("campeon_id, goleador_nombre, mejor_jugador_nombre, mejor_arquero_nombre, fair_play_id, locked")
+        .select(
+          "campeon_id, goleador_nombre, mejor_jugador_nombre, mejor_arquero_nombre, fair_play_id, locked",
+        )
         .eq("user_id", user.id)
         .maybeSingle();
       if (!active) return;
       if (row) setData(row as CrystalRow);
       setLoading(false);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [user, authLoading]);
 
   const locked = isCrystalBallLocked() || data.locked;
@@ -108,7 +122,10 @@ function BolaDeCristalPage() {
         <div className="h-20 mb-8 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />
         <div className="space-y-4">
           {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-28 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />
+            <div
+              key={i}
+              className="h-28 rounded-2xl bg-gradient-card border border-border/50 animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -123,10 +140,22 @@ function BolaDeCristalPage() {
             <LogIn className="h-7 w-7 text-primary-foreground" />
           </div>
           <h1 className="font-display text-4xl tracking-tight">Ingresá para jugar</h1>
-          <p className="mt-3 text-muted-foreground">Necesitás cuenta para guardar tu Bola de Cristal.</p>
+          <p className="mt-3 text-muted-foreground">
+            Necesitás cuenta para guardar tu Bola de Cristal.
+          </p>
           <div className="mt-6 flex gap-3 justify-center">
-            <Link to="/login" className="px-5 py-2.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider">Ingresar</Link>
-            <Link to="/registro" className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch">Sumate</Link>
+            <Link
+              to="/login"
+              className="px-5 py-2.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider"
+            >
+              Ingresar
+            </Link>
+            <Link
+              to="/registro"
+              className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
+            >
+              Sumate
+            </Link>
           </div>
         </div>
       </div>
@@ -150,7 +179,8 @@ function BolaDeCristalPage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute -top-2 right-0 h-44 lg:h-56 object-contain object-bottom pointer-events-none drop-shadow-2xl"
-          loading="lazy" decoding="async"
+          loading="lazy"
+          decoding="async"
         />
       </header>
 
@@ -162,7 +192,9 @@ function BolaDeCristalPage() {
           </div>
         ) : (
           <>
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Cierra en</div>
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+              Cierra en
+            </div>
             <div className="flex gap-3 font-display text-2xl tabular-nums text-primary">
               <span>{String(t.days).padStart(2, "0")}d</span>
               <span>{String(t.hours).padStart(2, "0")}h</span>
@@ -188,22 +220,37 @@ function BolaDeCristalPage() {
           >
             <option value="">Elegí selección</option>
             {teams.map((t) => (
-              <option key={t.id} value={t.id}>{t.code} — {t.name}</option>
+              <option key={t.id} value={t.id}>
+                {t.code} — {t.name}
+              </option>
             ))}
           </select>
         </CrystalField>
 
-        <CrystalField label="Goleador del torneo" points={crystalBallPoints.goleador} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
+        <CrystalField
+          label="Goleador del torneo"
+          points={crystalBallPoints.goleador}
+          icon={<Sparkles className="h-5 w-5" />}
+          locked={locked}
+        >
           <PlayerAutocomplete
             disabled={locked}
             placeholder="Ej: Lionel Messi"
             value={data.goleador_nombre}
             onChange={(v) => setData((d) => ({ ...d, goleador_nombre: v }))}
           />
-          <p className="mt-2 text-[11px] text-muted-foreground">Buscá entre los jugadores del Mundial. Si tu plantel no está cargado todavía, podés escribir el nombre libremente.</p>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Buscá entre los jugadores del Mundial. Si tu plantel no está cargado todavía, podés
+            escribir el nombre libremente.
+          </p>
         </CrystalField>
 
-        <CrystalField label="Mejor jugador" points={crystalBallPoints.mejorJugador} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
+        <CrystalField
+          label="Mejor jugador"
+          points={crystalBallPoints.mejorJugador}
+          icon={<Sparkles className="h-5 w-5" />}
+          locked={locked}
+        >
           <PlayerAutocomplete
             disabled={locked}
             placeholder="Ej: Kylian Mbappé"
@@ -212,7 +259,12 @@ function BolaDeCristalPage() {
           />
         </CrystalField>
 
-        <CrystalField label="Mejor arquero" points={crystalBallPoints.mejorArquero} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
+        <CrystalField
+          label="Mejor arquero"
+          points={crystalBallPoints.mejorArquero}
+          icon={<Sparkles className="h-5 w-5" />}
+          locked={locked}
+        >
           <PlayerAutocomplete
             disabled={locked}
             placeholder="Ej: Emiliano Martínez"
@@ -222,7 +274,12 @@ function BolaDeCristalPage() {
           />
         </CrystalField>
 
-        <CrystalField label="Premio Fair Play" points={crystalBallPoints.fairPlay} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
+        <CrystalField
+          label="Premio Fair Play"
+          points={crystalBallPoints.fairPlay}
+          icon={<Sparkles className="h-5 w-5" />}
+          locked={locked}
+        >
           <select
             disabled={locked}
             value={data.fair_play_id ?? ""}
@@ -231,7 +288,9 @@ function BolaDeCristalPage() {
           >
             <option value="">Elegí selección</option>
             {teams.map((t) => (
-              <option key={t.id} value={t.id}>{t.code} — {t.name}</option>
+              <option key={t.id} value={t.id}>
+                {t.code} — {t.name}
+              </option>
             ))}
           </select>
         </CrystalField>
@@ -249,8 +308,18 @@ function BolaDeCristalPage() {
 }
 
 function CrystalField({
-  label, points, icon, children, locked,
-}: { label: string; points: number; icon: React.ReactNode; children: React.ReactNode; locked: boolean }) {
+  label,
+  points,
+  icon,
+  children,
+  locked,
+}: {
+  label: string;
+  points: number;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  locked: boolean;
+}) {
   return (
     <div className="bg-gradient-card border border-border/50 rounded-2xl p-5">
       <div className="flex items-center justify-between gap-2 mb-3">

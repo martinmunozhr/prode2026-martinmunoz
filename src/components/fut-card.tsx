@@ -57,16 +57,33 @@ const RARITY_THEME: Record<
     ring: "ring-2 ring-fuchsia-300 shadow-[0_0_36px_oklch(0.7_0.24_295/0.6)]",
     halo: "from-fuchsia-300/40 via-amber-200/20 to-cyan-300/30",
     chip: "bg-gradient-to-r from-fuchsia-500 to-amber-400 text-zinc-950",
-    gradient:
-      "linear-gradient(135deg, #fde68a 0%, #f0abfc 35%, #a78bfa 70%, #67e8f9 100%)",
+    gradient: "linear-gradient(135deg, #fde68a 0%, #f0abfc 35%, #a78bfa 70%, #67e8f9 100%)",
     nameColor: "text-zinc-950",
   },
 };
 
 const SIZE_CLASS = {
-  sm: { box: "text-xs", num: "text-2xl", name: "text-[11px]", flag: "text-4xl", chip: "text-[8px] px-1.5" },
-  md: { box: "text-sm", num: "text-3xl", name: "text-sm", flag: "text-5xl", chip: "text-[9px] px-2" },
-  lg: { box: "text-base", num: "text-4xl", name: "text-base", flag: "text-7xl", chip: "text-[10px] px-2.5" },
+  sm: {
+    box: "text-xs",
+    num: "text-2xl",
+    name: "text-[11px]",
+    flag: "text-4xl",
+    chip: "text-[8px] px-1.5",
+  },
+  md: {
+    box: "text-sm",
+    num: "text-3xl",
+    name: "text-sm",
+    flag: "text-5xl",
+    chip: "text-[9px] px-2",
+  },
+  lg: {
+    box: "text-base",
+    num: "text-4xl",
+    name: "text-base",
+    flag: "text-7xl",
+    chip: "text-[10px] px-2.5",
+  },
 } as const;
 
 export function FutCard({
@@ -105,13 +122,19 @@ export function FutCard({
         "relative aspect-[3/4] rounded-2xl overflow-hidden p-3 flex flex-col text-left transition-all duration-300 animate-card-reveal",
         theme.ring,
         locked && "ring-1 ring-border/40 grayscale opacity-70",
-        onClick && "cursor-pointer hover:-translate-y-1 hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-primary",
+        onClick &&
+          "cursor-pointer hover:-translate-y-1 hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-primary",
         sz.box,
         className,
       )}
     >
       {/* Halo radial */}
-      <div className={cn("pointer-events-none absolute inset-0 bg-gradient-to-br opacity-90", theme.halo)} />
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 bg-gradient-to-br opacity-90",
+          theme.halo,
+        )}
+      />
 
       {/* Patrón estilo holo solo para legendario */}
       {rarity === "legendario" && !locked && (
@@ -140,15 +163,36 @@ export function FutCard({
 
       {/* Header: número + posición + rareza */}
       <div className="relative z-10 flex items-start justify-between">
-        <div className={cn("font-display leading-none", sz.num, theme.nameColor, locked && "text-muted-foreground")}>
+        <div
+          className={cn(
+            "font-display leading-none",
+            sz.num,
+            theme.nameColor,
+            locked && "text-muted-foreground",
+          )}
+        >
           {jerseyNumber ?? "?"}
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className={cn("font-bold uppercase tracking-widest rounded", theme.chip, sz.chip, "py-0.5")}>
+          <span
+            className={cn(
+              "font-bold uppercase tracking-widest rounded",
+              theme.chip,
+              sz.chip,
+              "py-0.5",
+            )}
+          >
             {RARITY_LABEL[rarity]}
           </span>
           {position && (
-            <span className={cn("font-bold uppercase tracking-widest rounded bg-background/40 backdrop-blur", sz.chip, "py-0.5", theme.nameColor)}>
+            <span
+              className={cn(
+                "font-bold uppercase tracking-widest rounded bg-background/40 backdrop-blur",
+                sz.chip,
+                "py-0.5",
+                theme.nameColor,
+              )}
+            >
               {position}
             </span>
           )}
@@ -166,11 +210,23 @@ export function FutCard({
 
       {/* Nombre + club + estrellas */}
       <div className="relative z-10 text-center">
-        <div className={cn("font-display uppercase tracking-wide truncate", sz.name, theme.nameColor, locked && "text-muted-foreground")}>
+        <div
+          className={cn(
+            "font-display uppercase tracking-wide truncate",
+            sz.name,
+            theme.nameColor,
+            locked && "text-muted-foreground",
+          )}
+        >
           {locked ? "???" : name}
         </div>
         {club && !locked && (
-          <div className={cn("text-[9px] uppercase tracking-widest mt-0.5 truncate opacity-80", theme.nameColor)}>
+          <div
+            className={cn(
+              "text-[9px] uppercase tracking-widest mt-0.5 truncate opacity-80",
+              theme.nameColor,
+            )}
+          >
             {club}
           </div>
         )}
@@ -178,7 +234,10 @@ export function FutCard({
           {Array.from({ length: stars }).map((_, i) => (
             <Star
               key={i}
-              className={cn("h-3 w-3 fill-current", locked ? "text-muted-foreground/40" : theme.nameColor)}
+              className={cn(
+                "h-3 w-3 fill-current",
+                locked ? "text-muted-foreground/40" : theme.nameColor,
+              )}
             />
           ))}
         </div>

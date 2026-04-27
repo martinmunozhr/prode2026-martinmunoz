@@ -43,7 +43,9 @@ export function OnboardingModal() {
             <span className="text-xs uppercase tracking-widest font-bold">Bienvenido</span>
           </div>
           <h2 className="font-display text-3xl tracking-wider mt-2">¡Empezá a jugar!</h2>
-          <p className="text-sm mt-2 opacity-90">Pronosticá los 104 partidos del Mundial 2026 y competí con tu familia y amigos.</p>
+          <p className="text-sm mt-2 opacity-90">
+            Pronosticá los 104 partidos del Mundial 2026 y competí con tu familia y amigos.
+          </p>
         </div>
 
         <div className="p-6 space-y-4">
@@ -54,7 +56,8 @@ export function OnboardingModal() {
             <div className="text-sm">
               <div className="font-bold">Acertá el resultado</div>
               <div className="text-muted-foreground">
-                <strong>1 punto</strong> si acertás ganador o empate. <strong>3 puntos</strong> si acertás el marcador exacto.
+                <strong>1 punto</strong> si acertás ganador o empate. <strong>3 puntos</strong> si
+                acertás el marcador exacto.
               </div>
             </div>
           </div>
@@ -66,7 +69,8 @@ export function OnboardingModal() {
             <div className="text-sm">
               <div className="font-bold">Sumá goleadores (opcional)</div>
               <div className="text-muted-foreground">
-                Elegí quién marca cada gol. <strong>+1 punto extra por acierto</strong>. Si no querés, saltealo, no perdés nada.
+                Elegí quién marca cada gol. <strong>+1 punto extra por acierto</strong>. Si no
+                querés, saltealo, no perdés nada.
               </div>
             </div>
           </div>
@@ -78,13 +82,15 @@ export function OnboardingModal() {
             <div className="text-sm">
               <div className="font-bold">Bola de Cristal</div>
               <div className="text-muted-foreground">
-                Pronosticá el campeón, goleador y MVP <em>antes del primer partido</em>. Hasta <strong>32 puntos</strong> en juego.
+                Pronosticá el campeón, goleador y MVP <em>antes del primer partido</em>. Hasta{" "}
+                <strong>32 puntos</strong> en juego.
               </div>
             </div>
           </div>
 
           <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
-            💡 En fases finales los puntos se multiplican: Octavos x1.5, Cuartos x2, Semis x2.5, <strong>Final x3</strong>.
+            💡 En fases finales los puntos se multiplican: Octavos x1.5, Cuartos x2, Semis x2.5,{" "}
+            <strong>Final x3</strong>.
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 pt-2">

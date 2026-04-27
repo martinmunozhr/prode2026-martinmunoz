@@ -20,16 +20,24 @@ export const Route = createFileRoute("/equipos/$equipoId")({
     meta: loaderData
       ? [
           { title: `${loaderData.team.name} — Plantel y Álbum de Figuritas` },
-          { name: "description", content: `Plantel completo de ${loaderData.team.name} para el Mundial 2026: 26 jugadores en formato álbum de figuritas.` },
+          {
+            name: "description",
+            content: `Plantel completo de ${loaderData.team.name} para el Mundial 2026: 26 jugadores en formato álbum de figuritas.`,
+          },
           { property: "og:title", content: `${loaderData.team.name} — Mundial 2026` },
-          { property: "og:description", content: `Plantel y figuritas de ${loaderData.team.name}.` },
+          {
+            property: "og:description",
+            content: `Plantel y figuritas de ${loaderData.team.name}.`,
+          },
         ]
       : [{ title: "Equipo no encontrado" }],
   }),
   notFoundComponent: () => (
     <div className="container mx-auto px-4 py-20 text-center">
       <h1 className="font-display text-5xl">Equipo no encontrado</h1>
-      <Link to="/equipos" className="mt-4 inline-block text-primary underline">Ver todos los equipos</Link>
+      <Link to="/equipos" className="mt-4 inline-block text-primary underline">
+        Ver todos los equipos
+      </Link>
     </div>
   ),
   component: EquipoDetailPage,
@@ -40,7 +48,9 @@ type RarityFilter = "ALL" | Player["rarity"];
 
 function EquipoDetailPage() {
   const { team, roster, real } = Route.useLoaderData() as LoaderData;
-  const teamMatches = matches.filter((m) => m.homeId === team.id || m.awayId === team.id).slice(0, 3);
+  const teamMatches = matches
+    .filter((m) => m.homeId === team.id || m.awayId === team.id)
+    .slice(0, 3);
 
   const [posFilter, setPosFilter] = useState<PosFilter>("ALL");
   const [rarityFilter, setRarityFilter] = useState<RarityFilter>("ALL");
@@ -69,7 +79,10 @@ function EquipoDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
-      <Link to="/equipos" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6">
+      <Link
+        to="/equipos"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6"
+      >
         <ArrowLeft className="h-4 w-4" /> Todos los equipos
       </Link>
 
@@ -77,11 +90,18 @@ function EquipoDetailPage() {
       <header className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-hero p-6 md:p-10 mb-10">
         <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
         <div className="relative flex flex-col md:flex-row items-center gap-6">
-          <Flag teamId={team.id} className="text-[8rem] md:text-[10rem] !rounded-lg shadow-elevated" />
+          <Flag
+            teamId={team.id}
+            className="text-[8rem] md:text-[10rem] !rounded-lg shadow-elevated"
+          />
           <div className="text-center md:text-left">
-            <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Grupo {team.group} · {team.confederation}</div>
+            <div className="text-[11px] uppercase tracking-widest text-primary font-bold">
+              Grupo {team.group} · {team.confederation}
+            </div>
             <h1 className="font-display text-5xl md:text-7xl tracking-tight mt-1">{team.name}</h1>
-            <p className="mt-2 text-muted-foreground">26 jugadores convocados · álbum de figuritas</p>
+            <p className="mt-2 text-muted-foreground">
+              26 jugadores convocados · álbum de figuritas
+            </p>
             {real && (
               <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-accent font-bold bg-accent/10 border border-accent/30 px-3 py-1 rounded-full">
                 <Sparkles className="h-3 w-3" /> Plantel real verificado
@@ -95,8 +115,12 @@ function EquipoDetailPage() {
       <section>
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
-            <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Álbum Panini</div>
-            <h2 className="font-display text-3xl md:text-4xl tracking-tight">Plantel · 26 figuritas</h2>
+            <div className="text-[11px] uppercase tracking-widest text-accent font-bold">
+              Álbum Panini
+            </div>
+            <h2 className="font-display text-3xl md:text-4xl tracking-tight">
+              Plantel · 26 figuritas
+            </h2>
           </div>
           <div className="flex items-center gap-3 text-xs">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pitch/10 border border-pitch/30 text-pitch font-bold">
@@ -138,16 +162,22 @@ function EquipoDetailPage() {
         </div>
 
         {filtered.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">No hay figuritas con esos filtros.</div>
+          <div className="text-center py-16 text-muted-foreground">
+            No hay figuritas con esos filtros.
+          </div>
         )}
 
         {(["POR", "DEF", "MED", "DEL"] as const).map((pos) =>
           byPos[pos].length === 0 ? null : (
             <div key={pos} className="mb-8">
               <div className="flex items-center gap-2 mb-3">
-                <h3 className="font-display text-lg tracking-wider text-muted-foreground">{posLabel(pos)}</h3>
+                <h3 className="font-display text-lg tracking-wider text-muted-foreground">
+                  {posLabel(pos)}
+                </h3>
                 <div className="flex-1 h-px bg-border/30" />
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{byPos[pos].length}</span>
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {byPos[pos].length}
+                </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {byPos[pos].map((p) => {
@@ -159,7 +189,10 @@ function EquipoDetailPage() {
                       teamId={team.id}
                       teamFlag={team.flag}
                       animationDelay={delay}
-                      onClick={() => { setSelected(p); setModalOpen(true); }}
+                      onClick={() => {
+                        setSelected(p);
+                        setModalOpen(true);
+                      }}
                     />
                   );
                 })}
@@ -174,7 +207,9 @@ function EquipoDetailPage() {
         <section className="mt-12">
           <h2 className="font-display text-2xl tracking-wider mb-4">Próximos partidos</h2>
           <div className="grid md:grid-cols-3 gap-4">
-            {teamMatches.map((m) => <MatchCard key={m.id} match={m} />)}
+            {teamMatches.map((m) => (
+              <MatchCard key={m.id} match={m} />
+            ))}
           </div>
         </section>
       )}
@@ -191,7 +226,12 @@ function EquipoDetailPage() {
   );
 }
 
-function FilterGroup<T extends string>({ label, value, onChange, options }: {
+function FilterGroup<T extends string>({
+  label,
+  value,
+  onChange,
+  options,
+}: {
   label: string;
   value: T;
   onChange: (v: T) => void;
@@ -199,7 +239,9 @@ function FilterGroup<T extends string>({ label, value, onChange, options }: {
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold hidden sm:inline">{label}</span>
+      <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold hidden sm:inline">
+        {label}
+      </span>
       <div className="flex flex-wrap gap-1">
         {options.map((o) => (
           <button
@@ -221,5 +263,11 @@ function FilterGroup<T extends string>({ label, value, onChange, options }: {
 }
 
 function posLabel(p: "POR" | "DEF" | "MED" | "DEL") {
-  return p === "POR" ? "Arqueros" : p === "DEF" ? "Defensores" : p === "MED" ? "Mediocampistas" : "Delanteros";
+  return p === "POR"
+    ? "Arqueros"
+    : p === "DEF"
+      ? "Defensores"
+      : p === "MED"
+        ? "Mediocampistas"
+        : "Delanteros";
 }

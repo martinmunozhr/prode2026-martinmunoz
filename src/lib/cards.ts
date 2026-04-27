@@ -55,7 +55,7 @@ export const PACKS: PackDef[] = [
     type: "legendario",
     cost: 1000,
     cards: 11,
-    odds: { comun: 0, raro: 0.30, epico: 0.55, legendario: 0.15 },
+    odds: { comun: 0, raro: 0.3, epico: 0.55, legendario: 0.15 },
     guaranteesLegendary: true,
     description: "Sobre legendario. Once figuritas, una legendaria garantizada.",
   },

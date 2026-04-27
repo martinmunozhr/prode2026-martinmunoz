@@ -40,7 +40,10 @@ function AdminSobres() {
   const run = async () => {
     setRunning(true);
     try {
-      const r = await simulatePackFn({ data: { packType, iterations: iter }, headers: await authHeaders() });
+      const r = await simulatePackFn({
+        data: { packType, iterations: iter },
+        headers: await authHeaders(),
+      });
       setResult(r.result);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error en la simulación");
@@ -64,7 +67,9 @@ function AdminSobres() {
   const total = useMemo(() => result?.reduce((a, b) => a + Number(b.count), 0) ?? 0, [result]);
   const pack = PACKS.find((p) => p.type === packType)!;
 
-  useEffect(() => { setResult(null); }, [packType]);
+  useEffect(() => {
+    setResult(null);
+  }, [packType]);
 
   return (
     <div className="space-y-6">
@@ -74,13 +79,17 @@ function AdminSobres() {
         </div>
         <div>
           <h2 className="font-display text-2xl tracking-wider">Simulador de sobres</h2>
-          <p className="text-xs text-muted-foreground">Probá la distribución de rarezas sin gastar monedas reales.</p>
+          <p className="text-xs text-muted-foreground">
+            Probá la distribución de rarezas sin gastar monedas reales.
+          </p>
         </div>
       </div>
 
       <div className="rounded-2xl border border-border/50 bg-card/40 p-5 grid gap-4 md:grid-cols-3">
         <div>
-          <label className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">Tipo de sobre</label>
+          <label className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
+            Tipo de sobre
+          </label>
           <div className="grid grid-cols-2 gap-2 mt-2">
             {PACKS.map((p) => (
               <button
@@ -100,7 +109,9 @@ function AdminSobres() {
           </div>
         </div>
         <div>
-          <label className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">Iteraciones (1–10000)</label>
+          <label className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
+            Iteraciones (1–10000)
+          </label>
           <input
             type="number"
             min={1}
@@ -109,7 +120,9 @@ function AdminSobres() {
             onChange={(e) => setIter(Math.max(1, Math.min(10000, Number(e.target.value) || 1)))}
             className="mt-2 w-full px-3 py-2 rounded-lg bg-background/60 border border-border/60 font-mono text-sm"
           />
-          <p className="text-[10px] text-muted-foreground mt-1">Total cartas a simular: {(iter * pack.cards).toLocaleString()}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            Total cartas a simular: {(iter * pack.cards).toLocaleString()}
+          </p>
         </div>
         <div className="flex items-end gap-2">
           <button
@@ -117,7 +130,11 @@ function AdminSobres() {
             disabled={running}
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-xs shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50"
           >
-            {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
+            {running ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <BarChart3 className="h-4 w-4" />
+            )}
             Simular
           </button>
           <button
@@ -125,7 +142,11 @@ function AdminSobres() {
             disabled={opening}
             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-accent/50 bg-accent/10 text-accent font-bold uppercase tracking-wider text-xs hover:bg-accent/20 transition-colors disabled:opacity-50"
           >
-            {opening ? <Loader2 className="h-4 w-4 animate-spin" /> : <PackageOpen className="h-4 w-4" />}
+            {opening ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <PackageOpen className="h-4 w-4" />
+            )}
             Abrir 1 sobre
           </button>
         </div>
@@ -133,13 +154,17 @@ function AdminSobres() {
 
       {/* Probabilidades teóricas */}
       <div className="rounded-2xl border border-border/50 bg-card/30 p-5">
-        <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-3">Odds teóricas — sobre {RARITY_LABEL[packType]}</div>
+        <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-3">
+          Odds teóricas — sobre {RARITY_LABEL[packType]}
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {RARITY_ORDER.map((r) => (
             <div key={r} className="rounded-lg border border-border/40 bg-background/30 p-3">
               <div className="flex items-center gap-2">
                 <span className={cn("h-2 w-2 rounded-full", RARITY_COLOR[r])} />
-                <span className="text-xs font-bold uppercase tracking-wider">{RARITY_LABEL[r]}</span>
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {RARITY_LABEL[r]}
+                </span>
               </div>
               <div className="font-display text-3xl mt-1">{Math.round(pack.odds[r] * 100)}%</div>
             </div>
@@ -157,10 +182,14 @@ function AdminSobres() {
         <div className="rounded-2xl border border-pitch/40 bg-pitch/5 p-5">
           <div className="flex items-baseline justify-between mb-4">
             <div>
-              <div className="text-xs uppercase tracking-widest text-pitch font-bold">Resultado de la simulación</div>
+              <div className="text-xs uppercase tracking-widest text-pitch font-bold">
+                Resultado de la simulación
+              </div>
               <div className="font-display text-2xl">{total.toLocaleString()} cartas</div>
             </div>
-            <div className="text-xs text-muted-foreground">{iter} sobres × {pack.cards} cartas</div>
+            <div className="text-xs text-muted-foreground">
+              {iter} sobres × {pack.cards} cartas
+            </div>
           </div>
           <div className="space-y-2">
             {RARITY_ORDER.map((r) => {
@@ -179,20 +208,29 @@ function AdminSobres() {
                     <div className={cn("h-full", RARITY_COLOR[r])} style={{ width: `${pct}%` }} />
                   </div>
                   <div className="w-24 text-right text-sm font-mono tabular-nums">
-                    {count.toLocaleString()} <span className="text-muted-foreground">({pct.toFixed(1)}%)</span>
+                    {count.toLocaleString()}{" "}
+                    <span className="text-muted-foreground">({pct.toFixed(1)}%)</span>
                   </div>
-                  <div className={cn(
-                    "w-16 text-right text-xs font-mono tabular-nums",
-                    Math.abs(delta) < 1 ? "text-muted-foreground" : delta > 0 ? "text-pitch" : "text-alert",
-                  )}>
-                    {delta > 0 ? "+" : ""}{delta.toFixed(1)}
+                  <div
+                    className={cn(
+                      "w-16 text-right text-xs font-mono tabular-nums",
+                      Math.abs(delta) < 1
+                        ? "text-muted-foreground"
+                        : delta > 0
+                          ? "text-pitch"
+                          : "text-alert",
+                    )}
+                  >
+                    {delta > 0 ? "+" : ""}
+                    {delta.toFixed(1)}
                   </div>
                 </div>
               );
             })}
           </div>
           <p className="text-[11px] text-muted-foreground mt-4">
-            Δ = diferencia respecto a las odds teóricas. Cuantas más iteraciones, más se debería acercar a 0.
+            Δ = diferencia respecto a las odds teóricas. Cuantas más iteraciones, más se debería
+            acercar a 0.
           </p>
         </div>
       )}
@@ -208,10 +246,15 @@ function SimRevealModal({ cards, onClose }: { cards: SimCard[]; onClose: () => v
   const showAll = step >= cards.length;
   const current = !showAll ? cards[step] : null;
 
-  useEffect(() => { setFlipped(false); }, [step]);
+  useEffect(() => {
+    setFlipped(false);
+  }, [step]);
 
   const advance = () => {
-    if (!flipped) { setFlipped(true); return; }
+    if (!flipped) {
+      setFlipped(true);
+      return;
+    }
     setStep((s) => s + 1);
   };
   const skipAll = () => setStep(cards.length);
@@ -227,10 +270,17 @@ function SimRevealModal({ cards, onClose }: { cards: SimCard[]; onClose: () => v
 
       <div className="max-w-5xl w-full relative">
         <div className="text-center mb-6">
-          <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Simulación · sin afectar tu álbum</div>
-          <h2 className="font-display text-4xl mt-1">{showAll ? "Botín simulado" : `Carta ${step + 1} de ${cards.length}`}</h2>
+          <div className="text-[11px] uppercase tracking-widest text-accent font-bold">
+            Simulación · sin afectar tu álbum
+          </div>
+          <h2 className="font-display text-4xl mt-1">
+            {showAll ? "Botín simulado" : `Carta ${step + 1} de ${cards.length}`}
+          </h2>
           {!showAll && (
-            <button onClick={skipAll} className="text-xs text-muted-foreground hover:text-foreground mt-2 underline underline-offset-4">
+            <button
+              onClick={skipAll}
+              className="text-xs text-muted-foreground hover:text-foreground mt-2 underline underline-offset-4"
+            >
               Saltar animación
             </button>
           )}
@@ -254,7 +304,10 @@ function SimRevealModal({ cards, onClose }: { cards: SimCard[]; onClose: () => v
               ))}
             </div>
             <div className="text-center mt-6">
-              <button onClick={onClose} className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch">
+              <button
+                onClick={onClose}
+                className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch"
+              >
                 Cerrar
               </button>
             </div>

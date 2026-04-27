@@ -37,8 +37,22 @@ function fmtDate(iso: string) {
 }
 
 export function MatchCard({ match, editable, initialPrediction, onSave }: Props) {
-  const home = getTeam(match.homeId) ?? { id: match.homeId, name: "Por definir", code: "TBD", flag: "⏳", group: "?", confederation: "OFC" as const };
-  const away = getTeam(match.awayId) ?? { id: match.awayId, name: "Por definir", code: "TBD", flag: "⏳", group: "?", confederation: "OFC" as const };
+  const home = getTeam(match.homeId) ?? {
+    id: match.homeId,
+    name: "Por definir",
+    code: "TBD",
+    flag: "⏳",
+    group: "?",
+    confederation: "OFC" as const,
+  };
+  const away = getTeam(match.awayId) ?? {
+    id: match.awayId,
+    name: "Por definir",
+    code: "TBD",
+    flag: "⏳",
+    group: "?",
+    confederation: "OFC" as const,
+  };
   const isFinished = match.status === "finished";
   const isLive = match.status === "live";
   const isTbd = match.homeId === "tbd" || match.awayId === "tbd";
@@ -47,7 +61,9 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   const [saved, setSaved] = useState(!!initialPrediction);
   const [saving, setSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (initialPrediction) {
@@ -80,7 +96,9 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[3px] opacity-80"
-        style={{ background: `linear-gradient(90deg, ${homePal.color} 0%, ${homePal.color} 48%, transparent 50%, ${awayPal.color} 52%, ${awayPal.color} 100%)` }}
+        style={{
+          background: `linear-gradient(90deg, ${homePal.color} 0%, ${homePal.color} 48%, transparent 50%, ${awayPal.color} 52%, ${awayPal.color} 100%)`,
+        }}
       />
       <div
         aria-hidden
@@ -117,7 +135,9 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           </span>
         )}
         {isFinished && (
-          <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Final</span>
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+            Final
+          </span>
         )}
       </div>
 
@@ -125,23 +145,46 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <div className="flex flex-col items-center gap-2 text-center">
           <Flag teamId={home.id} className="text-5xl" />
-          <div className="font-display text-base md:text-lg tracking-wide leading-tight">{home.name}</div>
-          <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{home.code}</div>
+          <div className="font-display text-base md:text-lg tracking-wide leading-tight">
+            {home.name}
+          </div>
+          <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
+            {home.code}
+          </div>
         </div>
 
         <div className="flex flex-col items-center gap-2 px-2">
           {isFinished ? (
             <div className="font-display text-4xl md:text-5xl tabular-nums text-primary">
-              {match.homeScore} <span className="text-muted-foreground/50">-</span> {match.awayScore}
+              {match.homeScore} <span className="text-muted-foreground/50">-</span>{" "}
+              {match.awayScore}
             </div>
           ) : editable && !isTbd ? (
             <div className="flex items-center gap-2">
-              <ScoreInput label={`Goles ${home.name}`} value={pred.home} onChange={(v) => { setPred({ ...pred, home: v }); setSaved(false); }} />
-              <span className="text-muted-foreground font-display text-2xl" aria-hidden>:</span>
-              <ScoreInput label={`Goles ${away.name}`} value={pred.away} onChange={(v) => { setPred({ ...pred, away: v }); setSaved(false); }} />
+              <ScoreInput
+                label={`Goles ${home.name}`}
+                value={pred.home}
+                onChange={(v) => {
+                  setPred({ ...pred, home: v });
+                  setSaved(false);
+                }}
+              />
+              <span className="text-muted-foreground font-display text-2xl" aria-hidden>
+                :
+              </span>
+              <ScoreInput
+                label={`Goles ${away.name}`}
+                value={pred.away}
+                onChange={(v) => {
+                  setPred({ ...pred, away: v });
+                  setSaved(false);
+                }}
+              />
             </div>
           ) : (
-            <div className="font-display text-3xl text-muted-foreground/70">{isTbd ? "TBD" : "VS"}</div>
+            <div className="font-display text-3xl text-muted-foreground/70">
+              {isTbd ? "TBD" : "VS"}
+            </div>
           )}
           {!isFinished && (
             <div className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -153,8 +196,12 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
 
         <div className="flex flex-col items-center gap-2 text-center">
           <Flag teamId={away.id} className="text-5xl" />
-          <div className="font-display text-base md:text-lg tracking-wide leading-tight">{away.name}</div>
-          <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{away.code}</div>
+          <div className="font-display text-base md:text-lg tracking-wide leading-tight">
+            {away.name}
+          </div>
+          <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
+            {away.code}
+          </div>
         </div>
       </div>
 
@@ -162,7 +209,9 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
       <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <MapPin className="h-3 w-3" />
-          <span>{match.stadium} · {match.city}</span>
+          <span>
+            {match.stadium} · {match.city}
+          </span>
         </div>
         {editable && !isTbd && (
           <button
@@ -178,7 +227,15 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   );
 }
 
-function ScoreInput({ value, onChange, label }: { value: number; onChange: (v: number) => void; label?: string }) {
+function ScoreInput({
+  value,
+  onChange,
+  label,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  label?: string;
+}) {
   return (
     <input
       type="number"
