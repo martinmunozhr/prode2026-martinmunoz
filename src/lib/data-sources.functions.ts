@@ -281,6 +281,10 @@ export const previewRosterText = createServerFn({ method: "POST" })
   })
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch {
+      return { players: [] as ReturnType<typeof parseRosterText> };
+    }
     return { players: parseRosterText(data.text) };
   });
