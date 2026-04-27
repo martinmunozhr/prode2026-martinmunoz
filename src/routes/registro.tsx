@@ -8,7 +8,10 @@ export const Route = createFileRoute("/registro")({
   head: () => ({
     meta: [
       { title: "Registrate — Prode Mundial 2026" },
-      { name: "description", content: "Creá tu cuenta gratis y empezá a pronosticar el Mundial 2026." },
+      {
+        name: "description",
+        content: "Creá tu cuenta gratis y empezá a pronosticar el Mundial 2026.",
+      },
       { property: "og:title", content: "Sumate al Prode 2026" },
       { property: "og:description", content: "Creá tu cuenta gratis y jugá el prode del Mundial." },
     ],
@@ -55,13 +58,41 @@ function RegistroPage() {
             <Trophy className="h-7 w-7 text-primary-foreground" />
           </div>
         </div>
-        <h1 className="font-display text-3xl sm:text-4xl text-center tracking-tight">Sumate al prode</h1>
-        <p className="text-center text-muted-foreground mt-2 text-sm">Gratis. 30 segundos. Sin tarjeta.</p>
+        <h1 className="font-display text-3xl sm:text-4xl text-center tracking-tight">
+          Sumate al prode
+        </h1>
+        <p className="text-center text-muted-foreground mt-2 text-sm">
+          Gratis. 30 segundos. Sin tarjeta.
+        </p>
 
         <form className="mt-8 space-y-4" onSubmit={onSubmit}>
-          <Field label="Usuario" type="text" placeholder="elprofeta" value={username} onChange={setUsername} required autoComplete="username" />
-          <Field label="Email" type="email" placeholder="vos@email.com" value={email} onChange={setEmail} required autoComplete="email" />
-          <Field label="Contraseña" type="password" placeholder="Mínimo 6 caracteres" value={password} onChange={setPassword} required autoComplete="new-password" />
+          <Field
+            label="Usuario"
+            type="text"
+            placeholder="elprofeta"
+            value={username}
+            onChange={setUsername}
+            required
+            autoComplete="username"
+          />
+          <Field
+            label="Email"
+            type="email"
+            placeholder="vos@email.com"
+            value={email}
+            onChange={setEmail}
+            required
+            autoComplete="email"
+          />
+          <Field
+            label="Contraseña"
+            type="password"
+            placeholder="Mínimo 6 caracteres"
+            value={password}
+            onChange={setPassword}
+            required
+            autoComplete="new-password"
+          />
           <button
             type="submit"
             disabled={loading}
@@ -73,20 +104,37 @@ function RegistroPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           ¿Ya tenés cuenta?{" "}
-          <Link to="/login" className="text-primary font-semibold hover:underline">Ingresá</Link>
+          <Link to="/login" className="text-primary font-semibold hover:underline">
+            Ingresá
+          </Link>
         </p>
       </div>
     </div>
   );
 }
 
-function Field({ label, type, placeholder, value, onChange, required, autoComplete }: {
-  label: string; type: string; placeholder: string;
-  value: string; onChange: (v: string) => void; required?: boolean; autoComplete?: string;
+function Field({
+  label,
+  type,
+  placeholder,
+  value,
+  onChange,
+  required,
+  autoComplete,
+}: {
+  label: string;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+  autoComplete?: string;
 }) {
   return (
     <div>
-      <label className="block text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">{label}</label>
+      <label className="block text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
+        {label}
+      </label>
       <input
         type={type}
         placeholder={placeholder}

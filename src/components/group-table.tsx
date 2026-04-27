@@ -30,10 +30,20 @@ export function GroupTable({ group }: { group: string }) {
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={r.team.id} className={cn("border-t border-border/30 hover:bg-muted/30 transition-colors", i < 2 && "bg-primary/5")}>
+            <tr
+              key={r.team.id}
+              className={cn(
+                "border-t border-border/30 hover:bg-muted/30 transition-colors",
+                i < 2 && "bg-primary/5",
+              )}
+            >
               <td className="px-3 py-2.5 font-display text-base tabular-nums">{i + 1}</td>
               <td className="px-3 py-2.5">
-                <Link to="/equipos/$equipoId" params={{ equipoId: r.team.id }} className="flex items-center gap-2 hover:text-primary">
+                <Link
+                  to="/equipos/$equipoId"
+                  params={{ equipoId: r.team.id }}
+                  className="flex items-center gap-2 hover:text-primary"
+                >
                   <Flag teamId={r.team.id} className="text-xl" />
                   <span className="font-semibold truncate">{r.team.name}</span>
                 </Link>
@@ -42,10 +52,18 @@ export function GroupTable({ group }: { group: string }) {
               <td className="px-2 py-2.5 text-center tabular-nums hidden sm:table-cell">{r.pg}</td>
               <td className="px-2 py-2.5 text-center tabular-nums hidden sm:table-cell">{r.pe}</td>
               <td className="px-2 py-2.5 text-center tabular-nums hidden sm:table-cell">{r.pp}</td>
-              <td className={cn("px-2 py-2.5 text-center tabular-nums", r.dg > 0 ? "text-primary" : r.dg < 0 ? "text-alert" : "")}>
-                {r.dg > 0 ? "+" : ""}{r.dg}
+              <td
+                className={cn(
+                  "px-2 py-2.5 text-center tabular-nums",
+                  r.dg > 0 ? "text-primary" : r.dg < 0 ? "text-alert" : "",
+                )}
+              >
+                {r.dg > 0 ? "+" : ""}
+                {r.dg}
               </td>
-              <td className="px-2 py-2.5 text-center font-display text-lg text-primary tabular-nums">{r.pts}</td>
+              <td className="px-2 py-2.5 text-center font-display text-lg text-primary tabular-nums">
+                {r.pts}
+              </td>
             </tr>
           ))}
         </tbody>

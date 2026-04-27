@@ -79,16 +79,18 @@ export function GoalscorerPicker({
       }
       setLoading(false);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [open, homeId, awayId, matchId, user]);
 
   const homePicked = useMemo(
     () => picks.filter((p) => p.team_id === homeId).reduce((s, p) => s + p.goals_predicted, 0),
-    [picks, homeId]
+    [picks, homeId],
   );
   const awayPicked = useMemo(
     () => picks.filter((p) => p.team_id === awayId).reduce((s, p) => s + p.goals_predicted, 0),
-    [picks, awayId]
+    [picks, awayId],
   );
 
   const totalAlreadyPicked = picks.length;
@@ -180,15 +182,24 @@ export function GoalscorerPicker({
           <div className="flex items-start gap-2 text-[11px] text-muted-foreground bg-secondary/30 rounded-md p-2">
             <Info className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
             <span>
-              Es <strong>opcional</strong>. Si lo hacés, sumás <strong>+1 punto extra por cada goleador acertado</strong> (×
-              multiplicador de fase). Si pronosticaste {predHome}-{predAway}, debés elegir{" "}
-              <strong>{predHome} de {homeName}</strong> y <strong>{predAway} de {awayName}</strong>.
-              Podés repetir el mismo jugador (ej: hat-trick).
+              Es <strong>opcional</strong>. Si lo hacés, sumás{" "}
+              <strong>+1 punto extra por cada goleador acertado</strong> (× multiplicador de fase).
+              Si pronosticaste {predHome}-{predAway}, debés elegir{" "}
+              <strong>
+                {predHome} de {homeName}
+              </strong>{" "}
+              y{" "}
+              <strong>
+                {predAway} de {awayName}
+              </strong>
+              . Podés repetir el mismo jugador (ej: hat-trick).
             </span>
           </div>
 
           {loading ? (
-            <div className="text-xs text-muted-foreground text-center py-4">Cargando plantillas...</div>
+            <div className="text-xs text-muted-foreground text-center py-4">
+              Cargando plantillas...
+            </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-3">
               <TeamColumn
@@ -239,7 +250,9 @@ function TeamColumn({
     <div>
       <div className="flex items-center justify-between mb-1.5">
         <div className="text-[11px] font-bold uppercase tracking-widest">{title}</div>
-        <div className={`text-[11px] tabular-nums ${complete ? "text-primary" : "text-muted-foreground"}`}>
+        <div
+          className={`text-[11px] tabular-nums ${complete ? "text-primary" : "text-muted-foreground"}`}
+        >
           {picked}/{allowed}
         </div>
       </div>

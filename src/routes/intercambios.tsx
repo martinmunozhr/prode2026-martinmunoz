@@ -1,6 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeftRight, Loader2, Plus, X, Send, Check, Search, Inbox, History } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Loader2,
+  Plus,
+  X,
+  Send,
+  Check,
+  Search,
+  Inbox,
+  History,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth-context";
 import { FutCard } from "@/components/fut-card";
@@ -14,9 +24,16 @@ export const Route = createFileRoute("/intercambios")({
   head: () => ({
     meta: [
       { title: "Intercambios — Prode Mundial 2026" },
-      { name: "description", content: "Proponé intercambios de figuritas con otros participantes y completá tu álbum más rápido." },
+      {
+        name: "description",
+        content:
+          "Proponé intercambios de figuritas con otros participantes y completá tu álbum más rápido.",
+      },
       { property: "og:title", content: "Intercambios — Prode Mundial 2026" },
-      { property: "og:description", content: "Intercambiá tus figuritas repetidas con otros participantes." },
+      {
+        property: "og:description",
+        content: "Intercambiá tus figuritas repetidas con otros participantes.",
+      },
     ],
   }),
   component: IntercambiosPage,
@@ -58,10 +75,19 @@ type Tab = "recibidas" | "enviadas" | "nuevo" | "historial";
 // Lazy import — Outbox icon en lucide se llama "Send"-like; usamos "Inbox" + "Send" pero hagamos versión propia para "enviadas"
 function OutboxIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
       <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-      <path d="M12 13V3" /><path d="m9 6 3-3 3 3" />
+      <path d="M12 13V3" />
+      <path d="m9 6 3-3 3 3" />
     </svg>
   );
 }
@@ -79,8 +105,18 @@ function IntercambiosPage() {
           Necesitás ingresar para proponer intercambios y completar tu álbum.
         </p>
         <div className="mt-6 flex gap-3 justify-center">
-          <Link to="/login" className="px-5 py-2.5 rounded-md border border-border text-sm font-bold uppercase tracking-wider">Ingresar</Link>
-          <Link to="/registro" className="px-5 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch">Sumate</Link>
+          <Link
+            to="/login"
+            className="px-5 py-2.5 rounded-md border border-border text-sm font-bold uppercase tracking-wider"
+          >
+            Ingresar
+          </Link>
+          <Link
+            to="/registro"
+            className="px-5 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
+          >
+            Sumate
+          </Link>
         </div>
       </div>
     );
@@ -89,18 +125,41 @@ function IntercambiosPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <header className="mb-8">
-        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Mercado de figuritas</div>
+        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">
+          Mercado de figuritas
+        </div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Intercambios</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl">
-          Ofrecé tus repetidas y pedí las que te faltan. El otro participante decide si acepta o rechaza tu propuesta.
+          Ofrecé tus repetidas y pedí las que te faltan. El otro participante decide si acepta o
+          rechaza tu propuesta.
         </p>
       </header>
 
       <div className="flex gap-1 p-1 rounded-xl border border-border/50 bg-card/40 w-fit mb-6 overflow-x-auto">
-        <TabBtn active={tab === "recibidas"} onClick={() => setTab("recibidas")} icon={Inbox} label="Recibidas" />
-        <TabBtn active={tab === "enviadas"} onClick={() => setTab("enviadas")} icon={OutboxIcon} label="Enviadas" />
-        <TabBtn active={tab === "nuevo"} onClick={() => setTab("nuevo")} icon={Plus} label="Nuevo" />
-        <TabBtn active={tab === "historial"} onClick={() => setTab("historial")} icon={History} label="Historial" />
+        <TabBtn
+          active={tab === "recibidas"}
+          onClick={() => setTab("recibidas")}
+          icon={Inbox}
+          label="Recibidas"
+        />
+        <TabBtn
+          active={tab === "enviadas"}
+          onClick={() => setTab("enviadas")}
+          icon={OutboxIcon}
+          label="Enviadas"
+        />
+        <TabBtn
+          active={tab === "nuevo"}
+          onClick={() => setTab("nuevo")}
+          icon={Plus}
+          label="Nuevo"
+        />
+        <TabBtn
+          active={tab === "historial"}
+          onClick={() => setTab("historial")}
+          icon={History}
+          label="Historial"
+        />
       </div>
 
       {tab === "recibidas" && <ListaTab kind="recibidas" />}
@@ -111,13 +170,25 @@ function IntercambiosPage() {
   );
 }
 
-function TabBtn({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: React.ComponentType<{ className?: string }>; label: string }) {
+function TabBtn({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
   return (
     <button
       onClick={onClick}
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap",
-        active ? "bg-primary text-primary-foreground shadow-glow-pitch" : "text-muted-foreground hover:text-foreground hover:bg-background/40",
+        active
+          ? "bg-primary text-primary-foreground shadow-glow-pitch"
+          : "text-muted-foreground hover:text-foreground hover:bg-background/40",
       )}
     >
       <Icon className="h-4 w-4" />
@@ -147,21 +218,27 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
       const ids = tr.map((t) => t.id);
       const { data: its } = await supabase
         .from("trade_items")
-        .select("trade_id, from_user_id, player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)")
+        .select(
+          "trade_id, from_user_id, player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)",
+        )
         .in("trade_id", ids);
       setItems((its ?? []) as unknown as TradeItemRow[]);
 
       const userIds = Array.from(new Set(tr.flatMap((t) => [t.proposer_id, t.receiver_id])));
       const { data: pr } = await supabase.from("profiles").select("id, username").in("id", userIds);
       const map: Record<string, ProfileLite> = {};
-      (pr ?? []).forEach((p) => { map[p.id] = p as ProfileLite; });
+      (pr ?? []).forEach((p) => {
+        map[p.id] = p as ProfileLite;
+      });
       setProfiles(map);
     } else {
       setItems([]);
     }
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user?.id, kind]);
+  useEffect(() => {
+    load(); /* eslint-disable-next-line */
+  }, [user?.id, kind]);
 
   const handleAccept = async (id: string) => {
     setBusy(id);
@@ -171,7 +248,9 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
       await load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "No se pudo aceptar");
-    } finally { setBusy(null); }
+    } finally {
+      setBusy(null);
+    }
   };
 
   const handleReject = async (id: string) => {
@@ -182,17 +261,28 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
       await load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "No se pudo cancelar");
-    } finally { setBusy(null); }
+    } finally {
+      setBusy(null);
+    }
   };
 
-  if (!trades) return <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
+  if (!trades)
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+      </div>
+    );
 
   if (trades.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border/60 bg-card/30 p-10 text-center">
         <ArrowLeftRight className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
         <p className="text-sm text-muted-foreground">
-          {kind === "recibidas" ? "No tenés propuestas pendientes." : kind === "enviadas" ? "No mandaste ninguna propuesta todavía." : "No hay intercambios cerrados."}
+          {kind === "recibidas"
+            ? "No tenés propuestas pendientes."
+            : kind === "enviadas"
+              ? "No mandaste ninguna propuesta todavía."
+              : "No hay intercambios cerrados."}
         </p>
       </div>
     );
@@ -212,20 +302,36 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
           <div key={t.id} className="rounded-2xl border border-border/50 bg-card/40 p-4 md:p-5">
             <div className="flex items-baseline justify-between flex-wrap gap-2 mb-3">
               <div className="flex items-center gap-2">
-                <span className={cn(
-                  "inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest",
-                  t.status === "pending" && "bg-amber-500/20 text-amber-300 border border-amber-500/40",
-                  t.status === "accepted" && "bg-pitch/20 text-pitch border border-pitch/40",
-                  t.status === "rejected" && "bg-alert/20 text-alert border border-alert/40",
-                  t.status === "cancelled" && "bg-muted text-muted-foreground",
-                )}>
-                  {t.status === "pending" ? "Pendiente" : t.status === "accepted" ? "Aceptado" : t.status === "rejected" ? "Rechazado" : "Cancelado"}
+                <span
+                  className={cn(
+                    "inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest",
+                    t.status === "pending" &&
+                      "bg-amber-500/20 text-amber-300 border border-amber-500/40",
+                    t.status === "accepted" && "bg-pitch/20 text-pitch border border-pitch/40",
+                    t.status === "rejected" && "bg-alert/20 text-alert border border-alert/40",
+                    t.status === "cancelled" && "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {t.status === "pending"
+                    ? "Pendiente"
+                    : t.status === "accepted"
+                      ? "Aceptado"
+                      : t.status === "rejected"
+                        ? "Rechazado"
+                        : "Cancelado"}
                 </span>
                 <span className="text-sm font-bold">
                   {kind === "enviadas" ? "Para " : kind === "recibidas" ? "De " : ""}
                   <span className="text-primary">{otherUser}</span>
                 </span>
-                <span className="text-[11px] text-muted-foreground">{new Date(t.created_at).toLocaleDateString("es-AR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {new Date(t.created_at).toLocaleDateString("es-AR", {
+                    day: "2-digit",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
               <div className="flex gap-2">
                 {isReceived && (
@@ -235,7 +341,11 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
                       onClick={() => handleAccept(t.id)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-pitch text-pitch-foreground text-xs font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
                     >
-                      {busy === t.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+                      {busy === t.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Check className="h-3.5 w-3.5" />
+                      )}
                       Aceptar
                     </button>
                     <button
@@ -266,8 +376,16 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
             )}
 
             <div className="grid md:grid-cols-2 gap-4">
-              <TradeSide title={kind === "recibidas" ? "Te ofrecen" : "Vas a entregar"} cards={kind === "recibidas" ? otherItems : myItems} highlight={kind === "recibidas"} />
-              <TradeSide title={kind === "recibidas" ? "Te piden" : "Vas a recibir"} cards={kind === "recibidas" ? myItems : otherItems} highlight={kind !== "recibidas"} />
+              <TradeSide
+                title={kind === "recibidas" ? "Te ofrecen" : "Vas a entregar"}
+                cards={kind === "recibidas" ? otherItems : myItems}
+                highlight={kind === "recibidas"}
+              />
+              <TradeSide
+                title={kind === "recibidas" ? "Te piden" : "Vas a recibir"}
+                cards={kind === "recibidas" ? myItems : otherItems}
+                highlight={kind !== "recibidas"}
+              />
             </div>
           </div>
         );
@@ -276,10 +394,30 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
   );
 }
 
-function TradeSide({ title, cards, highlight }: { title: string; cards: TradeItemRow[]; highlight: boolean }) {
+function TradeSide({
+  title,
+  cards,
+  highlight,
+}: {
+  title: string;
+  cards: TradeItemRow[];
+  highlight: boolean;
+}) {
   return (
-    <div className={cn("rounded-xl p-3 border", highlight ? "border-pitch/30 bg-pitch/5" : "border-border/40 bg-background/30")}>
-      <div className={cn("text-[10px] uppercase tracking-widest font-bold mb-2", highlight ? "text-pitch" : "text-muted-foreground")}>{title}</div>
+    <div
+      className={cn(
+        "rounded-xl p-3 border",
+        highlight ? "border-pitch/30 bg-pitch/5" : "border-border/40 bg-background/30",
+      )}
+    >
+      <div
+        className={cn(
+          "text-[10px] uppercase tracking-widest font-bold mb-2",
+          highlight ? "text-pitch" : "text-muted-foreground",
+        )}
+      >
+        {title}
+      </div>
       {cards.length === 0 ? (
         <div className="text-xs text-muted-foreground py-4 text-center">—</div>
       ) : (
@@ -296,7 +434,9 @@ function TradeSide({ title, cards, highlight }: { title: string; cards: TradeIte
                 rarity={it.player.rarity}
               />
               {it.quantity > 1 && (
-                <span className="absolute -top-1 -right-1 z-30 px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">×{it.quantity}</span>
+                <span className="absolute -top-1 -right-1 z-30 px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                  ×{it.quantity}
+                </span>
               )}
             </div>
           ))}
@@ -339,7 +479,9 @@ function NuevoTradeTab() {
     (async () => {
       const { data } = await supabase
         .from("user_collection")
-        .select("player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)")
+        .select(
+          "player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)",
+        )
         .eq("user_id", user.id)
         .gt("quantity", 1);
       setMyCol((data ?? []) as unknown as CollectionRow[]);
@@ -348,16 +490,22 @@ function NuevoTradeTab() {
 
   // Cargar colección del otro
   useEffect(() => {
-    if (!partnerId) { setTheirCol([]); return; }
+    if (!partnerId) {
+      setTheirCol([]);
+      return;
+    }
     (async () => {
       const { data } = await supabase
         .from("user_collection")
-        .select("player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)")
+        .select(
+          "player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)",
+        )
         .eq("user_id", partnerId)
         .gt("quantity", 1);
       setTheirCol((data ?? []) as unknown as CollectionRow[]);
     })();
-    setOffer({}); setRequest({});
+    setOffer({});
+    setRequest({});
   }, [partnerId]);
 
   const filteredPartners = useMemo(
@@ -370,7 +518,8 @@ function NuevoTradeTab() {
       const cur = o[pid] ?? 0;
       const next = cur >= max - 1 ? 0 : cur + 1; // dejamos siempre 1 al usuario
       const copy = { ...o };
-      if (next === 0) delete copy[pid]; else copy[pid] = next;
+      if (next === 0) delete copy[pid];
+      else copy[pid] = next;
       return copy;
     });
   };
@@ -379,7 +528,8 @@ function NuevoTradeTab() {
       const cur = o[pid] ?? 0;
       const next = cur >= max - 1 ? 0 : cur + 1;
       const copy = { ...o };
-      if (next === 0) delete copy[pid]; else copy[pid] = next;
+      if (next === 0) delete copy[pid];
+      else copy[pid] = next;
       return copy;
     });
   };
@@ -402,7 +552,9 @@ function NuevoTradeTab() {
         headers: await authHeaders(),
       });
       toast.success("¡Propuesta enviada!");
-      setOffer({}); setRequest({}); setMessage("");
+      setOffer({});
+      setRequest({});
+      setMessage("");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "No se pudo enviar");
     } finally {
@@ -414,7 +566,9 @@ function NuevoTradeTab() {
     <div className="space-y-6">
       {/* Selección de usuario */}
       <div className="rounded-2xl border border-border/50 bg-card/40 p-5">
-        <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold mb-3">¿Con quién querés intercambiar?</div>
+        <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold mb-3">
+          ¿Con quién querés intercambiar?
+        </div>
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -439,7 +593,9 @@ function NuevoTradeTab() {
               {p.username}
             </button>
           ))}
-          {filteredPartners.length === 0 && <p className="text-xs text-muted-foreground">Sin resultados.</p>}
+          {filteredPartners.length === 0 && (
+            <p className="text-xs text-muted-foreground">Sin resultados.</p>
+          )}
         </div>
       </div>
 
@@ -474,15 +630,20 @@ function NuevoTradeTab() {
             />
             <div className="flex items-center justify-between mt-3 flex-wrap gap-3">
               <div className="text-xs text-muted-foreground">
-                Ofrecés <span className="font-bold text-foreground">{offerCount}</span> figurita{offerCount !== 1 ? "s" : ""} ·
-                Pedís <span className="font-bold text-foreground">{requestCount}</span>
+                Ofrecés <span className="font-bold text-foreground">{offerCount}</span> figurita
+                {offerCount !== 1 ? "s" : ""} · Pedís{" "}
+                <span className="font-bold text-foreground">{requestCount}</span>
               </div>
               <button
                 onClick={send}
                 disabled={!canSend}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100"
               >
-                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {sending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
                 Enviar propuesta
               </button>
             </div>
@@ -494,22 +655,31 @@ function NuevoTradeTab() {
 }
 
 function CollectionPicker({
-  title, empty, cards, selected, onToggle, accent,
+  title,
+  empty,
+  cards,
+  selected,
+  onToggle,
+  accent,
 }: {
-  title: string; empty: string;
-  cards: CollectionRow[]; selected: Record<string, number>;
+  title: string;
+  empty: string;
+  cards: CollectionRow[];
+  selected: Record<string, number>;
   onToggle: (pid: string, max: number) => void;
   accent: "pitch" | "primary";
 }) {
   const [filter, setFilter] = useState<"todas" | CardRarity>("todas");
   const filtered = useMemo(
-    () => filter === "todas" ? cards : cards.filter((c) => c.player.rarity === filter),
+    () => (filter === "todas" ? cards : cards.filter((c) => c.player.rarity === filter)),
     [cards, filter],
   );
 
   return (
     <div className="rounded-2xl border border-border/50 bg-card/40 p-4">
-      <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold mb-3">{title}</div>
+      <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold mb-3">
+        {title}
+      </div>
       <div className="flex flex-wrap gap-1.5 mb-3">
         {(["todas", "legendario", "epico", "raro", "comun"] as const).map((f) => (
           <button
@@ -517,7 +687,9 @@ function CollectionPicker({
             onClick={() => setFilter(f)}
             className={cn(
               "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md transition-colors",
-              filter === f ? "bg-primary text-primary-foreground" : "bg-background/40 text-muted-foreground hover:text-foreground",
+              filter === f
+                ? "bg-primary text-primary-foreground"
+                : "bg-background/40 text-muted-foreground hover:text-foreground",
             )}
           >
             {f === "todas" ? "Todas" : RARITY_LABEL[f as CardRarity]}
@@ -537,7 +709,10 @@ function CollectionPicker({
                 onClick={() => onToggle(c.player_id, max)}
                 className={cn(
                   "relative rounded-xl transition-all",
-                  sel > 0 && (accent === "pitch" ? "ring-2 ring-pitch shadow-glow-pitch" : "ring-2 ring-primary shadow-glow-pitch"),
+                  sel > 0 &&
+                    (accent === "pitch"
+                      ? "ring-2 ring-pitch shadow-glow-pitch"
+                      : "ring-2 ring-primary shadow-glow-pitch"),
                 )}
               >
                 <FutCard

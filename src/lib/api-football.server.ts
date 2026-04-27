@@ -14,10 +14,26 @@ export type ApiFootballResponse<T> = {
   results: number;
 };
 
-export async function getRemainingRequests(): Promise<{ used: number; limit: number; date: string }> {
-  const { data: limitRow } = await supabaseAdmin.from("app_settings").select("value").eq("key", "api_football_daily_limit").single();
-  const { data: usedRow } = await supabaseAdmin.from("app_settings").select("value").eq("key", "api_football_requests_today").single();
-  const { data: dateRow } = await supabaseAdmin.from("app_settings").select("value").eq("key", "last_sync_date").single();
+export async function getRemainingRequests(): Promise<{
+  used: number;
+  limit: number;
+  date: string;
+}> {
+  const { data: limitRow } = await supabaseAdmin
+    .from("app_settings")
+    .select("value")
+    .eq("key", "api_football_daily_limit")
+    .single();
+  const { data: usedRow } = await supabaseAdmin
+    .from("app_settings")
+    .select("value")
+    .eq("key", "api_football_requests_today")
+    .single();
+  const { data: dateRow } = await supabaseAdmin
+    .from("app_settings")
+    .select("value")
+    .eq("key", "last_sync_date")
+    .single();
 
   const today = new Date().toISOString().slice(0, 10);
   const lastDate = String(dateRow?.value ?? "").replace(/"/g, "") || "1970-01-01";
@@ -26,8 +42,18 @@ export async function getRemainingRequests(): Promise<{ used: number; limit: num
   if (lastDate !== today) {
     await supabaseAdmin.from("app_settings").upsert(
       [
-        { key: "api_football_requests_today", value: 0, is_public: true, updated_at: new Date().toISOString() },
-        { key: "last_sync_date", value: today, is_public: true, updated_at: new Date().toISOString() },
+        {
+          key: "api_football_requests_today",
+          value: 0,
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          key: "last_sync_date",
+          value: today,
+          is_public: true,
+          updated_at: new Date().toISOString(),
+        },
       ],
       { onConflict: "key" },
     );
@@ -60,7 +86,10 @@ export async function apiFootballFetch<T>(
 
   if (!res.ok) throw new Error(`API-Football ${path} -> ${res.status}: ${await res.text()}`);
   const json = (await res.json()) as ApiFootballResponse<T>;
-  if (json.errors && (Array.isArray(json.errors) ? json.errors.length : Object.keys(json.errors).length) > 0) {
+  if (
+    json.errors &&
+    (Array.isArray(json.errors) ? json.errors.length : Object.keys(json.errors).length) > 0
+  ) {
     // API-Football returns errors as object or array; surface them but don't throw if quota issue.
     console.warn("API-Football payload errors:", json.errors);
   }

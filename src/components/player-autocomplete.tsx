@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, X } from "lucide-react";
 
-type PlayerLite = { id: string; name: string; team_id: string; team_name?: string; team_flag?: string; position: string };
+type PlayerLite = {
+  id: string;
+  name: string;
+  team_id: string;
+  team_name?: string;
+  team_flag?: string;
+  position: string;
+};
 
 type Props = {
   value: string | null;
@@ -17,14 +24,22 @@ type Props = {
  * Autocomplete sobre la tabla players. Si todavía no se cargaron planteles,
  * permite escritura libre (texto plano) para que el usuario igual pueda jugar.
  */
-export function PlayerAutocomplete({ value, onChange, placeholder, disabled, positionFilter }: Props) {
+export function PlayerAutocomplete({
+  value,
+  onChange,
+  placeholder,
+  disabled,
+  positionFilter,
+}: Props) {
   const [query, setQuery] = useState(value ?? "");
   const [open, setOpen] = useState(false);
   const [players, setPlayers] = useState<PlayerLite[]>([]);
   const [loadedAll, setLoadedAll] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setQuery(value ?? ""); }, [value]);
+  useEffect(() => {
+    setQuery(value ?? "");
+  }, [value]);
 
   useEffect(() => {
     let active = true;
@@ -51,7 +66,9 @@ export function PlayerAutocomplete({ value, onChange, placeholder, disabled, pos
       setPlayers(rows);
       setLoadedAll(true);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [positionFilter]);
 
   // Click outside
@@ -67,7 +84,9 @@ export function PlayerAutocomplete({ value, onChange, placeholder, disabled, pos
     const q = query.trim().toLowerCase();
     if (!q) return players.slice(0, 20);
     return players
-      .filter((p) => p.name.toLowerCase().includes(q) || (p.team_name ?? "").toLowerCase().includes(q))
+      .filter(
+        (p) => p.name.toLowerCase().includes(q) || (p.team_name ?? "").toLowerCase().includes(q),
+      )
       .slice(0, 20);
   }, [query, players]);
 
@@ -92,7 +111,10 @@ export function PlayerAutocomplete({ value, onChange, placeholder, disabled, pos
         {query && !disabled && (
           <button
             type="button"
-            onClick={() => { setQuery(""); onChange(null); }}
+            onClick={() => {
+              setQuery("");
+              onChange(null);
+            }}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             aria-label="Limpiar"
           >
@@ -103,7 +125,9 @@ export function PlayerAutocomplete({ value, onChange, placeholder, disabled, pos
 
       {open && !disabled && (
         <div className="absolute z-30 mt-1 w-full max-h-72 overflow-y-auto rounded-xl border border-border bg-popover shadow-elevated">
-          {!loadedAll && <div className="px-3 py-2 text-xs text-muted-foreground">Cargando jugadores...</div>}
+          {!loadedAll && (
+            <div className="px-3 py-2 text-xs text-muted-foreground">Cargando jugadores...</div>
+          )}
           {loadedAll && players.length === 0 && (
             <div className="px-3 py-3 text-xs text-muted-foreground">
               Aún no hay planteles cargados. Escribí el nombre libremente.
@@ -113,12 +137,18 @@ export function PlayerAutocomplete({ value, onChange, placeholder, disabled, pos
             <button
               key={p.id}
               type="button"
-              onClick={() => { setQuery(p.name); onChange(p.name); setOpen(false); }}
+              onClick={() => {
+                setQuery(p.name);
+                onChange(p.name);
+                setOpen(false);
+              }}
               className="w-full text-left px-3 py-2 hover:bg-muted/50 flex items-center gap-2 text-sm"
             >
               <span className="text-lg">{p.team_flag}</span>
               <span className="flex-1 truncate">{p.name}</span>
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{p.team_name}</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                {p.team_name}
+              </span>
             </button>
           ))}
           {loadedAll && matches.length === 0 && query && (

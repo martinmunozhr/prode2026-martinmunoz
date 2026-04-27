@@ -25,8 +25,13 @@ export function computeInsights(
   preds: UserPrediction[],
   matchesById: Record<string, Match>,
 ): UserInsights {
-  let exact = 0, partial = 0, miss = 0, totalPoints = 0;
-  let currentStreak = 0, bestStreak = 0, runningStreak = 0;
+  let exact = 0,
+    partial = 0,
+    miss = 0,
+    totalPoints = 0;
+  let currentStreak = 0,
+    bestStreak = 0,
+    runningStreak = 0;
   const teamPickCount: Record<string, number> = {};
 
   // Ordenar por fecha asc para racha
@@ -40,8 +45,8 @@ export function computeInsights(
       outcomeOf(p.home_score, p.away_score) === "home"
         ? m.homeId
         : outcomeOf(p.home_score, p.away_score) === "away"
-        ? m.awayId
-        : null;
+          ? m.awayId
+          : null;
     if (winnerPick) teamPickCount[winnerPick] = (teamPickCount[winnerPick] ?? 0) + 1;
 
     if (m.status !== "finished" || m.homeScore == null || m.awayScore == null) continue;

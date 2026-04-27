@@ -11,7 +11,11 @@ import {
 } from "@/lib/api-football.server";
 
 function norm(s: string) {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
 }
 
 type ApiFixture = {
@@ -37,7 +41,9 @@ async function runSync() {
     });
     requestsUsed++;
 
-    const { data: matches } = await supabaseAdmin.from("matches").select("id, home_id, away_id, match_date");
+    const { data: matches } = await supabaseAdmin
+      .from("matches")
+      .select("id, home_id, away_id, match_date");
     const teamMap = new Map<string, string>();
     const { data: allTeams } = await supabaseAdmin.from("teams").select("id, name");
     for (const t of allTeams ?? []) teamMap.set(norm(t.name), t.id);
@@ -55,7 +61,9 @@ async function runSync() {
       );
       if (!ourMatch) continue;
       const status =
-        fx.fixture.status.short === "FT" || fx.fixture.status.short === "AET" || fx.fixture.status.short === "PEN"
+        fx.fixture.status.short === "FT" ||
+        fx.fixture.status.short === "AET" ||
+        fx.fixture.status.short === "PEN"
           ? "finished"
           : ["1H", "2H", "HT", "ET", "P", "BT", "LIVE"].includes(fx.fixture.status.short)
             ? "live"

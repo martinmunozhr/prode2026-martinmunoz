@@ -115,7 +115,10 @@ export function useChallenges(): {
 
 // ---------- ALL PROFILES (para elegir oponente) ----------
 
-export function useAllProfiles(excludeUserId?: string): { profiles: ProfileLite[]; loading: boolean } {
+export function useAllProfiles(excludeUserId?: string): {
+  profiles: ProfileLite[];
+  loading: boolean;
+} {
   const [profiles, setProfiles] = useState<ProfileLite[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -58,12 +58,18 @@ export type CrystalBallPrediction = {
 
 export type CrystalBallResult = CrystalBallPrediction;
 
-export function calcCrystalBallPoints(pred: CrystalBallPrediction, real: CrystalBallResult): number {
+export function calcCrystalBallPoints(
+  pred: CrystalBallPrediction,
+  real: CrystalBallResult,
+): number {
   let p = 0;
   if (pred.campeon_id && pred.campeon_id === real.campeon_id) p += crystalBallPoints.campeon;
-  if (pred.goleador_nombre && pred.goleador_nombre === real.goleador_nombre) p += crystalBallPoints.goleador;
-  if (pred.mejor_jugador_nombre && pred.mejor_jugador_nombre === real.mejor_jugador_nombre) p += crystalBallPoints.mejorJugador;
-  if (pred.mejor_arquero_nombre && pred.mejor_arquero_nombre === real.mejor_arquero_nombre) p += crystalBallPoints.mejorArquero;
+  if (pred.goleador_nombre && pred.goleador_nombre === real.goleador_nombre)
+    p += crystalBallPoints.goleador;
+  if (pred.mejor_jugador_nombre && pred.mejor_jugador_nombre === real.mejor_jugador_nombre)
+    p += crystalBallPoints.mejorJugador;
+  if (pred.mejor_arquero_nombre && pred.mejor_arquero_nombre === real.mejor_arquero_nombre)
+    p += crystalBallPoints.mejorArquero;
   if (pred.fair_play_id && pred.fair_play_id === real.fair_play_id) p += crystalBallPoints.fairPlay;
   return p;
 }

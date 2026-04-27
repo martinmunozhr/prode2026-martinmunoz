@@ -42,7 +42,9 @@ function AdminLayout() {
       <div className="container mx-auto px-4 py-20 text-center">
         <Shield className="mx-auto h-12 w-12 text-muted-foreground" />
         <h1 className="mt-4 font-display text-3xl tracking-wider">Acceso restringido</h1>
-        <p className="mt-2 text-muted-foreground">Esta sección es exclusiva para administradores.</p>
+        <p className="mt-2 text-muted-foreground">
+          Esta sección es exclusiva para administradores.
+        </p>
       </div>
     );
   }
@@ -55,7 +57,9 @@ function AdminLayout() {
         </div>
         <div>
           <h1 className="font-display text-3xl tracking-wider">Panel admin</h1>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Solo visible para vos</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">
+            Solo visible para vos
+          </p>
         </div>
       </div>
 
@@ -66,7 +70,9 @@ function AdminLayout() {
             to={t.to}
             activeOptions={{ exact: t.exact }}
             activeProps={{ className: "bg-primary/10 text-primary border-primary/40" }}
-            inactiveProps={{ className: "border-transparent text-muted-foreground hover:text-foreground" }}
+            inactiveProps={{
+              className: "border-transparent text-muted-foreground hover:text-foreground",
+            }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold uppercase tracking-wider whitespace-nowrap transition-colors"
           >
             <t.icon className="h-4 w-4" />

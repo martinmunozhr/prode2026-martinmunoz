@@ -77,8 +77,14 @@ export const recycleCardFn = createServerFn({ method: "POST" })
 const TradeProposalSchema = z.object({
   receiverId: z.string().uuid(),
   message: z.string().max(280).optional(),
-  offer: z.array(z.object({ playerId: z.string().uuid(), quantity: z.number().int().min(1).max(5) })).min(1).max(10),
-  request: z.array(z.object({ playerId: z.string().uuid(), quantity: z.number().int().min(1).max(5) })).min(1).max(10),
+  offer: z
+    .array(z.object({ playerId: z.string().uuid(), quantity: z.number().int().min(1).max(5) }))
+    .min(1)
+    .max(10),
+  request: z
+    .array(z.object({ playerId: z.string().uuid(), quantity: z.number().int().min(1).max(5) }))
+    .min(1)
+    .max(10),
 });
 
 export const proposeTradeFn = createServerFn({ method: "POST" })
@@ -96,8 +102,18 @@ export const proposeTradeFn = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     const items = [
-      ...data.offer.map((i) => ({ trade_id: trade.id, from_user_id: userId, player_id: i.playerId, quantity: i.quantity })),
-      ...data.request.map((i) => ({ trade_id: trade.id, from_user_id: data.receiverId, player_id: i.playerId, quantity: i.quantity })),
+      ...data.offer.map((i) => ({
+        trade_id: trade.id,
+        from_user_id: userId,
+        player_id: i.playerId,
+        quantity: i.quantity,
+      })),
+      ...data.request.map((i) => ({
+        trade_id: trade.id,
+        from_user_id: data.receiverId,
+        player_id: i.playerId,
+        quantity: i.quantity,
+      })),
     ];
     const { error: itemsErr } = await supabase.from("trade_items").insert(items);
     if (itemsErr) throw new Error(itemsErr.message);
@@ -142,7 +158,11 @@ export const simulatePackFn = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     // Verificar admin
     const { data: roles } = await supabase
-      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
     if (!roles) throw new Error("Solo admin");
 
     const { data: result, error } = await supabase.rpc("simulate_pack", {
@@ -158,11 +178,18 @@ const SimulateOpenSchema = z.object({
   packType: z.enum(["comun", "raro", "epico", "legendario"]),
 });
 
-const PACK_DEFS: Record<PackType, { cards: number; odds: Record<CardRarity, number>; guaranteesLegendary?: boolean }> = {
+const PACK_DEFS: Record<
+  PackType,
+  { cards: number; odds: Record<CardRarity, number>; guaranteesLegendary?: boolean }
+> = {
   comun: { cards: 5, odds: { comun: 0.75, raro: 0.22, epico: 0.03, legendario: 0 } },
   raro: { cards: 7, odds: { comun: 0.45, raro: 0.45, epico: 0.09, legendario: 0.01 } },
   epico: { cards: 9, odds: { comun: 0.15, raro: 0.45, epico: 0.35, legendario: 0.05 } },
-  legendario: { cards: 11, odds: { comun: 0, raro: 0.30, epico: 0.55, legendario: 0.15 }, guaranteesLegendary: true },
+  legendario: {
+    cards: 11,
+    odds: { comun: 0, raro: 0.3, epico: 0.55, legendario: 0.15 },
+    guaranteesLegendary: true,
+  },
 };
 
 function pickRarity(odds: Record<CardRarity, number>): CardRarity {
@@ -182,7 +209,11 @@ export const simulateOpenPackFn = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: roles } = await supabase
-      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
     if (!roles) throw new Error("Solo admin");
 
     const def = PACK_DEFS[data.packType as PackType];
@@ -200,13 +231,26 @@ export const simulateOpenPackFn = createServerFn({ method: "POST" })
       .in("rarity", uniqueRarities);
     if (error) throw new Error(error.message);
 
-    const pool: Record<CardRarity, typeof players> = { comun: [], raro: [], epico: [], legendario: [] };
+    const pool: Record<CardRarity, typeof players> = {
+      comun: [],
+      raro: [],
+      epico: [],
+      legendario: [],
+    };
     for (const p of players ?? []) pool[p.rarity as CardRarity].push(p);
 
     const cards = rarities.map((r) => {
       const bucket = pool[r];
       if (!bucket || bucket.length === 0) {
-        return { player_id: "—", rarity: r, player_name: "Sin jugador disponible", team_id: "", position: "", jersey_number: null, club: null };
+        return {
+          player_id: "—",
+          rarity: r,
+          player_name: "Sin jugador disponible",
+          team_id: "",
+          position: "",
+          jersey_number: null,
+          club: null,
+        };
       }
       const p = bucket[Math.floor(Math.random() * bucket.length)];
       return {

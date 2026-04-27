@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Coins, Package, BookOpen, ArrowLeftRight, Sparkles, Loader2, Recycle, Trash2 } from "lucide-react";
+import {
+  Coins,
+  Package,
+  BookOpen,
+  ArrowLeftRight,
+  Sparkles,
+  Loader2,
+  Recycle,
+  Trash2,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth-context";
 import { useCoins } from "@/hooks/use-coins";
@@ -16,9 +25,17 @@ export const Route = createFileRoute("/figuritas")({
   head: () => ({
     meta: [
       { title: "Figuritas y Sobres — Prode Mundial 2026" },
-      { name: "description", content: "Abrí sobres con las monedas que ganás en el prode, completá tu álbum y intercambiá con otros participantes." },
+      {
+        name: "description",
+        content:
+          "Abrí sobres con las monedas que ganás en el prode, completá tu álbum y intercambiá con otros participantes.",
+      },
       { property: "og:title", content: "Figuritas y Sobres — Prode Mundial 2026" },
-      { property: "og:description", content: "Sistema de paquetes de figuritas: ganá monedas, abrí sobres, completá el álbum, intercambiá." },
+      {
+        property: "og:description",
+        content:
+          "Sistema de paquetes de figuritas: ganá monedas, abrí sobres, completá el álbum, intercambiá.",
+      },
     ],
   }),
   component: FiguritasPage,
@@ -40,8 +57,18 @@ function FiguritasPage() {
           Necesitás una cuenta para ganar monedas, abrir sobres e intercambiar figuritas.
         </p>
         <div className="mt-6 flex gap-3 justify-center">
-          <Link to="/login" className="px-5 py-2.5 rounded-md border border-border text-sm font-bold uppercase tracking-wider">Ingresar</Link>
-          <Link to="/registro" className="px-5 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch">Sumate</Link>
+          <Link
+            to="/login"
+            className="px-5 py-2.5 rounded-md border border-border text-sm font-bold uppercase tracking-wider"
+          >
+            Ingresar
+          </Link>
+          <Link
+            to="/registro"
+            className="px-5 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
+          >
+            Sumate
+          </Link>
         </div>
       </div>
     );
@@ -50,10 +77,14 @@ function FiguritasPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <header className="mb-8">
-        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Álbum del Mundial</div>
+        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">
+          Álbum del Mundial
+        </div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Figuritas</h1>
         <p className="mt-2 text-muted-foreground max-w-2xl">
-          Por cada punto que sumás en el prode te llevás <strong className="text-foreground">100 monedas</strong>. Usalas para abrir sobres, completar tu álbum y desafiar a otros participantes.
+          Por cada punto que sumás en el prode te llevás{" "}
+          <strong className="text-foreground">100 monedas</strong>. Usalas para abrir sobres,
+          completar tu álbum y desafiar a otros participantes.
         </p>
         <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-trophy text-trophy-foreground font-bold shadow-glow-trophy">
           <Coins className="h-4 w-4" />
@@ -64,9 +95,24 @@ function FiguritasPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 p-1 rounded-xl border border-border/50 bg-card/40 w-fit mb-6 overflow-x-auto">
-        <TabBtn active={tab === "sobres"} onClick={() => setTab("sobres")} icon={Package} label="Sobres" />
-        <TabBtn active={tab === "coleccion"} onClick={() => setTab("coleccion")} icon={BookOpen} label="Mi colección" />
-        <TabBtn active={tab === "intercambios"} onClick={() => setTab("intercambios")} icon={ArrowLeftRight} label="Intercambios" />
+        <TabBtn
+          active={tab === "sobres"}
+          onClick={() => setTab("sobres")}
+          icon={Package}
+          label="Sobres"
+        />
+        <TabBtn
+          active={tab === "coleccion"}
+          onClick={() => setTab("coleccion")}
+          icon={BookOpen}
+          label="Mi colección"
+        />
+        <TabBtn
+          active={tab === "intercambios"}
+          onClick={() => setTab("intercambios")}
+          icon={ArrowLeftRight}
+          label="Intercambios"
+        />
       </div>
 
       {tab === "sobres" && <SobresTab balance={balance ?? 0} />}
@@ -76,13 +122,25 @@ function FiguritasPage() {
   );
 }
 
-function TabBtn({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: typeof Package; label: string }) {
+function TabBtn({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: typeof Package;
+  label: string;
+}) {
   return (
     <button
       onClick={onClick}
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap",
-        active ? "bg-primary text-primary-foreground shadow-glow-pitch" : "text-muted-foreground hover:text-foreground hover:bg-background/40",
+        active
+          ? "bg-primary text-primary-foreground shadow-glow-pitch"
+          : "text-muted-foreground hover:text-foreground hover:bg-background/40",
       )}
     >
       <Icon className="h-4 w-4" />
@@ -120,25 +178,31 @@ function SobresTab({ balance }: { balance: number }) {
               key={p.type}
               className={cn(
                 "relative overflow-hidden rounded-2xl border p-5 flex flex-col gap-3",
-                rarityKey === "legendario" && "border-fuchsia-400/60 shadow-[0_0_28px_oklch(0.7_0.24_295/0.4)]",
+                rarityKey === "legendario" &&
+                  "border-fuchsia-400/60 shadow-[0_0_28px_oklch(0.7_0.24_295/0.4)]",
                 rarityKey === "epico" && "border-amber-400/60",
                 rarityKey === "raro" && "border-sky-400/60",
                 rarityKey === "comun" && "border-zinc-500/60",
               )}
               style={{
-                background: rarityKey === "legendario"
-                  ? "linear-gradient(160deg, #6b21a8 0%, #f0abfc 50%, #fde68a 100%)"
-                  : rarityKey === "epico"
-                  ? "linear-gradient(160deg, #92400e 0%, #f5c249 100%)"
-                  : rarityKey === "raro"
-                  ? "linear-gradient(160deg, #1e3a5f 0%, #6ea4cc 100%)"
-                  : "linear-gradient(160deg, #3f3f46 0%, #71717a 100%)",
+                background:
+                  rarityKey === "legendario"
+                    ? "linear-gradient(160deg, #6b21a8 0%, #f0abfc 50%, #fde68a 100%)"
+                    : rarityKey === "epico"
+                      ? "linear-gradient(160deg, #92400e 0%, #f5c249 100%)"
+                      : rarityKey === "raro"
+                        ? "linear-gradient(160deg, #1e3a5f 0%, #6ea4cc 100%)"
+                        : "linear-gradient(160deg, #3f3f46 0%, #71717a 100%)",
               }}
             >
               <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
               <div className="relative">
-                <div className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sobre</div>
-                <div className="font-display text-3xl tracking-wider text-white">{RARITY_LABEL[rarityKey]}</div>
+                <div className="text-[10px] uppercase tracking-widest font-bold text-white/80">
+                  Sobre
+                </div>
+                <div className="font-display text-3xl tracking-wider text-white">
+                  {RARITY_LABEL[rarityKey]}
+                </div>
                 <div className="text-xs text-white/80 mt-0.5">{p.cards} figuritas</div>
               </div>
 
@@ -163,7 +227,9 @@ function SobresTab({ balance }: { balance: number }) {
                 onClick={() => handleOpen(p.type)}
                 className={cn(
                   "relative mt-auto w-full px-4 py-2.5 rounded-lg font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 transition-all",
-                  cant ? "bg-white text-zinc-900 hover:scale-[1.02]" : "bg-white/20 text-white/60 cursor-not-allowed",
+                  cant
+                    ? "bg-white text-zinc-900 hover:scale-[1.02]"
+                    : "bg-white/20 text-white/60 cursor-not-allowed",
                 )}
               >
                 {opening === p.type ? (
@@ -190,10 +256,15 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
   const current = !showAll ? cards[step] : null;
 
   // Reset flip on each new card
-  useEffect(() => { setFlipped(false); }, [step]);
+  useEffect(() => {
+    setFlipped(false);
+  }, [step]);
 
   const advance = () => {
-    if (!flipped) { setFlipped(true); return; }
+    if (!flipped) {
+      setFlipped(true);
+      return;
+    }
     setStep((s) => s + 1);
   };
 
@@ -211,10 +282,17 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
 
       <div className="max-w-5xl w-full relative">
         <div className="text-center mb-6">
-          <div className="text-[11px] uppercase tracking-widest text-accent font-bold">¡Sobre abierto!</div>
-          <h2 className="font-display text-4xl mt-1">{showAll ? "Tu botín" : `Carta ${step + 1} de ${cards.length}`}</h2>
+          <div className="text-[11px] uppercase tracking-widest text-accent font-bold">
+            ¡Sobre abierto!
+          </div>
+          <h2 className="font-display text-4xl mt-1">
+            {showAll ? "Tu botín" : `Carta ${step + 1} de ${cards.length}`}
+          </h2>
           {!showAll && (
-            <button onClick={skipAll} className="text-xs text-muted-foreground hover:text-foreground mt-2 underline underline-offset-4">
+            <button
+              onClick={skipAll}
+              className="text-xs text-muted-foreground hover:text-foreground mt-2 underline underline-offset-4"
+            >
               Saltar animación
             </button>
           )}
@@ -249,10 +327,16 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
               ))}
             </div>
             <div className="text-center mt-6 flex gap-3 justify-center">
-              <Link to="/intercambios" className="px-5 py-2.5 rounded-lg border border-border text-sm font-bold uppercase tracking-wider hover:bg-muted/40">
+              <Link
+                to="/intercambios"
+                className="px-5 py-2.5 rounded-lg border border-border text-sm font-bold uppercase tracking-wider hover:bg-muted/40"
+              >
                 Ir a intercambios
               </Link>
-              <button onClick={onClose} className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch">
+              <button
+                onClick={onClose}
+                className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch"
+              >
                 Listo
               </button>
             </div>
@@ -342,13 +426,17 @@ function ColeccionTab() {
     if (!user) return;
     const { data } = await supabase
       .from("user_collection")
-      .select("player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)")
+      .select(
+        "player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)",
+      )
       .eq("user_id", user.id)
       .gt("quantity", 0);
     setItems((data ?? []) as unknown as CollectionItem[]);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user?.id]);
+  useEffect(() => {
+    load(); /* eslint-disable-next-line */
+  }, [user?.id]);
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -384,7 +472,11 @@ function ColeccionTab() {
   };
 
   if (!items) {
-    return <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+      </div>
+    );
   }
 
   return (
@@ -404,17 +496,25 @@ function ColeccionTab() {
             onClick={() => setFilter(f)}
             className={cn(
               "text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md transition-colors",
-              filter === f ? "bg-primary text-primary-foreground" : "bg-card/40 text-muted-foreground hover:text-foreground",
+              filter === f
+                ? "bg-primary text-primary-foreground"
+                : "bg-card/40 text-muted-foreground hover:text-foreground",
             )}
           >
-            {f === "todas" ? "Todas" : f === "repetidas" ? "Repetidas" : RARITY_LABEL[f as CardRarity]}
+            {f === "todas"
+              ? "Todas"
+              : f === "repetidas"
+                ? "Repetidas"
+                : RARITY_LABEL[f as CardRarity]}
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          {items.length === 0 ? "Tu álbum está vacío. Abrí un sobre para empezar." : "No hay figuritas con ese filtro."}
+          {items.length === 0
+            ? "Tu álbum está vacío. Abrí un sobre para empezar."
+            : "No hay figuritas con ese filtro."}
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -437,7 +537,11 @@ function ColeccionTab() {
                   className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
                   title="Reciclar 1 repetida"
                 >
-                  {recycling === it.player_id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Recycle className="h-3 w-3" />}
+                  {recycling === it.player_id ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Recycle className="h-3 w-3" />
+                  )}
                   Reciclar
                 </button>
               )}
@@ -450,7 +554,8 @@ function ColeccionTab() {
       <div className="mt-12 p-5 rounded-xl border border-border/50 bg-card/40">
         <h3 className="font-display text-xl tracking-wider mb-2">Tu álbum por selección</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Mirá qué figuritas te faltan de cada equipo en su perfil. Las que no obtuviste aparecen como silueta.
+          Mirá qué figuritas te faltan de cada equipo en su perfil. Las que no obtuviste aparecen
+          como silueta.
         </p>
         <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-8 gap-2">
           {MOCK_TEAMS.slice(0, 16).map((t) => (
@@ -465,7 +570,10 @@ function ColeccionTab() {
             </Link>
           ))}
         </div>
-        <Link to="/equipos" className="block mt-4 text-center text-sm text-primary font-bold uppercase tracking-wider">
+        <Link
+          to="/equipos"
+          className="block mt-4 text-center text-sm text-primary font-bold uppercase tracking-wider"
+        >
           Ver todas las selecciones →
         </Link>
       </div>
@@ -473,7 +581,15 @@ function ColeccionTab() {
   );
 }
 
-function Stat({ label, value, accent = "text-foreground" }: { label: string; value: number; accent?: string }) {
+function Stat({
+  label,
+  value,
+  accent = "text-foreground",
+}: {
+  label: string;
+  value: number;
+  accent?: string;
+}) {
   return (
     <div className="rounded-xl border border-border/50 bg-card/40 p-3">
       <div className={cn("font-display text-3xl", accent)}>{value}</div>
@@ -489,10 +605,14 @@ function IntercambiosTab() {
       <ArrowLeftRight className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
       <h3 className="font-display text-2xl">Intercambios entre participantes</h3>
       <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-        Ofrecé tus repetidas a otros usuarios y pediles las que te faltan. Los intercambios funcionan con cartas múltiples por cada lado.
+        Ofrecé tus repetidas a otros usuarios y pediles las que te faltan. Los intercambios
+        funcionan con cartas múltiples por cada lado.
       </p>
       <div className="mt-6 flex flex-wrap gap-3 justify-center">
-        <Link to="/intercambios" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-sm shadow-glow-pitch hover:scale-105 transition-transform">
+        <Link
+          to="/intercambios"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-sm shadow-glow-pitch hover:scale-105 transition-transform"
+        >
           <ArrowLeftRight className="h-4 w-4" /> Ir a intercambios
         </Link>
       </div>

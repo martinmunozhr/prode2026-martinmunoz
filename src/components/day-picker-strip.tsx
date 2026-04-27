@@ -35,7 +35,11 @@ export function DayPickerStrip({ days, selected, onSelect }: Props) {
   // Auto-scroll the selected day into view when it changes
   useEffect(() => {
     if (selectedRef.current) {
-      selectedRef.current.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      selectedRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
     }
   }, [selected]);
 
@@ -114,30 +118,36 @@ export function DayPickerStrip({ days, selected, onSelect }: Props) {
                     : "bg-card border-border/50 hover:border-primary/40 hover:bg-card/80",
                 )}
               >
-                <div className={cn(
-                  "text-[10px] uppercase tracking-widest font-bold",
-                  isSelected ? "text-primary-foreground/80" : "text-muted-foreground",
-                )}>
+                <div
+                  className={cn(
+                    "text-[10px] uppercase tracking-widest font-bold",
+                    isSelected ? "text-primary-foreground/80" : "text-muted-foreground",
+                  )}
+                >
                   {WD[d.date.getDay()]}
                 </div>
                 <div className="font-display text-3xl tabular-nums leading-none mt-1">
                   {String(d.date.getDate()).padStart(2, "0")}
                 </div>
-                <div className={cn(
-                  "text-[10px] uppercase tracking-widest font-bold mt-0.5",
-                  isSelected ? "text-primary-foreground/80" : "text-muted-foreground",
-                )}>
+                <div
+                  className={cn(
+                    "text-[10px] uppercase tracking-widest font-bold mt-0.5",
+                    isSelected ? "text-primary-foreground/80" : "text-muted-foreground",
+                  )}
+                >
                   {MONTHS[d.date.getMonth()]}
                 </div>
                 <div className="mt-1.5 flex items-center justify-center gap-1">
-                  <span className={cn(
-                    "text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full",
-                    isSelected
-                      ? "bg-white/20 text-primary-foreground"
-                      : allDone
-                        ? "bg-primary/20 text-primary"
-                        : "bg-secondary text-secondary-foreground",
-                  )}>
+                  <span
+                    className={cn(
+                      "text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full",
+                      isSelected
+                        ? "bg-white/20 text-primary-foreground"
+                        : allDone
+                          ? "bg-primary/20 text-primary"
+                          : "bg-secondary text-secondary-foreground",
+                    )}
+                  >
                     {d.predicted}/{d.count}
                   </span>
                 </div>

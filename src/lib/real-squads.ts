@@ -230,7 +230,13 @@ const GER: RawPlayer[] = [
   { number: 21, name: "İlkay Gündoğan", position: "MED", age: 35, club: "Galatasaray" },
   { number: 25, name: "Angelo Stiller", position: "MED", age: 24, club: "Stuttgart" },
   { number: 7, name: "Kai Havertz", position: "DEL", age: 26, club: "Arsenal" },
-  { number: 9, name: "Tim Kleindienst", position: "DEL", age: 30, club: "Borussia Mönchengladbach" },
+  {
+    number: 9,
+    name: "Tim Kleindienst",
+    position: "DEL",
+    age: 30,
+    club: "Borussia Mönchengladbach",
+  },
   { number: 10, name: "Jamal Musiala", position: "MED", age: 22, club: "Bayern Munich" },
   { number: 11, name: "Karim Adeyemi", position: "DEL", age: 23, club: "Borussia Dortmund" },
   { number: 13, name: "Serge Gnabry", position: "DEL", age: 30, club: "Bayern Munich" },
@@ -482,12 +488,18 @@ const ITA: RawPlayer[] = [
 
 // Mapeo team_id → roster real
 const REAL_SQUADS: Record<string, { players: RawPlayer[]; stars: string[] }> = {
-  arg: { players: ARG, stars: ["Lionel Messi", "Julián Álvarez", "Emiliano Martínez", "Lautaro Martínez"] },
+  arg: {
+    players: ARG,
+    stars: ["Lionel Messi", "Julián Álvarez", "Emiliano Martínez", "Lautaro Martínez"],
+  },
   bra: { players: BRA, stars: ["Vinícius Júnior", "Rodrygo", "Endrick", "Alisson"] },
   fra: { players: FRA, stars: ["Kylian Mbappé", "Ousmane Dembélé", "Aurélien Tchouaméni"] },
   esp: { players: ESP, stars: ["Lamine Yamal", "Pedri", "Rodri", "Nico Williams"] },
   ing: { players: ING, stars: ["Jude Bellingham", "Harry Kane", "Bukayo Saka", "Cole Palmer"] },
-  por: { players: POR_SQUAD, stars: ["Cristiano Ronaldo", "Bruno Fernandes", "Bernardo Silva", "Rafael Leão"] },
+  por: {
+    players: POR_SQUAD,
+    stars: ["Cristiano Ronaldo", "Bruno Fernandes", "Bernardo Silva", "Rafael Leão"],
+  },
   ger: { players: GER, stars: ["Florian Wirtz", "Jamal Musiala", "Joshua Kimmich"] },
   ned: { players: NED, stars: ["Virgil van Dijk", "Cody Gakpo", "Frenkie de Jong"] },
   uru: { players: URU, stars: ["Federico Valverde", "Darwin Núñez", "Ronald Araújo"] },

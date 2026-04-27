@@ -10,7 +10,15 @@ export const Route = createFileRoute("/admin/sync")({
   component: AdminSync,
 });
 
-type LogRow = { id: string; sync_type: string; status: string; requests_used: number; details: unknown; error: string | null; created_at: string };
+type LogRow = {
+  id: string;
+  sync_type: string;
+  status: string;
+  requests_used: number;
+  details: unknown;
+  error: string | null;
+  created_at: string;
+};
 
 function AdminSync() {
   const [quota, setQuota] = useState<{ used: number; limit: number; date: string } | null>(null);
@@ -28,7 +36,11 @@ function AdminSync() {
     } catch (e) {
       console.warn(e);
     }
-    const { data } = await supabase.from("api_sync_logs").select("*").order("created_at", { ascending: false }).limit(20);
+    const { data } = await supabase
+      .from("api_sync_logs")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(20);
     setLogs((data as LogRow[] | null) ?? []);
   };
 
@@ -63,19 +75,31 @@ function AdminSync() {
       <div className="rounded-xl border border-border/50 bg-card/40 p-5">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Quota API-Football hoy ({quota?.date ?? "-"})</div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">
+              Quota API-Football hoy ({quota?.date ?? "-"})
+            </div>
             <div className="font-display text-3xl tracking-wider mt-1">
-              {quota ? quota.used : "-"} <span className="text-muted-foreground text-xl">/ {quota?.limit ?? 100}</span>
+              {quota ? quota.used : "-"}{" "}
+              <span className="text-muted-foreground text-xl">/ {quota?.limit ?? 100}</span>
             </div>
           </div>
-          <button onClick={reload} className="p-2 rounded-md bg-muted/40 hover:bg-muted/60" aria-label="Refrescar">
+          <button
+            onClick={reload}
+            className="p-2 rounded-md bg-muted/40 hover:bg-muted/60"
+            aria-label="Refrescar"
+          >
             <RefreshCw className="h-4 w-4" />
           </button>
         </div>
         <div className="h-2 rounded-full bg-muted/30 overflow-hidden">
-          <div className={`h-full ${pct > 80 ? "bg-destructive" : "bg-primary"}`} style={{ width: `${pct}%` }} />
+          <div
+            className={`h-full ${pct > 80 ? "bg-destructive" : "bg-primary"}`}
+            style={{ width: `${pct}%` }}
+          />
         </div>
-        <div className="mt-2 text-xs text-muted-foreground">Quedan {remaining} requests. Se resetea cada día.</div>
+        <div className="mt-2 text-xs text-muted-foreground">
+          Quedan {remaining} requests. Se resetea cada día.
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -85,7 +109,8 @@ function AdminSync() {
             <h3 className="font-bold uppercase tracking-wider">Plantillas oficiales</h3>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Importa los squads de las 48 selecciones desde API-Football. Usa ~50 requests. Hacelo cuando se confirmen las listas oficiales.
+            Importa los squads de las 48 selecciones desde API-Football. Usa ~50 requests. Hacelo
+            cuando se confirmen las listas oficiales.
           </p>
           <button
             disabled={running !== null || remaining < 50}
@@ -102,7 +127,8 @@ function AdminSync() {
             <h3 className="font-bold uppercase tracking-wider">Sync resultados</h3>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Actualiza marcadores y estados de los partidos de hoy y ayer. Usa ~1 request. Ejecutalo cada cierto tiempo durante el Mundial.
+            Actualiza marcadores y estados de los partidos de hoy y ayer. Usa ~1 request. Ejecutalo
+            cada cierto tiempo durante el Mundial.
           </p>
           <button
             disabled={running !== null || remaining < 2}
@@ -133,12 +159,21 @@ function AdminSync() {
               <tbody>
                 {logs.map((l) => (
                   <tr key={l.id} className="border-t border-border/30">
-                    <td className="py-1.5 text-xs">{new Date(l.created_at).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}</td>
+                    <td className="py-1.5 text-xs">
+                      {new Date(l.created_at).toLocaleString("es-AR", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })}
+                    </td>
                     <td className="text-xs uppercase">{l.sync_type}</td>
                     <td>
                       <span
                         className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
-                          l.status === "success" ? "bg-primary/20 text-primary" : l.status === "partial" ? "bg-yellow-500/20 text-yellow-400" : "bg-destructive/20 text-destructive"
+                          l.status === "success"
+                            ? "bg-primary/20 text-primary"
+                            : l.status === "partial"
+                              ? "bg-yellow-500/20 text-yellow-400"
+                              : "bg-destructive/20 text-destructive"
                         }`}
                       >
                         {l.status}

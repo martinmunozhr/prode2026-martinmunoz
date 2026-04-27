@@ -19,7 +19,10 @@ function AdminDashboard() {
         supabase.from("matches").select("*", { count: "exact", head: true }),
         supabase.from("players").select("*", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("matches").select("*", { count: "exact", head: true }).eq("status", "finished"),
+        supabase
+          .from("matches")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "finished"),
       ]);
       setStats({
         teams: teams.count ?? 0,

@@ -8,7 +8,13 @@ export const Route = createFileRoute("/admin/jugadores")({
 });
 
 type Team = { id: string; name: string; flag: string; group_letter: string };
-type Player = { id: string; name: string; position: string; jersey_number: number | null; club: string | null };
+type Player = {
+  id: string;
+  name: string;
+  position: string;
+  jersey_number: number | null;
+  club: string | null;
+};
 
 function AdminJugadores() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -18,7 +24,11 @@ function AdminJugadores() {
 
   useEffect(() => {
     (async () => {
-      const { data: t } = await supabase.from("teams").select("id, name, flag, group_letter").order("group_letter").order("name");
+      const { data: t } = await supabase
+        .from("teams")
+        .select("id, name, flag, group_letter")
+        .order("group_letter")
+        .order("name");
       setTeams(t ?? []);
       // counts per team
       const { data: all } = await supabase.from("players").select("team_id");
@@ -31,7 +41,11 @@ function AdminJugadores() {
   useEffect(() => {
     if (!selected) return;
     (async () => {
-      const { data } = await supabase.from("players").select("id, name, position, jersey_number, club").eq("team_id", selected).order("jersey_number");
+      const { data } = await supabase
+        .from("players")
+        .select("id, name, position, jersey_number, club")
+        .eq("team_id", selected)
+        .order("jersey_number");
       setPlayers(data ?? []);
     })();
   }, [selected]);
@@ -39,7 +53,9 @@ function AdminJugadores() {
   return (
     <div className="grid gap-4 md:grid-cols-[280px_1fr]">
       <div className="rounded-xl border border-border/50 bg-card/40 p-3 max-h-[70vh] overflow-y-auto">
-        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-2 px-2">Selecciones ({teams.length})</h2>
+        <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-2 px-2">
+          Selecciones ({teams.length})
+        </h2>
         {teams.map((t) => (
           <button
             key={t.id}
@@ -50,17 +66,24 @@ function AdminJugadores() {
           >
             <Flag iso2={t.flag} className="h-4 w-6" />
             <span className="flex-1 text-left truncate">{t.name}</span>
-            <span className={`text-xs font-mono ${counts[t.id] ? "text-primary" : "text-muted-foreground"}`}>{counts[t.id] ?? 0}</span>
+            <span
+              className={`text-xs font-mono ${counts[t.id] ? "text-primary" : "text-muted-foreground"}`}
+            >
+              {counts[t.id] ?? 0}
+            </span>
           </button>
         ))}
       </div>
 
       <div className="rounded-xl border border-border/50 bg-card/40 p-4">
         {!selected ? (
-          <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">Seleccioná un equipo</div>
+          <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
+            Seleccioná un equipo
+          </div>
         ) : players.length === 0 ? (
           <div className="text-sm text-muted-foreground">
-            Sin jugadores cargados. Andá a <strong>Sync API</strong> para importar las plantillas oficiales.
+            Sin jugadores cargados. Andá a <strong>Sync API</strong> para importar las plantillas
+            oficiales.
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -75,7 +98,9 @@ function AdminJugadores() {
             <tbody>
               {players.map((p) => (
                 <tr key={p.id} className="border-t border-border/30">
-                  <td className="py-1.5 font-mono text-muted-foreground">{p.jersey_number ?? "-"}</td>
+                  <td className="py-1.5 font-mono text-muted-foreground">
+                    {p.jersey_number ?? "-"}
+                  </td>
                   <td className="font-semibold">{p.name}</td>
                   <td className="text-xs">{p.position}</td>
                   <td className="text-xs text-muted-foreground">{p.club ?? "-"}</td>

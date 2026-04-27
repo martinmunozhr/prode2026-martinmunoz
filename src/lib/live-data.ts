@@ -3,9 +3,18 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { matches as catalogMatches, teams as catalogTeams, type Match, type RankingEntry } from "@/lib/mock-data";
+import {
+  matches as catalogMatches,
+  teams as catalogTeams,
+  type Match,
+  type RankingEntry,
+} from "@/lib/mock-data";
 
-type LiveScore = { home: number | null; away: number | null; status: "scheduled" | "live" | "finished" };
+type LiveScore = {
+  home: number | null;
+  away: number | null;
+  status: "scheduled" | "live" | "finished";
+};
 
 // Load live scores keyed by match id from Supabase and merge with catalog matches.
 export function useLiveMatches(): { matches: Match[]; loading: boolean } {
@@ -18,7 +27,12 @@ export function useLiveMatches(): { matches: Match[]; loading: boolean } {
       const { data } = await supabase.from("matches").select("id, home_score, away_score, status");
       if (cancelled) return;
       const map = new Map<string, LiveScore>();
-      for (const m of data ?? []) map.set(m.id, { home: m.home_score, away: m.away_score, status: m.status as LiveScore["status"] });
+      for (const m of data ?? [])
+        map.set(m.id, {
+          home: m.home_score,
+          away: m.away_score,
+          status: m.status as LiveScore["status"],
+        });
       setScores(map);
       setLoading(false);
     };
@@ -27,7 +41,12 @@ export function useLiveMatches(): { matches: Match[]; loading: boolean } {
     const ch = supabase
       .channel("matches-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, (payload) => {
-        const row = payload.new as { id: string; home_score: number | null; away_score: number | null; status: LiveScore["status"] };
+        const row = payload.new as {
+          id: string;
+          home_score: number | null;
+          away_score: number | null;
+          status: LiveScore["status"];
+        };
         setScores((prev) => {
           const next = new Map(prev);
           next.set(row.id, { home: row.home_score, away: row.away_score, status: row.status });
@@ -83,7 +102,9 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
     const load = async () => {
       const [profilesRes, predsRes, cbRes, gspRes] = await Promise.all([
         supabase.from("profiles").select("id, username, avatar_color, favorite_team_id"),
-        supabase.from("predictions").select("user_id, points_earned, home_score, away_score, match_id"),
+        supabase
+          .from("predictions")
+          .select("user_id, points_earned, home_score, away_score, match_id"),
         supabase.from("crystal_ball").select("user_id, points_earned"),
         supabase.from("goalscorer_predictions").select("user_id, points_earned"),
       ]);
@@ -101,7 +122,8 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
         .eq("status", "finished");
       const fmap = new Map<string, { h: number; a: number }>();
       for (const m of finishedMatches ?? []) {
-        if (m.home_score !== null && m.away_score !== null) fmap.set(m.id, { h: m.home_score, a: m.away_score });
+        if (m.home_score !== null && m.away_score !== null)
+          fmap.set(m.id, { h: m.home_score, a: m.away_score });
       }
 
       const stats = new Map<string, { points: number; exact: number; partial: number }>();
@@ -159,7 +181,11 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
       .on("postgres_changes", { event: "*", schema: "public", table: "predictions" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "crystal_ball" }, load)
-      .on("postgres_changes", { event: "*", schema: "public", table: "goalscorer_predictions" }, load)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "goalscorer_predictions" },
+        load,
+      )
       .subscribe();
 
     return () => {
