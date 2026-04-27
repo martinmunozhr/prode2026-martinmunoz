@@ -17,18 +17,21 @@ export const Route = createFileRoute("/reglas")({
 function RulesPage() {
   return (
     <div className="container mx-auto px-4 py-10 md:py-16 max-w-4xl">
-      <header className="relative mb-10 overflow-visible">
-        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Cómo se juega</div>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Reglas del Prode</h1>
-        <p className="mt-3 text-muted-foreground text-lg max-w-xl">
-          Simple, claro y para toda la familia. Cargá tus pronósticos antes de cada partido y sumá puntos.
-        </p>
+      <header className="relative mb-10 overflow-hidden min-h-[140px]">
+        <div className="relative z-10 max-w-[75%]">
+          <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Cómo se juega</div>
+          <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Reglas del Prode</h1>
+          <p className="mt-3 text-muted-foreground text-lg max-w-xl">
+            Simple, claro y para toda la familia. Cargá tus pronósticos antes de cada partido y sumá puntos.
+          </p>
+        </div>
         <img
           src={pelota}
           alt=""
           aria-hidden
-          className="hidden md:block absolute -top-2 right-0 h-28 lg:h-36 object-contain pointer-events-none drop-shadow-2xl"
-         loading="lazy" decoding="async" />
+          className="hidden md:block absolute top-0 right-2 h-28 lg:h-36 object-contain pointer-events-none drop-shadow-2xl"
+          loading="lazy" decoding="async"
+        />
       </header>
 
       <Section icon={<Target />} title="Puntos por partido">

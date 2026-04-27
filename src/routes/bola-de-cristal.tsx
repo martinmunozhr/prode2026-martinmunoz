@@ -135,20 +135,23 @@ function BolaDeCristalPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
-      <header className="relative mb-8 overflow-visible">
-        <div className="text-[11px] uppercase tracking-widest text-accent font-bold flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5" /> Predicciones del torneo
+      <header className="relative mb-8 overflow-hidden min-h-[180px]">
+        <div className="relative z-10 max-w-[68%]">
+          <div className="text-[11px] uppercase tracking-widest text-accent font-bold flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" /> Predicciones del torneo
+          </div>
+          <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Bola de Cristal</h1>
+          <p className="mt-2 text-muted-foreground max-w-xl">
+            5 predicciones de torneo. Se bloquean al inicio del Mundial.
+          </p>
         </div>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Bola de Cristal</h1>
-        <p className="mt-2 text-muted-foreground max-w-xl">
-          5 predicciones de torneo. Se bloquean al inicio del Mundial.
-        </p>
         <img
           src={figYamal}
           alt=""
           aria-hidden
-          className="hidden md:block absolute -top-4 right-0 h-44 lg:h-52 object-contain pointer-events-none drop-shadow-2xl"
-         loading="lazy" decoding="async" />
+          className="hidden md:block absolute -top-2 right-0 h-44 lg:h-56 object-contain object-bottom pointer-events-none drop-shadow-2xl"
+          loading="lazy" decoding="async"
+        />
       </header>
 
       {/* Countdown */}
