@@ -37,16 +37,17 @@ export function PlayerAutocomplete({ value, onChange, placeholder, disabled, pos
       if (positionFilter) q = q.eq("position", positionFilter);
       const { data } = await q;
       if (!active) return;
-      const rows = (data ?? []).map((p) => ({
-        id: p.id as string,
-        name: p.name as string,
-        team_id: p.team_id as string,
-        position: p.position as string,
-        // @ts-expect-error supabase nested select typing
-        team_name: p.teams?.name ?? "",
-        // @ts-expect-error
-        team_flag: p.teams?.flag ?? "",
-      }));
+      const rows: PlayerLite[] = (data ?? []).map((p) => {
+        const t = (p as unknown as { teams?: { name?: string; flag?: string } }).teams;
+        return {
+          id: p.id as string,
+          name: p.name as string,
+          team_id: p.team_id as string,
+          position: p.position as string,
+          team_name: t?.name ?? "",
+          team_flag: t?.flag ?? "",
+        };
+      });
       setPlayers(rows);
       setLoadedAll(true);
     })();
