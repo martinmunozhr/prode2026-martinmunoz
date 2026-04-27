@@ -399,6 +399,7 @@ function NuevoTradeTab() {
           offer: Object.entries(offer).map(([playerId, quantity]) => ({ playerId, quantity })),
           request: Object.entries(request).map(([playerId, quantity]) => ({ playerId, quantity })),
         },
+        headers: await authHeaders(),
       });
       toast.success("¡Propuesta enviada!");
       setOffer({}); setRequest({}); setMessage("");
