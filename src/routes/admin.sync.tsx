@@ -11,6 +11,7 @@ import {
   previewRosterText,
 } from "@/lib/data-sources.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { authHeaders } from "@/lib/auth-headers";
 
 export const Route = createFileRoute("/admin/sync")({
   component: AdminSync,
@@ -58,7 +59,7 @@ function AdminSync() {
 
   const reload = async () => {
     try {
-      const q = await quotaFn();
+      const q = await quotaFn({ headers: await authHeaders() });
       setQuota(q);
     } catch (e) {
       console.warn(e);
@@ -84,14 +85,15 @@ function AdminSync() {
   const runSync = async (kind: "squads" | "results" | "wc-squads" | "wc-results") => {
     setRunning(kind);
     try {
+      const headers = await authHeaders();
       const r =
         kind === "squads"
-          ? await squadsFn()
+          ? await squadsFn({ headers })
           : kind === "results"
-            ? await resultsFn()
+            ? await resultsFn({ headers })
             : kind === "wc-squads"
-              ? await wcSquadsFn()
-              : await wcResultsFn();
+              ? await wcSquadsFn({ headers })
+              : await wcResultsFn({ headers });
       if (r.ok) {
         if (kind === "squads" || kind === "wc-squads") {
           const ins = "inserted" in r ? r.inserted : 0;
@@ -116,7 +118,7 @@ function AdminSync() {
       return;
     }
     try {
-      const r = await previewFn({ data: { text: rosterText } });
+      const r = await previewFn({ data: { text: rosterText }, headers: await authHeaders() });
       setPreview(r.players);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");
@@ -136,6 +138,7 @@ function AdminSync() {
     try {
       const r = await importFn({
         data: { teamId: selectedTeam, text: rosterText, replace },
+        headers: await authHeaders(),
       });
       if (r.ok) {
         toast.success(`${r.inserted} jugadores importados en ${r.teamName}`);
