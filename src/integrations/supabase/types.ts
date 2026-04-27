@@ -980,6 +980,16 @@ export type Database = {
       recycle_card: { Args: { _player_id: string }; Returns: Json }
       refresh_round_dates: { Args: { _round_id: string }; Returns: undefined }
       resolve_challenge: { Args: { _challenge_id: string }; Returns: undefined }
+      simulate_pack: {
+        Args: {
+          _iterations?: number
+          _pack_type: Database["public"]["Enums"]["pack_type"]
+        }
+        Returns: {
+          count: number
+          rarity: Database["public"]["Enums"]["card_rarity"]
+        }[]
+      }
       stage_multiplier: {
         Args: { _stage: Database["public"]["Enums"]["match_stage"] }
         Returns: number
