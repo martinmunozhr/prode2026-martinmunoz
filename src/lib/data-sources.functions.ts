@@ -46,7 +46,8 @@ export const syncSquadsWC2026 = createServerFn({ method: "POST" })
     const CONCURRENCY = 8;
     const queue = [...teams];
 
-    async function processTeam(t: typeof teams[number]) {
+    type TeamRow = { id: string; name: string; code: string };
+    async function processTeam(t: TeamRow) {
       try {
         let squad: WC2026SquadResponse | null = null;
         try {
