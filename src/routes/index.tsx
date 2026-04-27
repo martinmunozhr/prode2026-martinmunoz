@@ -102,9 +102,23 @@ function HomePage() {
           title="Próximos partidos"
           action={<Link to="/fixture" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Ver todos <ArrowRight className="h-4 w-4" /></Link>}
         />
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
-        </div>
+        {loadingMatches ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {[0, 1, 2].map((i) => <div key={i} className="h-44 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />)}
+          </div>
+        ) : upcoming.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-border/40 bg-gradient-card p-8 text-center">
+            <CalendarClock className="h-10 w-10 mx-auto text-accent mb-3" />
+            <h3 className="font-display text-2xl tracking-wide">El sorteo todavía no se realizó</h3>
+            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+              Apenas se confirmen los partidos del Mundial 2026 vas a poder verlos acá y empezar a pronosticar.
+            </p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
+          </div>
+        )}
       </section>
 
       <section className="mt-14">
@@ -117,20 +131,36 @@ function HomePage() {
           title="Top del ranking"
           action={<Link to="/ranking" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Tabla completa <ArrowRight className="h-4 w-4" /></Link>}
         />
-        <div className="mt-6 space-y-2">
-          {top3.map((e) => <RankingRow key={e.position} entry={e} highlight={e.position === 1} />)}
-        </div>
+        {loadingRanking ? (
+          <div className="mt-6 space-y-2">
+            {[0, 1, 2].map((i) => <div key={i} className="h-16 rounded-xl bg-gradient-card border border-border/50 animate-pulse" />)}
+          </div>
+        ) : top3.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-border/40 bg-gradient-card p-8 text-center">
+            <Sparkles className="h-10 w-10 mx-auto text-primary mb-3" />
+            <h3 className="font-display text-2xl tracking-wide">Sé el primero en el ranking</h3>
+            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+              Cuando arranquen los partidos y los jugadores carguen sus pronósticos, las posiciones aparecerán acá en tiempo real.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 space-y-2">
+            {top3.map((e) => <RankingRow key={e.position} entry={e} highlight={e.position === 1} />)}
+          </div>
+        )}
       </section>
 
-      <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
-        <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
-        <Target className="h-12 w-12 text-primary mx-auto mb-4" />
-        <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
-        <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
-        <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
-          Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
+      {!user && (
+        <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
+          <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
+          <Target className="h-12 w-12 text-primary mx-auto mb-4" />
+          <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
+          <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
+          <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+            Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
+          </Link>
+        </section>
+      )}
     </div>
   );
 }
