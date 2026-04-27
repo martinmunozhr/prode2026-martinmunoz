@@ -103,11 +103,11 @@ function AdminPredictor() {
                 onClick={() => run(m.home_id, m.away_id)}
                 className="w-full flex items-center gap-2 px-2 py-2 rounded-md hover:bg-muted/30 text-left"
               >
-                <Flag code={teamMap.get(m.home_id)?.flag ?? ""} className="h-4 w-6" />
+                <Flag iso2={teamMap.get(m.home_id)?.flag ?? ""} className="h-4 w-6" />
                 <span className="text-sm flex-1">{teamMap.get(m.home_id)?.name}</span>
                 <span className="text-xs text-muted-foreground">vs</span>
                 <span className="text-sm flex-1 text-right">{teamMap.get(m.away_id)?.name}</span>
-                <Flag code={teamMap.get(m.away_id)?.flag ?? ""} className="h-4 w-6" />
+                <Flag iso2={teamMap.get(m.away_id)?.flag ?? ""} className="h-4 w-6" />
               </button>
             ))}
           </div>
@@ -121,7 +121,7 @@ function AdminPredictor() {
               return (
                 <div key={r.team_id} className="flex items-center gap-2 px-2 py-1.5">
                   <span className="w-5 text-xs font-mono text-muted-foreground">#{i + 1}</span>
-                  {t && <Flag code={t.flag} className="h-4 w-6" />}
+                  {t && <Flag iso2={t.flag} className="h-4 w-6" />}
                   <span className="text-sm flex-1">{t?.name ?? r.team_id}</span>
                   <span className="font-mono text-sm font-bold text-primary">{Math.round(Number(r.elo_rating))}</span>
                 </div>

@@ -48,7 +48,7 @@ function AdminJugadores() {
               selected === t.id ? "bg-primary/10 text-primary" : "hover:bg-muted/30"
             }`}
           >
-            <Flag code={t.flag} className="h-4 w-6" />
+            <Flag iso2={t.flag} className="h-4 w-6" />
             <span className="flex-1 text-left truncate">{t.name}</span>
             <span className={`text-xs font-mono ${counts[t.id] ? "text-primary" : "text-muted-foreground"}`}>{counts[t.id] ?? 0}</span>
           </button>
