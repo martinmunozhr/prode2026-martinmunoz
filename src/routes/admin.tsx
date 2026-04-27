@@ -14,6 +14,7 @@ const tabs = [
   { to: "/admin/partidos" as const, label: "Partidos", icon: Calendar, exact: false },
   { to: "/admin/jugadores" as const, label: "Jugadores", icon: Users, exact: false },
   { to: "/admin/awards" as const, label: "Premios", icon: Trophy, exact: false },
+  { to: "/admin/sobres" as const, label: "Sobres", icon: Package, exact: false },
   { to: "/admin/sync" as const, label: "Sync API", icon: Activity, exact: false },
   { to: "/admin/predictor" as const, label: "Predictor", icon: BarChart3, exact: false },
 ];
