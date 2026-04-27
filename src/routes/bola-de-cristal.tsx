@@ -6,6 +6,7 @@ import { teams } from "@/lib/mock-data";
 import { isCrystalBallLocked, WORLD_CUP_KICKOFF, crystalBallPoints } from "@/lib/scoring";
 import { Sparkles, Lock, LogIn, Trophy, Save } from "lucide-react";
 import { toast } from "sonner";
+import { PlayerAutocomplete } from "@/components/player-autocomplete";
 
 export const Route = createFileRoute("/bola-de-cristal")({
   head: () => ({
@@ -170,35 +171,31 @@ function BolaDeCristalPage() {
         </CrystalField>
 
         <CrystalField label="Goleador del torneo" points={crystalBallPoints.goleador} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
-          <input
-            type="text"
+          <PlayerAutocomplete
             disabled={locked}
             placeholder="Ej: Lionel Messi"
-            value={data.goleador_nombre ?? ""}
-            onChange={(e) => setData((d) => ({ ...d, goleador_nombre: e.target.value || null }))}
-            className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary disabled:opacity-60"
+            value={data.goleador_nombre}
+            onChange={(v) => setData((d) => ({ ...d, goleador_nombre: v }))}
           />
+          <p className="mt-2 text-[11px] text-muted-foreground">Buscá entre los jugadores del Mundial. Si tu plantel no está cargado todavía, podés escribir el nombre libremente.</p>
         </CrystalField>
 
         <CrystalField label="Mejor jugador" points={crystalBallPoints.mejorJugador} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
-          <input
-            type="text"
+          <PlayerAutocomplete
             disabled={locked}
             placeholder="Ej: Kylian Mbappé"
-            value={data.mejor_jugador_nombre ?? ""}
-            onChange={(e) => setData((d) => ({ ...d, mejor_jugador_nombre: e.target.value || null }))}
-            className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary disabled:opacity-60"
+            value={data.mejor_jugador_nombre}
+            onChange={(v) => setData((d) => ({ ...d, mejor_jugador_nombre: v }))}
           />
         </CrystalField>
 
         <CrystalField label="Mejor arquero" points={crystalBallPoints.mejorArquero} icon={<Sparkles className="h-5 w-5" />} locked={locked}>
-          <input
-            type="text"
+          <PlayerAutocomplete
             disabled={locked}
             placeholder="Ej: Emiliano Martínez"
-            value={data.mejor_arquero_nombre ?? ""}
-            onChange={(e) => setData((d) => ({ ...d, mejor_arquero_nombre: e.target.value || null }))}
-            className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary disabled:opacity-60"
+            value={data.mejor_arquero_nombre}
+            onChange={(v) => setData((d) => ({ ...d, mejor_arquero_nombre: v }))}
+            positionFilter="Goalkeeper"
           />
         </CrystalField>
 
