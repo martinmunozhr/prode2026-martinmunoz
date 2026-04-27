@@ -59,6 +59,23 @@ export const syncSquads = createServerFn({ method: "POST" })
       season: WORLD_CUP_SEASON,
     });
 
+    // Detect plan/permission errors from API-Football (e.g. Free plan can't access 2026)
+    const apiErrors = leagueTeams.errors;
+    const hasErrors =
+      apiErrors &&
+      (Array.isArray(apiErrors) ? apiErrors.length > 0 : Object.keys(apiErrors).length > 0);
+    if (hasErrors || leagueTeams.response.length === 0) {
+      const errMsg =
+        apiErrors && !Array.isArray(apiErrors)
+          ? Object.values(apiErrors as Record<string, string>).join(" | ")
+          : "API-Football no devolvió equipos para la temporada solicitada.";
+      await logSync("squads", "failed", 1, { apiErrors }, errMsg);
+      return {
+        ok: false,
+        error: `API-Football: ${errMsg}`,
+      };
+    }
+
     let inserted = 0;
     let teamsMatched = 0;
     let requestsUsed = 1;
