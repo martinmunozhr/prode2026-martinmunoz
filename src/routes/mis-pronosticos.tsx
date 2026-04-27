@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MatchCard } from "@/components/match-card";
-import type { Match } from "@/lib/mock-data";
+import { GoalscorerPicker } from "@/components/goalscorer-picker";
+import { getTeam, type Match } from "@/lib/mock-data";
 import { calcMatchPoints } from "@/lib/scoring";
-import { Target, Clock, Lock, LogIn } from "lucide-react";
+import { Target, Clock, Lock, LogIn, Info, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
