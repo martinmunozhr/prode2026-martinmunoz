@@ -96,8 +96,20 @@ function FixturePage() {
           </div>
 
           <div className="grid lg:grid-cols-[1fr_1.4fr] gap-6">
-            <div>
+            <div className="space-y-6">
               <GroupTable group={activeGroup} />
+              <div className="hidden lg:flex relative rounded-2xl border border-border/40 bg-gradient-card overflow-hidden min-h-[340px] items-end justify-center p-4">
+                <img
+                  src={figVinicius}
+                  alt=""
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 mx-auto h-[320px] object-contain pointer-events-none drop-shadow-2xl"
+                />
+                <div className="relative z-10 text-center pb-2">
+                  <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Tu próximo movimiento</div>
+                  <div className="font-display text-lg leading-tight mt-1">¿Quién pasa de fase?</div>
+                </div>
+              </div>
             </div>
             <div className="space-y-4">
               <h2 className="font-display text-2xl tracking-wider">Partidos del Grupo {activeGroup}</h2>
