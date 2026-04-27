@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_sync_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          error: string | null
+          id: string
+          requests_used: number
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          error?: string | null
+          id?: string
+          requests_used?: number
+          status: string
+          sync_type: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          error?: string | null
+          id?: string
+          requests_used?: number
+          status?: string
+          sync_type?: string
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          is_public: boolean
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          is_public?: boolean
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          is_public?: boolean
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       crystal_ball: {
         Row: {
           campeon_id: string | null
@@ -55,6 +106,64 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      match_events: {
+        Row: {
+          created_at: string
+          detail: string | null
+          event_type: string
+          id: string
+          match_id: string
+          minute: number | null
+          player_id: string | null
+          player_name: string | null
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          event_type: string
+          id?: string
+          match_id: string
+          minute?: number | null
+          player_id?: string | null
+          player_name?: string | null
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          event_type?: string
+          id?: string
+          match_id?: string
+          minute?: number | null
+          player_id?: string | null
+          player_name?: string | null
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_events_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_events_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_events_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       matches: {
         Row: {
@@ -114,6 +223,97 @@ export type Database = {
             foreignKeyName: "matches_home_id_fkey"
             columns: ["home_id"]
             isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          api_player_id: number | null
+          club: string | null
+          created_at: string
+          id: string
+          is_captain: boolean
+          jersey_number: number | null
+          name: string
+          position: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          api_player_id?: number | null
+          club?: string | null
+          created_at?: string
+          id?: string
+          is_captain?: boolean
+          jersey_number?: number | null
+          name: string
+          position: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          api_player_id?: number | null
+          club?: string | null
+          created_at?: string
+          id?: string
+          is_captain?: boolean
+          jersey_number?: number | null
+          name?: string
+          position?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      power_rankings: {
+        Row: {
+          draws: number
+          elo_rating: number
+          goals_against: number
+          goals_for: number
+          losses: number
+          matches_played: number
+          team_id: string
+          updated_at: string
+          wins: number
+        }
+        Insert: {
+          draws?: number
+          elo_rating?: number
+          goals_against?: number
+          goals_for?: number
+          losses?: number
+          matches_played?: number
+          team_id: string
+          updated_at?: string
+          wins?: number
+        }
+        Update: {
+          draws?: number
+          elo_rating?: number
+          goals_against?: number
+          goals_for?: number
+          losses?: number
+          matches_played?: number
+          team_id?: string
+          updated_at?: string
+          wins?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "power_rankings_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: true
             referencedRelation: "teams"
             referencedColumns: ["id"]
           },
@@ -217,6 +417,74 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_awards: {
+        Row: {
+          campeon_id: string | null
+          fair_play_id: string | null
+          finalized: boolean
+          goleador_nombre: string | null
+          id: number
+          mejor_arquero_nombre: string | null
+          mejor_jugador_nombre: string | null
+          subcampeon_id: string | null
+          tercer_puesto_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          campeon_id?: string | null
+          fair_play_id?: string | null
+          finalized?: boolean
+          goleador_nombre?: string | null
+          id?: number
+          mejor_arquero_nombre?: string | null
+          mejor_jugador_nombre?: string | null
+          subcampeon_id?: string | null
+          tercer_puesto_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campeon_id?: string | null
+          fair_play_id?: string | null
+          finalized?: boolean
+          goleador_nombre?: string | null
+          id?: number
+          mejor_arquero_nombre?: string | null
+          mejor_jugador_nombre?: string | null
+          subcampeon_id?: string | null
+          tercer_puesto_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_awards_campeon_id_fkey"
+            columns: ["campeon_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_awards_fair_play_id_fkey"
+            columns: ["fair_play_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_awards_subcampeon_id_fkey"
+            columns: ["subcampeon_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_awards_tercer_puesto_id_fkey"
+            columns: ["tercer_puesto_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -243,12 +511,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calc_prediction_points: {
+        Args: {
+          _pred_away: number
+          _pred_home: number
+          _real_away: number
+          _real_home: number
+          _stage: Database["public"]["Enums"]["match_stage"]
+        }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      predict_match: {
+        Args: { _away_id: string; _home_id: string }
+        Returns: {
+          away_score: number
+          home_score: number
+          probability: number
+        }[]
+      }
+      stage_multiplier: {
+        Args: { _stage: Database["public"]["Enums"]["match_stage"] }
+        Returns: number
       }
     }
     Enums: {
