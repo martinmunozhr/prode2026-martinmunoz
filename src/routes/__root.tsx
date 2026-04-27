@@ -55,6 +55,12 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_AR" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Prode Mundial 2026" },
+      { name: "description", content: "World Cup Predictor: A football prediction app with real player images and a sticker collection system." },
+      { property: "og:description", content: "World Cup Predictor: A football prediction app with real player images and a sticker collection system." },
+      { name: "twitter:description", content: "World Cup Predictor: A football prediction app with real player images and a sticker collection system." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7c877d0b-d52e-4c3c-9fa9-a97b2935da1d/id-preview-95b13599--e2158aea-e2c1-4c86-ba3f-5af952e45d56.lovable.app-1777274208139.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7c877d0b-d52e-4c3c-9fa9-a97b2935da1d/id-preview-95b13599--e2158aea-e2c1-4c86-ba3f-5af952e45d56.lovable.app-1777274208139.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
