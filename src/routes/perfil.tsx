@@ -43,7 +43,25 @@ function PerfilPage() {
   };
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-20 text-center text-muted-foreground">Cargando...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
+        <header className="mb-10">
+          <div className="h-3 w-24 bg-primary/20 rounded animate-pulse" />
+          <div className="h-12 w-56 bg-muted/40 rounded mt-3 animate-pulse" />
+        </header>
+        <div className="rounded-3xl bg-gradient-card border border-border/50 p-6 md:p-8 space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="h-20 w-20 rounded-full bg-muted/40 animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-7 w-40 bg-muted/40 rounded animate-pulse" />
+              <div className="h-4 w-56 bg-muted/30 rounded animate-pulse" />
+            </div>
+          </div>
+          <div className="h-16 rounded-xl bg-muted/20 animate-pulse" />
+          <div className="h-12 rounded-xl bg-muted/20 animate-pulse" />
+        </div>
+      </div>
+    );
   }
 
   if (!user) {

@@ -56,7 +56,19 @@ function InsightsPage() {
   }, [user, authLoading]);
 
   if (authLoading || loading) {
-    return <div className="container mx-auto px-4 py-20 text-center text-muted-foreground">Cargando...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <header className="mb-8">
+          <div className="h-3 w-24 bg-primary/20 rounded animate-pulse" />
+          <div className="h-12 w-72 bg-muted/40 rounded mt-3 animate-pulse" />
+        </header>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-40 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!user) {

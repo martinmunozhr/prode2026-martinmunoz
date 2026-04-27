@@ -6,6 +6,7 @@ import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { ranking as fallbackRanking } from "@/lib/mock-data";
 import { ArrowRight, Trophy, Users, Zap, Target } from "lucide-react";
+import heroChampion from "@/assets/hero-champion.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,12 +63,28 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="lg:pl-6">
-            <div className="text-center mb-4">
-              <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">Inicio del Mundial</div>
-              <div className="font-display text-2xl text-foreground mt-1">11 · JUN · 2026</div>
+          <div className="lg:pl-6 space-y-5">
+            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-primary/30 shadow-elevated group">
+              <img
+                src={heroChampion}
+                alt="El Capitán levantando la copa del Mundial 2026"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="eager"
+                fetchPriority="high"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Quién levantará la copa</div>
+                <div className="font-display text-2xl tracking-tight">Tu pronóstico también suma.</div>
+              </div>
             </div>
-            <CountdownHero />
+            <div>
+              <div className="text-center mb-3">
+                <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">Inicio del Mundial</div>
+                <div className="font-display text-2xl text-foreground mt-1">11 · JUN · 2026</div>
+              </div>
+              <CountdownHero />
+            </div>
           </div>
         </div>
       </section>
