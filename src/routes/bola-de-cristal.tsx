@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { teams } from "@/lib/mock-data";
-import figBellingham from "@/assets/figuras/bellingham.png";
+import figYamal from "@/assets/figuras/yamal.png";
 import { isCrystalBallLocked, WORLD_CUP_KICKOFF, crystalBallPoints } from "@/lib/scoring";
 import { Sparkles, Lock, LogIn, Trophy, Save } from "lucide-react";
 import { toast } from "sonner";
@@ -144,7 +144,7 @@ function BolaDeCristalPage() {
           5 predicciones de torneo. Se bloquean al inicio del Mundial.
         </p>
         <img
-          src={figBellingham}
+          src={figYamal}
           alt=""
           aria-hidden
           className="hidden md:block absolute -top-4 right-0 h-44 lg:h-52 object-contain pointer-events-none drop-shadow-2xl"
