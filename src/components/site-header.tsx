@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, LogOut, User as UserIcon, Shield } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Shield, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { useCoins } from "@/hooks/use-coins";
 import { ThemeToggle } from "@/components/theme-toggle";
 import logoMundial from "@/assets/logo-mundial-2026.webp";
 
@@ -14,7 +15,8 @@ const links = [
   { to: "/desafios" as const, label: "Desafíos", exact: false },
   { to: "/bola-de-cristal" as const, label: "Bola", exact: false },
   { to: "/ranking" as const, label: "Ranking", exact: false },
-  { to: "/equipos" as const, label: "Álbum", exact: false },
+  { to: "/figuritas" as const, label: "Figuritas", exact: false },
+  { to: "/equipos" as const, label: "Equipos", exact: false },
   { to: "/reglas" as const, label: "Reglas", exact: false },
 ];
 
@@ -22,6 +24,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user, profile, signOut, loading } = useAuth();
   const { isAdmin } = useIsAdmin();
+  const { balance } = useCoins();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -61,6 +64,14 @@ export function SiteHeader() {
             <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
           ) : user ? (
             <>
+              <Link
+                to="/figuritas"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-gradient-trophy text-trophy-foreground font-bold shadow-glow-trophy hover:scale-105 transition-transform"
+                title="Tus monedas"
+              >
+                <Coins className="h-4 w-4" />
+                <span className="text-sm tabular-nums">{balance ?? "—"}</span>
+              </Link>
               {isAdmin && (
                 <Link
                   to="/admin"

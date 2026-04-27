@@ -1,0 +1,437 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { Coins, Package, BookOpen, ArrowLeftRight, Sparkles, Loader2, Recycle, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/auth-context";
+import { useCoins } from "@/hooks/use-coins";
+import { FutCard } from "@/components/fut-card";
+import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
+import { openPackFn, recycleCardFn, type OpenedCard } from "@/lib/cards.functions";
+import { teams as MOCK_TEAMS } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/figuritas")({
+  head: () => ({
+    meta: [
+      { title: "Figuritas y Sobres — Prode Mundial 2026" },
+      { name: "description", content: "Abrí sobres con las monedas que ganás en el prode, completá tu álbum y intercambiá con otros participantes." },
+      { property: "og:title", content: "Figuritas y Sobres — Prode Mundial 2026" },
+      { property: "og:description", content: "Sistema de paquetes de figuritas: ganá monedas, abrí sobres, completá el álbum, intercambiá." },
+    ],
+  }),
+  component: FiguritasPage,
+});
+
+type Tab = "sobres" | "coleccion" | "intercambios";
+
+function FiguritasPage() {
+  const { user, loading: authLoading } = useAuth();
+  const { balance } = useCoins();
+  const [tab, setTab] = useState<Tab>("sobres");
+
+  if (!authLoading && !user) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <Package className="h-14 w-14 mx-auto text-muted-foreground mb-4" />
+        <h1 className="font-display text-4xl">Tu álbum te espera</h1>
+        <p className="text-muted-foreground mt-2 max-w-md mx-auto">
+          Necesitás una cuenta para ganar monedas, abrir sobres e intercambiar figuritas.
+        </p>
+        <div className="mt-6 flex gap-3 justify-center">
+          <Link to="/login" className="px-5 py-2.5 rounded-md border border-border text-sm font-bold uppercase tracking-wider">Ingresar</Link>
+          <Link to="/registro" className="px-5 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch">Sumate</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <header className="mb-8">
+        <div className="text-[11px] uppercase tracking-widest text-accent font-bold">Álbum del Mundial</div>
+        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Figuritas</h1>
+        <p className="mt-2 text-muted-foreground max-w-2xl">
+          Por cada punto que sumás en el prode te llevás <strong className="text-foreground">100 monedas</strong>. Usalas para abrir sobres, completar tu álbum y desafiar a otros participantes.
+        </p>
+        <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-trophy text-trophy-foreground font-bold shadow-glow-trophy">
+          <Coins className="h-4 w-4" />
+          <span className="font-display text-2xl tracking-wider">{balance ?? "—"}</span>
+          <span className="text-xs uppercase tracking-widest">monedas</span>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 rounded-xl border border-border/50 bg-card/40 w-fit mb-6 overflow-x-auto">
+        <TabBtn active={tab === "sobres"} onClick={() => setTab("sobres")} icon={Package} label="Sobres" />
+        <TabBtn active={tab === "coleccion"} onClick={() => setTab("coleccion")} icon={BookOpen} label="Mi colección" />
+        <TabBtn active={tab === "intercambios"} onClick={() => setTab("intercambios")} icon={ArrowLeftRight} label="Intercambios" />
+      </div>
+
+      {tab === "sobres" && <SobresTab balance={balance ?? 0} />}
+      {tab === "coleccion" && <ColeccionTab />}
+      {tab === "intercambios" && <IntercambiosTab />}
+    </div>
+  );
+}
+
+function TabBtn({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: typeof Package; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap",
+        active ? "bg-primary text-primary-foreground shadow-glow-pitch" : "text-muted-foreground hover:text-foreground hover:bg-background/40",
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </button>
+  );
+}
+
+// ─────────── SOBRES ───────────
+function SobresTab({ balance }: { balance: number }) {
+  const [opening, setOpening] = useState<PackType | null>(null);
+  const [reveal, setReveal] = useState<OpenedCard[] | null>(null);
+
+  const handleOpen = async (packType: PackType) => {
+    setOpening(packType);
+    try {
+      const { cards } = await openPackFn({ data: { packType } });
+      setReveal(cards);
+      toast.success("¡Sobre abierto!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "No se pudo abrir el sobre");
+    } finally {
+      setOpening(null);
+    }
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {PACKS.map((p) => {
+          const cant = balance >= p.cost;
+          const rarityKey: CardRarity = p.type;
+          return (
+            <div
+              key={p.type}
+              className={cn(
+                "relative overflow-hidden rounded-2xl border p-5 flex flex-col gap-3",
+                rarityKey === "legendario" && "border-fuchsia-400/60 shadow-[0_0_28px_oklch(0.7_0.24_295/0.4)]",
+                rarityKey === "epico" && "border-amber-400/60",
+                rarityKey === "raro" && "border-sky-400/60",
+                rarityKey === "comun" && "border-zinc-500/60",
+              )}
+              style={{
+                background: rarityKey === "legendario"
+                  ? "linear-gradient(160deg, #6b21a8 0%, #f0abfc 50%, #fde68a 100%)"
+                  : rarityKey === "epico"
+                  ? "linear-gradient(160deg, #92400e 0%, #f5c249 100%)"
+                  : rarityKey === "raro"
+                  ? "linear-gradient(160deg, #1e3a5f 0%, #6ea4cc 100%)"
+                  : "linear-gradient(160deg, #3f3f46 0%, #71717a 100%)",
+              }}
+            >
+              <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+              <div className="relative">
+                <div className="text-[10px] uppercase tracking-widest font-bold text-white/80">Sobre</div>
+                <div className="font-display text-3xl tracking-wider text-white">{RARITY_LABEL[rarityKey]}</div>
+                <div className="text-xs text-white/80 mt-0.5">{p.cards} figuritas</div>
+              </div>
+
+              <p className="relative text-xs text-white/90 leading-snug">{p.description}</p>
+
+              <div className="relative space-y-1">
+                {RARITY_ORDER.filter((r) => p.odds[r] > 0).map((r) => (
+                  <div key={r} className="flex justify-between text-[11px] text-white/85">
+                    <span>{RARITY_LABEL[r]}</span>
+                    <span className="font-mono font-bold">{Math.round(p.odds[r] * 100)}%</span>
+                  </div>
+                ))}
+                {p.guaranteesLegendary && (
+                  <div className="text-[11px] font-bold text-amber-100 flex items-center gap-1 pt-1">
+                    <Sparkles className="h-3 w-3" /> 1 Legendario garantizado
+                  </div>
+                )}
+              </div>
+
+              <button
+                disabled={!cant || opening !== null}
+                onClick={() => handleOpen(p.type)}
+                className={cn(
+                  "relative mt-auto w-full px-4 py-2.5 rounded-lg font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 transition-all",
+                  cant ? "bg-white text-zinc-900 hover:scale-[1.02]" : "bg-white/20 text-white/60 cursor-not-allowed",
+                )}
+              >
+                {opening === p.type ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Coins className="h-4 w-4" />
+                )}
+                {p.cost}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      {reveal && <RevealModal cards={reveal} onClose={() => setReveal(null)} />}
+    </>
+  );
+}
+
+function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => void }) {
+  const [step, setStep] = useState(0);
+  const showAll = step >= cards.length;
+  return (
+    <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-md flex items-center justify-center p-4 overflow-auto">
+      <div className="max-w-5xl w-full">
+        <div className="text-center mb-6">
+          <div className="text-[11px] uppercase tracking-widest text-accent font-bold">¡Sobre abierto!</div>
+          <h2 className="font-display text-4xl mt-1">{showAll ? "Tu botín" : `Carta ${step + 1} de ${cards.length}`}</h2>
+        </div>
+
+        {showAll ? (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {cards.map((c, i) => (
+                <div key={i} className="relative">
+                  <FutCard
+                    name={c.player_name}
+                    teamId={c.team_id}
+                    position={c.position.slice(0, 3).toUpperCase()}
+                    jerseyNumber={c.jersey_number}
+                    club={c.club}
+                    rarity={c.rarity}
+                    animationDelay={i * 60}
+                    size="md"
+                  />
+                  {c.is_new && (
+                    <span className="absolute -top-2 -left-2 z-30 px-2 py-0.5 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch">
+                      Nueva!
+                    </span>
+                  )}
+                  {c.is_duplicate && (
+                    <span className="absolute -top-2 -left-2 z-30 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-bold uppercase tracking-wider border border-border">
+                      Repetida
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <button onClick={onClose} className="px-6 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch">
+                Listo
+              </button>
+            </div>
+          </>
+        ) : (
+          <button
+            onClick={() => setStep((s) => s + 1)}
+            className="block mx-auto"
+            aria-label="Revelar siguiente carta"
+          >
+            <div className="w-64">
+              <FutCard
+                name={cards[step].player_name}
+                teamId={cards[step].team_id}
+                position={cards[step].position.slice(0, 3).toUpperCase()}
+                jerseyNumber={cards[step].jersey_number}
+                club={cards[step].club}
+                rarity={cards[step].rarity}
+                size="lg"
+              />
+            </div>
+            <div className="text-center mt-4 text-xs text-muted-foreground uppercase tracking-widest">
+              Tocá para continuar
+            </div>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────── COLECCIÓN ───────────
+type CollectionItem = {
+  player_id: string;
+  quantity: number;
+  player: {
+    id: string;
+    name: string;
+    team_id: string;
+    position: string;
+    jersey_number: number | null;
+    club: string | null;
+    rarity: CardRarity;
+  };
+};
+
+function ColeccionTab() {
+  const { user } = useAuth();
+  const [items, setItems] = useState<CollectionItem[] | null>(null);
+  const [filter, setFilter] = useState<"todas" | "repetidas" | CardRarity>("todas");
+  const [recycling, setRecycling] = useState<string | null>(null);
+
+  const load = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("user_collection")
+      .select("player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)")
+      .eq("user_id", user.id)
+      .gt("quantity", 0);
+    setItems((data ?? []) as unknown as CollectionItem[]);
+  };
+
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user?.id]);
+
+  const filtered = useMemo(() => {
+    if (!items) return [];
+    if (filter === "todas") return items;
+    if (filter === "repetidas") return items.filter((i) => i.quantity > 1);
+    return items.filter((i) => i.player.rarity === filter);
+  }, [items, filter]);
+
+  const stats = useMemo(() => {
+    const acc = { total: 0, comun: 0, raro: 0, epico: 0, legendario: 0, dup: 0 };
+    items?.forEach((i) => {
+      acc.total++;
+      acc[i.player.rarity]++;
+      if (i.quantity > 1) acc.dup++;
+    });
+    return acc;
+  }, [items]);
+
+  const handleRecycle = async (playerId: string) => {
+    setRecycling(playerId);
+    try {
+      const r = await recycleCardFn({ data: { playerId } });
+      toast.success(`+${r.refund} monedas (${RARITY_LABEL[r.rarity]})`);
+      if (r.bonus_player_id && r.bonus_rarity) {
+        toast.success(`🎉 ¡Carta garantizada ${RARITY_LABEL[r.bonus_rarity]}!`);
+      }
+      await load();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "No se pudo reciclar");
+    } finally {
+      setRecycling(null);
+    }
+  };
+
+  if (!items) {
+    return <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <Stat label="Total" value={stats.total} />
+        <Stat label="Legendarios" value={stats.legendario} accent="text-fuchsia-400" />
+        <Stat label="Épicos" value={stats.epico} accent="text-amber-400" />
+        <Stat label="Raros" value={stats.raro} accent="text-sky-400" />
+        <Stat label="Repetidas" value={stats.dup} accent="text-pitch" />
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-6">
+        {(["todas", "repetidas", "legendario", "epico", "raro", "comun"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={cn(
+              "text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md transition-colors",
+              filter === f ? "bg-primary text-primary-foreground" : "bg-card/40 text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {f === "todas" ? "Todas" : f === "repetidas" ? "Repetidas" : RARITY_LABEL[f as CardRarity]}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          {items.length === 0 ? "Tu álbum está vacío. Abrí un sobre para empezar." : "No hay figuritas con ese filtro."}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {filtered.map((it, i) => (
+            <div key={it.player_id} className="relative">
+              <FutCard
+                name={it.player.name}
+                teamId={it.player.team_id}
+                position={it.player.position.slice(0, 3).toUpperCase()}
+                jerseyNumber={it.player.jersey_number}
+                club={it.player.club}
+                rarity={it.player.rarity}
+                quantity={it.quantity}
+                animationDelay={i * 18}
+              />
+              {it.quantity > 1 && (
+                <button
+                  disabled={recycling === it.player_id}
+                  onClick={() => handleRecycle(it.player_id)}
+                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
+                  title="Reciclar 1 repetida"
+                >
+                  {recycling === it.player_id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Recycle className="h-3 w-3" />}
+                  Reciclar
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Resumen por equipo: link a álbum */}
+      <div className="mt-12 p-5 rounded-xl border border-border/50 bg-card/40">
+        <h3 className="font-display text-xl tracking-wider mb-2">Tu álbum por selección</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Mirá qué figuritas te faltan de cada equipo en su perfil. Las que no obtuviste aparecen como silueta.
+        </p>
+        <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-8 gap-2">
+          {MOCK_TEAMS.slice(0, 16).map((t) => (
+            <Link
+              key={t.id}
+              to="/equipos/$equipoId"
+              params={{ equipoId: t.id }}
+              className="px-2 py-2 rounded-lg border border-border/50 bg-background/30 hover:border-primary/40 text-center"
+            >
+              <div className="text-2xl">{t.flag}</div>
+              <div className="text-[10px] uppercase tracking-widest mt-1 truncate">{t.name}</div>
+            </Link>
+          ))}
+        </div>
+        <Link to="/equipos" className="block mt-4 text-center text-sm text-primary font-bold uppercase tracking-wider">
+          Ver todas las selecciones →
+        </Link>
+      </div>
+    </>
+  );
+}
+
+function Stat({ label, value, accent = "text-foreground" }: { label: string; value: number; accent?: string }) {
+  return (
+    <div className="rounded-xl border border-border/50 bg-card/40 p-3">
+      <div className={cn("font-display text-3xl", accent)}>{value}</div>
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+// ─────────── INTERCAMBIOS ───────────
+function IntercambiosTab() {
+  return (
+    <div className="rounded-2xl border border-dashed border-border/60 bg-card/30 p-10 text-center">
+      <ArrowLeftRight className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+      <h3 className="font-display text-2xl">Intercambios entre participantes</h3>
+      <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+        Próximamente vas a poder ofrecer tus repetidas a otros usuarios y pedirles las que te faltan.
+        Por ahora, reciclá tus repetidas en la pestaña de colección para ganar monedas y carta garantizada cada 10 reciclajes.
+      </p>
+      <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pitch/10 border border-pitch/40 text-pitch text-xs font-bold uppercase tracking-widest">
+        <Trash2 className="h-3.5 w-3.5" /> Mientras tanto: reciclaje generoso 75% + 1 garantizada cada 10
+      </div>
+    </div>
+  );
+}

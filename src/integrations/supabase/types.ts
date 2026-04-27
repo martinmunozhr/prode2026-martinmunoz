@@ -121,6 +121,36 @@ export type Database = {
           },
         ]
       }
+      coin_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          tx_type: Database["public"]["Enums"]["coin_tx_type"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          tx_type: Database["public"]["Enums"]["coin_tx_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          tx_type?: Database["public"]["Enums"]["coin_tx_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       crystal_ball: {
         Row: {
           campeon_id: string | null
@@ -330,6 +360,39 @@ export type Database = {
           },
         ]
       }
+      pack_openings: {
+        Row: {
+          cost: number
+          created_at: string
+          duplicates_count: number
+          id: string
+          pack_type: Database["public"]["Enums"]["pack_type"]
+          player_ids: string[]
+          rarities: Database["public"]["Enums"]["card_rarity"][]
+          user_id: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string
+          duplicates_count?: number
+          id?: string
+          pack_type: Database["public"]["Enums"]["pack_type"]
+          player_ids: string[]
+          rarities: Database["public"]["Enums"]["card_rarity"][]
+          user_id: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          duplicates_count?: number
+          id?: string
+          pack_type?: Database["public"]["Enums"]["pack_type"]
+          player_ids?: string[]
+          rarities?: Database["public"]["Enums"]["card_rarity"][]
+          user_id?: string
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           api_player_id: number | null
@@ -340,6 +403,7 @@ export type Database = {
           jersey_number: number | null
           name: string
           position: string
+          rarity: Database["public"]["Enums"]["card_rarity"]
           team_id: string
           updated_at: string
         }
@@ -352,6 +416,7 @@ export type Database = {
           jersey_number?: number | null
           name: string
           position: string
+          rarity?: Database["public"]["Enums"]["card_rarity"]
           team_id: string
           updated_at?: string
         }
@@ -364,6 +429,7 @@ export type Database = {
           jersey_number?: number | null
           name?: string
           position?: string
+          rarity?: Database["public"]["Enums"]["card_rarity"]
           team_id?: string
           updated_at?: string
         }
@@ -488,6 +554,38 @@ export type Database = {
           username?: string
         }
         Relationships: []
+      }
+      round_payouts: {
+        Row: {
+          achievements_paid: Json
+          paid_at: string
+          points_paid: number
+          round_id: string
+          user_id: string
+        }
+        Insert: {
+          achievements_paid?: Json
+          paid_at?: string
+          points_paid?: number
+          round_id: string
+          user_id: string
+        }
+        Update: {
+          achievements_paid?: Json
+          paid_at?: string
+          points_paid?: number
+          round_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "round_payouts_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rounds: {
         Row: {
@@ -623,6 +721,158 @@ export type Database = {
           },
         ]
       }
+      trade_items: {
+        Row: {
+          created_at: string
+          from_user_id: string
+          id: string
+          player_id: string
+          quantity: number
+          trade_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_user_id: string
+          id?: string
+          player_id: string
+          quantity?: number
+          trade_id: string
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string
+          id?: string
+          player_id?: string
+          quantity?: number
+          trade_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_items_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_items_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: false
+            referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trades: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          proposer_id: string
+          receiver_id: string
+          resolved_at: string | null
+          status: Database["public"]["Enums"]["trade_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          proposer_id: string
+          receiver_id: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["trade_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          proposer_id?: string
+          receiver_id?: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["trade_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_coins: {
+        Row: {
+          balance: number
+          total_earned: number
+          total_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          total_earned?: number
+          total_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_collection: {
+        Row: {
+          first_obtained_at: string
+          player_id: string
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          first_obtained_at?: string
+          player_id: string
+          quantity?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          first_obtained_at?: string
+          player_id?: string
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_collection_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_recycle_fragments: {
+        Row: {
+          fragments: number
+          rarity: Database["public"]["Enums"]["card_rarity"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          fragments?: number
+          rarity: Database["public"]["Enums"]["card_rarity"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          fragments?: number
+          rarity?: Database["public"]["Enums"]["card_rarity"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -644,11 +894,34 @@ export type Database = {
         }
         Relationships: []
       }
+      user_streaks: {
+        Row: {
+          best_exact_streak: number
+          exact_streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_exact_streak?: number
+          exact_streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_exact_streak?: number
+          exact_streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      accept_trade: { Args: { _trade_id: string }; Returns: undefined }
+      auto_assign_rarities: { Args: never; Returns: undefined }
       calc_prediction_points: {
         Args: {
           _pred_away: number
@@ -656,6 +929,17 @@ export type Database = {
           _real_away: number
           _real_home: number
           _stage: Database["public"]["Enums"]["match_stage"]
+        }
+        Returns: number
+      }
+      ensure_user_coins: { Args: { _user_id: string }; Returns: undefined }
+      grant_coins: {
+        Args: {
+          _amount: number
+          _description?: string
+          _metadata?: Json
+          _tx_type: Database["public"]["Enums"]["coin_tx_type"]
+          _user_id: string
         }
         Returns: number
       }
@@ -667,6 +951,15 @@ export type Database = {
         Returns: boolean
       }
       is_round_finished: { Args: { _round_id: string }; Returns: boolean }
+      open_pack: {
+        Args: { _pack_type: Database["public"]["Enums"]["pack_type"] }
+        Returns: {
+          is_duplicate: boolean
+          is_new: boolean
+          player_id: string
+          rarity: Database["public"]["Enums"]["card_rarity"]
+        }[]
+      }
       points_for_user_in_round: {
         Args: { _round_id: string; _user_id: string }
         Returns: number
@@ -679,10 +972,12 @@ export type Database = {
           probability: number
         }[]
       }
+      process_round_payouts: { Args: { _round_id: string }; Returns: undefined }
       recalc_goalscorer_points: {
         Args: { _match_id: string }
         Returns: undefined
       }
+      recycle_card: { Args: { _player_id: string }; Returns: Json }
       refresh_round_dates: { Args: { _round_id: string }; Returns: undefined }
       resolve_challenge: { Args: { _challenge_id: string }; Returns: undefined }
       stage_multiplier: {
@@ -692,12 +987,23 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      card_rarity: "comun" | "raro" | "epico" | "legendario"
       challenge_status:
         | "pending"
         | "accepted"
         | "rejected"
         | "resolved"
         | "cancelled"
+      coin_tx_type:
+        | "round_points"
+        | "streak_bonus"
+        | "goalscorer_bonus"
+        | "challenge_bonus"
+        | "round_achievement"
+        | "pack_purchase"
+        | "recycle"
+        | "trade"
+        | "admin_grant"
       match_stage:
         | "Grupos"
         | "Dieciseisavos"
@@ -707,6 +1013,8 @@ export type Database = {
         | "Tercer Puesto"
         | "Final"
       match_status: "scheduled" | "live" | "finished"
+      pack_type: "comun" | "raro" | "epico" | "legendario"
+      trade_status: "pending" | "accepted" | "rejected" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -835,12 +1143,24 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      card_rarity: ["comun", "raro", "epico", "legendario"],
       challenge_status: [
         "pending",
         "accepted",
         "rejected",
         "resolved",
         "cancelled",
+      ],
+      coin_tx_type: [
+        "round_points",
+        "streak_bonus",
+        "goalscorer_bonus",
+        "challenge_bonus",
+        "round_achievement",
+        "pack_purchase",
+        "recycle",
+        "trade",
+        "admin_grant",
       ],
       match_stage: [
         "Grupos",
@@ -852,6 +1172,8 @@ export const Constants = {
         "Final",
       ],
       match_status: ["scheduled", "live", "finished"],
+      pack_type: ["comun", "raro", "epico", "legendario"],
+      trade_status: ["pending", "accepted", "rejected", "cancelled"],
     },
   },
 } as const
