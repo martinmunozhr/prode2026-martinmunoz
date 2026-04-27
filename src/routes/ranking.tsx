@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RankingRow } from "@/components/ranking-row";
-import { ranking } from "@/lib/mock-data";
-import { Trophy, Medal, Award } from "lucide-react";
+import { useLiveRanking, type LiveRankingEntry } from "@/lib/live-data";
+import { Trophy, Medal, Award, Users } from "lucide-react";
 
 export const Route = createFileRoute("/ranking")({
   head: () => ({
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/ranking")({
 });
 
 function RankingPage() {
+  const { ranking, loading } = useLiveRanking();
   const podium = ranking.slice(0, 3);
   const rest = ranking.slice(3);
 
@@ -24,35 +25,52 @@ function RankingPage() {
       <header className="mb-8">
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Competencia global</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Ranking</h1>
-        <p className="mt-2 text-muted-foreground">3 pts por resultado exacto · 1 pt por ganador correcto.</p>
+        <p className="mt-2 text-muted-foreground">3 pts por resultado exacto · 1 pt por ganador correcto. Multiplica en mata-mata.</p>
       </header>
 
-      {/* Podio */}
-      <section className="mb-10">
-        <div className="grid grid-cols-3 gap-3 md:gap-6 items-end">
-          <PodiumCard entry={podium[1]} place={2} icon={<Medal />} height="h-44 md:h-56" tone="silver" />
-          <PodiumCard entry={podium[0]} place={1} icon={<Trophy />} height="h-56 md:h-72" tone="gold" />
-          <PodiumCard entry={podium[2]} place={3} icon={<Award />} height="h-36 md:h-44" tone="bronze" />
+      {loading ? (
+        <div className="space-y-3">
+          <div className="h-56 rounded-xl bg-muted/30 animate-pulse" />
+          <div className="h-12 rounded-xl bg-muted/20 animate-pulse" />
+          <div className="h-12 rounded-xl bg-muted/20 animate-pulse" />
         </div>
-      </section>
+      ) : ranking.length === 0 ? (
+        <div className="text-center py-16 border border-border/40 rounded-2xl bg-card/40">
+          <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h3 className="mt-4 font-display text-2xl tracking-wider">Todavía no hay jugadores</h3>
+          <p className="mt-2 text-sm text-muted-foreground">Sé el primero en registrarte y cargar tus pronósticos.</p>
+        </div>
+      ) : (
+        <>
+          {/* Podio (sólo si hay 3 o más) */}
+          {podium.length >= 3 && (
+            <section className="mb-10">
+              <div className="grid grid-cols-3 gap-3 md:gap-6 items-end">
+                <PodiumCard entry={podium[1]} place={2} icon={<Medal />} height="h-44 md:h-56" tone="silver" />
+                <PodiumCard entry={podium[0]} place={1} icon={<Trophy />} height="h-56 md:h-72" tone="gold" />
+                <PodiumCard entry={podium[2]} place={3} icon={<Award />} height="h-36 md:h-44" tone="bronze" />
+              </div>
+            </section>
+          )}
 
-      {/* Headers */}
-      <div className="hidden md:grid grid-cols-[60px_1fr_100px_100px_100px] gap-4 px-4 pb-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
-        <div className="text-center">Pos</div>
-        <div>Jugador</div>
-        <div className="text-center">Exactos</div>
-        <div className="text-center">Parciales</div>
-        <div className="text-right">Puntos</div>
-      </div>
+          <div className="hidden md:grid grid-cols-[60px_1fr_100px_100px_100px] gap-4 px-4 pb-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+            <div className="text-center">Pos</div>
+            <div>Jugador</div>
+            <div className="text-center">Exactos</div>
+            <div className="text-center">Parciales</div>
+            <div className="text-right">Puntos</div>
+          </div>
 
-      <div className="space-y-2">
-        {rest.map((e) => <RankingRow key={e.position} entry={e} />)}
-      </div>
+          <div className="space-y-2">
+            {(rest.length > 0 ? rest : podium).map((e) => <RankingRow key={e.userId} entry={e} />)}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function PodiumCard({ entry, place, icon, height, tone }: { entry: typeof ranking[number]; place: number; icon: React.ReactNode; height: string; tone: "gold" | "silver" | "bronze" }) {
+function PodiumCard({ entry, place, icon, height, tone }: { entry: LiveRankingEntry; place: number; icon: React.ReactNode; height: string; tone: "gold" | "silver" | "bronze" }) {
   const styles = {
     gold: "bg-gradient-trophy border-accent/60 shadow-glow-trophy text-accent-foreground",
     silver: "bg-gradient-card border-muted-foreground/40",

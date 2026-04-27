@@ -2,8 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { MatchCard } from "@/components/match-card";
 import { GroupTable } from "@/components/group-table";
-import { matches, groupLetters } from "@/lib/mock-data";
+import { groupLetters } from "@/lib/mock-data";
+import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
+
+const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
+type Stage = typeof STAGES[number];
 
 export const Route = createFileRoute("/fixture")({
   head: () => ({
@@ -18,15 +22,21 @@ export const Route = createFileRoute("/fixture")({
 });
 
 function FixturePage() {
+  const { matches, loading } = useLiveMatches();
+  const [stage, setStage] = useState<Stage>("Grupos");
   const [activeGroup, setActiveGroup] = useState<string>("A");
-  const groupMatches = matches.filter((m) => m.group === activeGroup);
 
+  const stageMatches = matches.filter((m) => m.stage === stage);
+  const groupMatches = stageMatches.filter((m) => m.group === activeGroup);
+  const knockoutMatches = stageMatches.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const selectStage = (s: Stage) => {
+    setStage(s);
+    if (typeof window !== "undefined") requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+  };
   const selectGroup = (g: string) => {
     setActiveGroup(g);
-    if (typeof window !== "undefined") {
-      // smooth scroll the content into view
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-    }
+    if (typeof window !== "undefined") requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
   };
 
   return (
@@ -37,37 +47,75 @@ function FixturePage() {
         <p className="mt-2 text-muted-foreground max-w-2xl">12 grupos de 4 equipos. Los 2 mejores de cada grupo + los 8 mejores terceros pasan a dieciseisavos.</p>
       </header>
 
-      {/* Group selector */}
-      <div className="flex flex-wrap gap-2 mb-8 sticky top-16 z-40 bg-background/80 backdrop-blur-xl py-3 -mx-4 px-4 border-b border-border/30" role="tablist" aria-label="Seleccionar grupo">
-        {groupLetters.map((g) => (
+      {/* Stage selector */}
+      <div className="flex flex-wrap gap-2 mb-6 sticky top-16 z-40 bg-background/80 backdrop-blur-xl py-3 -mx-4 px-4 border-b border-border/30">
+        {STAGES.map((s) => (
           <button
-            key={g}
-            onClick={() => selectGroup(g)}
-            role="tab"
-            aria-selected={activeGroup === g}
-            aria-label={`Grupo ${g}`}
+            key={s}
+            onClick={() => selectStage(s)}
             className={cn(
-              "h-11 w-11 rounded-lg font-display text-xl tracking-wider transition-all",
-              activeGroup === g
-                ? "bg-gradient-pitch text-primary-foreground shadow-glow-pitch scale-110"
-                : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-primary/30"
+              "px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all",
+              stage === s
+                ? "bg-gradient-pitch text-primary-foreground shadow-glow-pitch"
+                : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-primary/30",
             )}
           >
-            {g}
+            {s}
           </button>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_1.4fr] gap-6">
-        <div>
-          <GroupTable group={activeGroup} />
-        </div>
+      {stage === "Grupos" ? (
+        <>
+          <div className="flex flex-wrap gap-2 mb-8" role="tablist" aria-label="Seleccionar grupo">
+            {groupLetters.map((g) => (
+              <button
+                key={g}
+                onClick={() => selectGroup(g)}
+                role="tab"
+                aria-selected={activeGroup === g}
+                aria-label={`Grupo ${g}`}
+                className={cn(
+                  "h-11 w-11 rounded-lg font-display text-xl tracking-wider transition-all",
+                  activeGroup === g
+                    ? "bg-gradient-pitch text-primary-foreground shadow-glow-pitch scale-110"
+                    : "bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:border-primary/30",
+                )}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
 
-        <div className="space-y-4">
-          <h2 className="font-display text-2xl tracking-wider">Partidos del Grupo {activeGroup}</h2>
-          {groupMatches.map((m) => <MatchCard key={m.id} match={m} />)}
+          <div className="grid lg:grid-cols-[1fr_1.4fr] gap-6">
+            <div>
+              <GroupTable group={activeGroup} />
+            </div>
+            <div className="space-y-4">
+              <h2 className="font-display text-2xl tracking-wider">Partidos del Grupo {activeGroup}</h2>
+              {loading ? (
+                <div className="h-40 rounded-xl bg-muted/30 animate-pulse" />
+              ) : groupMatches.length === 0 ? (
+                <div className="text-sm text-muted-foreground border border-border/40 rounded-xl p-6 text-center">Sin partidos cargados.</div>
+              ) : (
+                groupMatches.map((m) => <MatchCard key={m.id} match={m} />)
+              )}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-4">
+          {loading ? (
+            <div className="h-40 rounded-xl bg-muted/30 animate-pulse md:col-span-2" />
+          ) : knockoutMatches.length === 0 ? (
+            <div className="text-sm text-muted-foreground border border-border/40 rounded-xl p-6 text-center md:col-span-2">
+              Esta fase se definirá cuando avance el torneo.
+            </div>
+          ) : (
+            knockoutMatches.map((m) => <MatchCard key={m.id} match={m} />)
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
