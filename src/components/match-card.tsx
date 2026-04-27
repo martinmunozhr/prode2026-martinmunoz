@@ -2,6 +2,7 @@ import { Match, getTeam } from "@/lib/mock-data";
 import { Flag } from "@/components/flag";
 import { MapPin, Clock, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
+import { getTeamPalette } from "@/lib/team-colors";
 
 const STAGE_MULTIPLIER: Record<Match["stage"], number> = {
   Grupos: 1,
@@ -70,8 +71,27 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
     }
   };
 
+  const homePal = getTeamPalette(home.id);
+  const awayPal = getTeamPalette(away.id);
+
   return (
     <div className="group bg-gradient-card border border-border/50 rounded-2xl p-5 shadow-card-sport hover:shadow-elevated hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+      {/* Team color accents */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[3px] opacity-80"
+        style={{ background: `linear-gradient(90deg, ${homePal.color} 0%, ${homePal.color} 48%, transparent 50%, ${awayPal.color} 52%, ${awayPal.color} 100%)` }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-20 -left-20 h-44 w-44 rounded-full blur-3xl opacity-15 group-hover:opacity-25 transition-opacity"
+        style={{ background: homePal.color }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -right-20 h-44 w-44 rounded-full blur-3xl opacity-15 group-hover:opacity-25 transition-opacity"
+        style={{ background: awayPal.color }}
+      />
       {/* Status badge */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest font-semibold text-muted-foreground">
