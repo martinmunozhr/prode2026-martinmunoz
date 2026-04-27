@@ -63,7 +63,7 @@ function LoginPage() {
 
         <div className="mt-4 flex items-center gap-3">
           <div className="flex-1 h-px bg-border/50" />
-          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">o</span>
+          <span className="font-sans text-[10px] uppercase tracking-widest text-muted-foreground">o</span>
           <div className="flex-1 h-px bg-border/50" />
         </div>
 

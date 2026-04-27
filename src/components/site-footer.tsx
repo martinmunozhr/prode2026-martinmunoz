@@ -5,7 +5,7 @@ export function SiteFooter() {
         <p className="font-display text-base tracking-wider">
           PRODE MUNDIAL <span className="text-primary">2026</span>
         </p>
-        <p>Hecho con 🔥 para los que viven el fútbol. Datos de muestra.</p>
+        <p>Hecho con <span aria-hidden>🔥</span> para los que viven el fútbol.</p>
       </div>
     </footer>
   );
