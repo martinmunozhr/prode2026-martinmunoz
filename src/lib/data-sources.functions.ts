@@ -223,7 +223,15 @@ export const importRosterText = createServerFn({ method: "POST" })
   )
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch (e) {
+      return {
+        ok: false as const,
+        error: e instanceof Error ? e.message : "Forbidden",
+        inserted: 0,
+      };
+    }
 
     const { data: team, error: teamErr } = await supabaseAdmin
       .from("teams")
