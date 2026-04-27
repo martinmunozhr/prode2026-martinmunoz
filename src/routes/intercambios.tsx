@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeftRight, Loader2, Plus, X, Send, Check, Search, Inbox, Outbox, History } from "lucide-react";
+import { ArrowLeftRight, Loader2, Plus, X, Send, Check, Search, Inbox, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth-context";
 import { FutCard } from "@/components/fut-card";
