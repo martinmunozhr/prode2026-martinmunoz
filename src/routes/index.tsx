@@ -134,6 +134,30 @@ function HomePage() {
       </section>
 
       <section className="mt-14">
+        <SectionHeader
+          eyebrow="Las figuras"
+          title="Estrellas del Mundial"
+          action={<Link to="/equipos" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Ver álbum <ArrowRight className="h-4 w-4" /></Link>}
+        />
+        <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {FIGURAS.map((f) => (
+            <div key={f.name} className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-border/50 bg-gradient-card shadow-elevated">
+              <img src={f.img} alt={`${f.name} - ${f.country}`} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                <div className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-primary font-bold">
+                  <Star className="h-3 w-3" /> Figura
+                </div>
+                <div className="font-display text-base sm:text-lg leading-tight mt-0.5 text-foreground">{f.name}</div>
+                <div className="text-xs text-muted-foreground">{f.flag} {f.country}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[10px] text-muted-foreground/70 text-right">Fotos: Wikimedia Commons (CC BY-SA)</p>
+      </section>
+
+      <section className="mt-14">
         <AlbumPreview />
       </section>
 
@@ -165,12 +189,15 @@ function HomePage() {
       {!user && (
         <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
           <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
-          <Target className="h-12 w-12 text-primary mx-auto mb-4" />
-          <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
-          <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
-          <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
-            Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
-          </Link>
+          <img src={imgPelota} alt="" aria-hidden className="absolute -right-10 -bottom-10 h-56 w-56 object-contain opacity-20 rotate-12 pointer-events-none" />
+          <div className="relative">
+            <Target className="h-12 w-12 text-primary mx-auto mb-4" />
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
+            <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
+            <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+              Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </section>
       )}
     </div>
