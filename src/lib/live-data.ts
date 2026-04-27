@@ -42,14 +42,19 @@ export function useLiveMatches(): { matches: Match[]; loading: boolean } {
     };
   }, []);
 
+  const now = Date.now();
   const matches = catalogMatches.map((m) => {
     const s = scores.get(m.id);
     if (!s) return m;
+    // Safety: if the catalog match is still in the future, ignore stale "finished" rows
+    // from the DB (e.g. seed/test data) so we don't show fake results before kickoff.
+    const isFuture = new Date(m.date).getTime() > now;
+    if (isFuture && s.status === "finished") return m;
     return {
       ...m,
       homeScore: s.home ?? m.homeScore,
       awayScore: s.away ?? m.awayScore,
-      status: s.status,
+      status: isFuture ? m.status : s.status,
     };
   });
 

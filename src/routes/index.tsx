@@ -4,8 +4,8 @@ import { MatchCard } from "@/components/match-card";
 import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
-import { ranking as fallbackRanking } from "@/lib/mock-data";
-import { ArrowRight, Trophy, Users, Zap, Target } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
 
 export const Route = createFileRoute("/")({
@@ -21,9 +21,10 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { matches: upcoming } = useUpcomingLiveMatches(3);
-  const { ranking: liveRanking } = useLiveRanking();
-  const top3 = liveRanking.length > 0 ? liveRanking.slice(0, 3) : fallbackRanking.slice(0, 3);
+  const { user } = useAuth();
+  const { matches: upcoming, loading: loadingMatches } = useUpcomingLiveMatches(3);
+  const { ranking: liveRanking, loading: loadingRanking } = useLiveRanking();
+  const top3 = liveRanking.slice(0, 3);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-14">
@@ -37,20 +38,26 @@ function HomePage() {
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
               Inscripciones abiertas
             </div>
-            <h1 className="font-display text-5xl sm:text-6xl md:text-8xl leading-[0.9] tracking-tight">
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight">
               EL PRODE
               <br />
               <span className="text-gradient-pitch">DEL MUNDIAL</span>
               <br />
               2026.
             </h1>
-            <p className="mt-5 text-lg text-muted-foreground max-w-xl">
+            <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-xl">
               48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado, sumá puntos y escalá en el ranking global.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/registro" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
-                Sumate al prode <ArrowRight className="h-4 w-4" />
-              </Link>
+              {user ? (
+                <Link to="/mis-pronosticos" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                  Ir a mis pronósticos <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link to="/registro" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+                  Sumate al prode <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
               <Link to="/fixture" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors">
                 Ver fixture
               </Link>
@@ -95,9 +102,23 @@ function HomePage() {
           title="Próximos partidos"
           action={<Link to="/fixture" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Ver todos <ArrowRight className="h-4 w-4" /></Link>}
         />
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
-        </div>
+        {loadingMatches ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {[0, 1, 2].map((i) => <div key={i} className="h-44 rounded-2xl bg-gradient-card border border-border/50 animate-pulse" />)}
+          </div>
+        ) : upcoming.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-border/40 bg-gradient-card p-8 text-center">
+            <CalendarClock className="h-10 w-10 mx-auto text-accent mb-3" />
+            <h3 className="font-display text-2xl tracking-wide">El sorteo todavía no se realizó</h3>
+            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+              Apenas se confirmen los partidos del Mundial 2026 vas a poder verlos acá y empezar a pronosticar.
+            </p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
+          </div>
+        )}
       </section>
 
       <section className="mt-14">
@@ -110,20 +131,36 @@ function HomePage() {
           title="Top del ranking"
           action={<Link to="/ranking" className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1">Tabla completa <ArrowRight className="h-4 w-4" /></Link>}
         />
-        <div className="mt-6 space-y-2">
-          {top3.map((e) => <RankingRow key={e.position} entry={e} highlight={e.position === 1} />)}
-        </div>
+        {loadingRanking ? (
+          <div className="mt-6 space-y-2">
+            {[0, 1, 2].map((i) => <div key={i} className="h-16 rounded-xl bg-gradient-card border border-border/50 animate-pulse" />)}
+          </div>
+        ) : top3.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-border/40 bg-gradient-card p-8 text-center">
+            <Sparkles className="h-10 w-10 mx-auto text-primary mb-3" />
+            <h3 className="font-display text-2xl tracking-wide">Sé el primero en el ranking</h3>
+            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+              Cuando arranquen los partidos y los jugadores carguen sus pronósticos, las posiciones aparecerán acá en tiempo real.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 space-y-2">
+            {top3.map((e) => <RankingRow key={e.position} entry={e} highlight={e.position === 1} />)}
+          </div>
+        )}
       </section>
 
-      <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
-        <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
-        <Target className="h-12 w-12 text-primary mx-auto mb-4" />
-        <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
-        <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
-        <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
-          Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
+      {!user && (
+        <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
+          <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
+          <Target className="h-12 w-12 text-primary mx-auto mb-4" />
+          <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
+          <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
+          <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
+            Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
+          </Link>
+        </section>
+      )}
     </div>
   );
 }
