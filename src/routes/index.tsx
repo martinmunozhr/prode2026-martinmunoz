@@ -38,19 +38,19 @@ function HomePage() {
   const top3 = liveRanking.slice(0, 3);
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-14">
-      <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-hero shadow-elevated p-6 md:p-12">
+    <div className="container mx-auto px-4 py-4 md:py-6">
+      <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-hero shadow-elevated p-5 md:p-8 lg:p-10">
         <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
         <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-accent/15 blur-3xl" />
 
-        <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+        <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-8 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest mb-3">
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
               Inscripciones abiertas
             </div>
             <div className="relative">
-              <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] leading-[0.9] tracking-tight">
+              <h1 className="font-display text-5xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-[5rem] leading-[0.9] tracking-tight">
                 PRODE
                 <br />
                 <span className="text-gradient-pitch">MUNDIAL</span>
@@ -61,48 +61,48 @@ function HomePage() {
                 src={trofeo2026}
                 alt=""
                 aria-hidden
-                className="hidden sm:block absolute -top-6 -right-2 md:-right-6 lg:-right-2 h-32 md:h-44 lg:h-52 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] rotate-[8deg]"
+                className="hidden sm:block absolute -top-4 -right-2 md:-right-4 lg:-right-2 h-24 md:h-32 lg:h-40 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] rotate-[8deg]"
                 loading="eager"
                 decoding="async"
               />
             </div>
-            <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-xl">
+            <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-xl">
               48 selecciones. 104 partidos. Un solo campeón del prode. Pronosticá cada resultado,
               sumá puntos y escalá en el ranking global.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-wrap gap-3">
               {user ? (
                 <Link
                   to="/mis-pronosticos"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform text-sm"
                 >
                   Ir a mis pronósticos <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : (
                 <Link
                   to="/registro"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform text-sm"
                 >
                   Sumate al prode <ArrowRight className="h-4 w-4" />
                 </Link>
               )}
               <Link
                 to="/fixture"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card/50 backdrop-blur font-bold uppercase tracking-wider hover:border-primary/40 transition-colors text-sm"
               >
                 Ver fixture
               </Link>
             </div>
 
-            <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
-              <Stat icon={<Users className="h-5 w-5" />} value="48" label="Selecciones" />
-              <Stat icon={<Zap className="h-5 w-5" />} value="104" label="Partidos" />
-              <Stat icon={<Trophy className="h-5 w-5" />} value="1" label="Campeón" />
+            <div className="mt-5 grid grid-cols-3 gap-3 max-w-md">
+              <Stat icon={<Users className="h-4 w-4" />} value="48" label="Selecciones" />
+              <Stat icon={<Zap className="h-4 w-4" />} value="104" label="Partidos" />
+              <Stat icon={<Trophy className="h-4 w-4" />} value="1" label="Campeón" />
             </div>
           </div>
 
-          <div className="lg:pl-6 space-y-5">
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-primary/30 shadow-elevated group">
+          <div className="lg:pl-4 space-y-3">
+            <div className="relative aspect-[4/5] lg:aspect-[4/4.2] rounded-2xl overflow-hidden border border-primary/30 shadow-elevated group max-h-[460px] mx-auto w-full">
               <img
                 src={heroChampion}
                 alt="El Capitán levantando la copa del Mundial 2026"
@@ -111,21 +111,20 @@ function HomePage() {
                 fetchPriority="high"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
+              <div className="absolute bottom-0 left-0 right-0 p-3">
                 <div className="text-[10px] uppercase tracking-widest text-primary font-bold">
                   Quién levantará la copa
                 </div>
-                <div className="font-display text-2xl tracking-tight">
+                <div className="font-display text-xl tracking-tight">
                   Tu pronóstico también suma.
                 </div>
               </div>
             </div>
             <div>
-              <div className="text-center mb-3">
-                <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">
-                  Inicio del Mundial
+              <div className="text-center mb-2">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                  Inicio del Mundial · 11 · JUN · 2026
                 </div>
-                <div className="font-display text-2xl text-foreground mt-1">11 · JUN · 2026</div>
               </div>
               <CountdownHero />
             </div>
