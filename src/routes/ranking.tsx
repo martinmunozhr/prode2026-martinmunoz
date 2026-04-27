@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RankingRow } from "@/components/ranking-row";
 import { useLiveRanking, type LiveRankingEntry } from "@/lib/live-data";
 import { Trophy, Medal, Award, Users } from "lucide-react";
-import figRonaldo from "@/assets/figuras/ronaldo.png";
+import figRonaldo from "@/assets/figuras/ronaldo.webp";
 
 export const Route = createFileRoute("/ranking")({
   head: () => ({
@@ -32,7 +32,7 @@ function RankingPage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute -top-4 right-0 h-44 lg:h-52 object-contain pointer-events-none drop-shadow-2xl"
-        />
+         loading="lazy" decoding="async" />
       </header>
 
       {loading ? (

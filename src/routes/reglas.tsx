@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Trophy, Target, CheckCircle2, Zap, Sparkles, Lock, Star } from "lucide-react";
-import pelota from "@/assets/elementos/pelota.png";
+import pelota from "@/assets/elementos/pelota.webp";
 
 export const Route = createFileRoute("/reglas")({
   head: () => ({
@@ -28,7 +28,7 @@ function RulesPage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute -top-2 right-0 h-28 lg:h-36 object-contain pointer-events-none drop-shadow-2xl"
-        />
+         loading="lazy" decoding="async" />
       </header>
 
       <Section icon={<Target />} title="Puntos por partido">

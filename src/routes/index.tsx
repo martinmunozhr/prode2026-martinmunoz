@@ -6,11 +6,11 @@ import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
 import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
-import heroChampion from "@/assets/hero-champion.jpg";
-import figMessi from "@/assets/figuras/messi.png";
-import figHaaland from "@/assets/figuras/haaland.png";
-import trofeo2026 from "@/assets/elementos/trofeo.png";
-import messiTrofeo from "@/assets/elementos/messi-trofeo.png";
+import heroChampion from "@/assets/hero-champion.webp";
+import figMessi from "@/assets/figuras/messi.webp";
+import figHaaland from "@/assets/figuras/haaland.webp";
+import trofeo2026 from "@/assets/elementos/trofeo.webp";
+import messiTrofeo from "@/assets/elementos/messi-trofeo.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -89,7 +89,7 @@ function HomePage() {
                 alt=""
                 aria-hidden
                 className="absolute right-2 top-4 h-40 md:h-52 object-contain pointer-events-none drop-shadow-2xl"
-              />
+               loading="lazy" decoding="async" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Quién levantará la copa</div>
                 <div className="font-display text-2xl tracking-tight">Tu pronóstico también suma.</div>
@@ -163,9 +163,9 @@ function HomePage() {
       {!user && (
         <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
           <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
-          <img src={figHaaland} alt="" aria-hidden className="hidden md:block absolute -right-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl" />
-          <img src={messiTrofeo} alt="" aria-hidden className="hidden md:block absolute -left-10 -bottom-4 h-72 lg:h-80 object-contain opacity-95 pointer-events-none drop-shadow-2xl" />
-          <img src={figMessi} alt="" aria-hidden className="md:hidden absolute -left-8 -bottom-2 h-48 object-contain opacity-90 pointer-events-none drop-shadow-2xl" />
+          <img src={figHaaland} alt="" aria-hidden className="hidden md:block absolute -right-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
+          <img src={messiTrofeo} alt="" aria-hidden className="hidden md:block absolute -left-10 -bottom-4 h-72 lg:h-80 object-contain opacity-95 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
+          <img src={figMessi} alt="" aria-hidden className="md:hidden absolute -left-8 -bottom-2 h-48 object-contain opacity-90 pointer-events-none drop-shadow-2xl"  loading="lazy" decoding="async" />
           <div className="relative max-w-xl mx-auto">
             <Target className="h-12 w-12 text-primary mx-auto mb-4" />
             <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>

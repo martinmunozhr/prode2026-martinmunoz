@@ -5,8 +5,8 @@ import { GroupTable } from "@/components/group-table";
 import { groupLetters } from "@/lib/mock-data";
 import { useLiveMatches } from "@/lib/live-data";
 import { cn } from "@/lib/utils";
-import figMbappe from "@/assets/figuras/mbappe.png";
-import figVinicius from "@/assets/figuras/vinicius.png";
+import figMbappe from "@/assets/figuras/mbappe.webp";
+import figVinicius from "@/assets/figuras/vinicius.webp";
 
 const STAGES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Puesto", "Final"] as const;
 type Stage = typeof STAGES[number];
@@ -54,7 +54,7 @@ function FixturePage() {
           alt=""
           aria-hidden
           className="hidden md:block absolute right-0 bottom-0 h-[110%] object-contain object-bottom pointer-events-none drop-shadow-2xl"
-        />
+         loading="lazy" decoding="async" />
       </header>
 
       {/* Stage selector */}
@@ -106,7 +106,7 @@ function FixturePage() {
                   alt=""
                   aria-hidden
                   className="absolute inset-x-0 bottom-0 mx-auto h-[320px] object-contain pointer-events-none drop-shadow-2xl"
-                />
+                 loading="lazy" decoding="async" />
                 <div className="relative z-10 text-center pb-2">
                   <div className="text-[10px] uppercase tracking-widest text-primary font-bold">Tu próximo movimiento</div>
                   <div className="font-display text-lg leading-tight mt-1">¿Quién pasa de fase?</div>
