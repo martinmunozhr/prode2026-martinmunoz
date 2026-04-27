@@ -179,11 +179,12 @@ function HomePage() {
       {!user && (
         <section className="mt-14 relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-card p-8 md:p-12 text-center">
           <div className="absolute inset-0 bg-gradient-pitch opacity-5" />
-          <img src={imgPelota} alt="" aria-hidden className="absolute -right-10 -bottom-10 h-56 w-56 object-contain opacity-20 rotate-12 pointer-events-none" />
-          <div className="relative">
+          <img src={figHaaland} alt="" aria-hidden className="hidden md:block absolute -right-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl" />
+          <img src={figMessi} alt="" aria-hidden className="hidden md:block absolute -left-6 -bottom-4 h-72 lg:h-80 object-contain opacity-90 pointer-events-none drop-shadow-2xl" />
+          <div className="relative max-w-xl mx-auto">
             <Target className="h-12 w-12 text-primary mx-auto mb-4" />
             <h2 className="font-display text-4xl md:text-5xl tracking-tight">¿Listo para demostrar que sabés?</h2>
-            <p className="mt-3 text-muted-foreground max-w-xl mx-auto">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
+            <p className="mt-3 text-muted-foreground">Cargá tus pronósticos, competí con tus amigos y armá tu álbum de figuritas con las 48 selecciones.</p>
             <Link to="/registro" className="mt-6 inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform">
               Crear mi cuenta gratis <ArrowRight className="h-4 w-4" />
             </Link>
