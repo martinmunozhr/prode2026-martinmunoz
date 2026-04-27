@@ -15,10 +15,14 @@ import {
 import { assertAdmin, norm } from "@/lib/admin.helpers.server";
 
 // ---------------- REMAINING QUOTA ----------------
-export const getApiQuota = createServerFn({ method: "GET" })
+export const getApiQuota = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
+    try {
+      await assertAdmin(context.userId);
+    } catch {
+      return { used: 0, limit: 100, date: new Date().toISOString().slice(0, 10) };
+    }
     return getRemainingRequests();
   });
 
