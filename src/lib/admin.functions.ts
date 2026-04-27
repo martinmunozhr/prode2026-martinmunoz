@@ -238,7 +238,9 @@ export const updateMatchManually = createServerFn({ method: "POST" })
 // ---------------- PREDICTOR (top 5 likely scores) ----------------
 export const predictMatch = createServerFn({ method: "GET" })
   .inputValidator((data: { homeId: string; awayId: string }) => data)
-  .handler(async ({ data }) => {
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
     const { data: rows, error } = await supabaseAdmin.rpc("predict_match", {
       _home_id: data.homeId,
       _away_id: data.awayId,
