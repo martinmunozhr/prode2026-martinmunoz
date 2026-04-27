@@ -5,6 +5,7 @@ import { simulatePackFn } from "@/lib/cards.functions";
 import { PACKS, RARITY_LABEL, RARITY_ORDER, type CardRarity, type PackType } from "@/lib/cards";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { authHeaders } from "@/lib/auth-headers";
 
 export const Route = createFileRoute("/admin/sobres")({
   component: AdminSobres,
