@@ -4,8 +4,8 @@ import { MatchCard } from "@/components/match-card";
 import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
-import { ranking as fallbackRanking } from "@/lib/mock-data";
-import { ArrowRight, Trophy, Users, Zap, Target } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.jpg";
 
 export const Route = createFileRoute("/")({
