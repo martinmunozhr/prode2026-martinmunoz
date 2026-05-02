@@ -9,6 +9,7 @@ import {
   type Match,
   type RankingEntry,
 } from "@/lib/mock-data";
+import { getHomeBootstrap } from "@/lib/home.functions";
 
 type LiveScore = {
   home: number | null;
