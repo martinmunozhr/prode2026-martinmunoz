@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { CountdownHero } from "@/components/countdown-hero";
 import { MatchCard } from "@/components/match-card";
 import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
-import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
+import { useHomeBootstrap } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
 import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.webp";
@@ -33,9 +34,10 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { user, loading: authLoading } = useAuth();
-  const { matches: upcoming, loading: loadingMatches } = useUpcomingLiveMatches(3);
-  const { ranking: liveRanking, loading: loadingRanking } = useLiveRanking();
-  const top3 = liveRanking.slice(0, 3);
+  const { upcoming, topRanking, loading } = useHomeBootstrap();
+  const top3 = topRanking.slice(0, 3);
+  const loadingMatches = loading;
+  const loadingRanking = loading;
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-6">
@@ -62,7 +64,7 @@ function HomePage() {
                 alt=""
                 aria-hidden
                 className="hidden sm:block absolute -top-4 -right-2 md:-right-4 lg:-right-2 h-24 md:h-32 lg:h-40 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] rotate-[8deg]"
-                loading="eager"
+                loading="lazy"
                 decoding="async"
               />
             </div>
@@ -107,8 +109,8 @@ function HomePage() {
                 src={heroChampion}
                 alt="El Capitán levantando la copa del Mundial 2026"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="eager"
-                fetchPriority="high"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-3">
@@ -127,19 +129,44 @@ function HomePage() {
                 </div>
               </div>
               <CountdownHero />
-              <div className="mt-3 flex justify-center">
-                <iframe
-                  src="https://aztecbracket.com/widget/en/supporter/ARG"
-                  width="240"
-                  height="70"
-                  frameBorder="0"
-                  style={{ border: "none", borderRadius: "14px" }}
-                  title="Aztec Bracket — Supporter ARG"
-                  loading="lazy"
-                />
-              </div>
+              <DeferredAztecWidget />
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mt-10 md:mt-14">
+        <SectionHeader
+          eyebrow="Cómo funciona"
+          title="Jugar es muy fácil"
+          action={
+            <Link
+              to="/reglas"
+              className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1"
+            >
+              Ver reglas <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
+        />
+        <div className="mt-6 grid sm:grid-cols-3 gap-3">
+          <HowStep
+            n="1"
+            icon={<Target className="h-5 w-5" />}
+            title="Pronosticá"
+            desc="Cargá tus resultados antes de cada partido. Tenés hasta el silbato inicial."
+          />
+          <HowStep
+            n="2"
+            icon={<Zap className="h-5 w-5" />}
+            title="Sumá puntos"
+            desc="1 punto por acertar el ganador, 3 si pegás el marcador exacto. +1 por goleador."
+          />
+          <HowStep
+            n="3"
+            icon={<Trophy className="h-5 w-5" />}
+            title="Subí en el ranking"
+            desc="Ganá monedas, abrí sobres y completá tu álbum mientras competís con tus amigos."
+          />
         </div>
       </section>
 
@@ -276,6 +303,31 @@ function HomePage() {
   );
 }
 
+function HowStep({
+  n,
+  icon,
+  title,
+  desc,
+}: {
+  n: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="relative rounded-2xl border border-border/50 bg-gradient-card p-4 md:p-5">
+      <div className="absolute top-3 right-3 font-display text-3xl text-primary/20 leading-none">
+        {n}
+      </div>
+      <div className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-primary/15 text-primary">
+        {icon}
+      </div>
+      <div className="mt-3 font-display text-xl tracking-wide">{title}</div>
+      <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+    </div>
+  );
+}
+
 function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div className="bg-card/40 backdrop-blur border border-border/40 rounded-xl p-3">
@@ -304,6 +356,48 @@ function SectionHeader({
         <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-1">{title}</h2>
       </div>
       {action}
+    </div>
+  );
+}
+
+// Defer the external Aztec Bracket iframe until it scrolls near the viewport.
+// This avoids a third-party network round-trip during the initial paint on mobile.
+function DeferredAztecWidget() {
+  const [show, setShow] = useState(false);
+  const [ref, setRef] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!ref || show) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setShow(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShow(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    obs.observe(ref);
+    return () => obs.disconnect();
+  }, [ref, show]);
+
+  return (
+    <div ref={setRef} className="mt-3 flex justify-center min-h-[70px]">
+      {show ? (
+        <iframe
+          src="https://aztecbracket.com/widget/en/supporter/ARG"
+          width="240"
+          height="70"
+          frameBorder="0"
+          style={{ border: "none", borderRadius: "14px" }}
+          title="Aztec Bracket — Supporter ARG"
+          loading="lazy"
+        />
+      ) : null}
     </div>
   );
 }

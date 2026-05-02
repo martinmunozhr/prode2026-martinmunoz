@@ -9,6 +9,7 @@ import {
   type Match,
   type RankingEntry,
 } from "@/lib/mock-data";
+import { getHomeBootstrap } from "@/lib/home.functions";
 
 type LiveScore = {
   home: number | null;
@@ -195,4 +196,69 @@ export function useLiveRanking(): { ranking: LiveRankingEntry[]; loading: boolea
   }, []);
 
   return { ranking: data, loading };
+}
+
+// Lightweight hook for the home page: a single server function call returns
+// pre-aggregated top 10 + match scores. No realtime, no big payloads on mobile.
+export function useHomeBootstrap(): {
+  topRanking: LiveRankingEntry[];
+  upcoming: Match[];
+  loading: boolean;
+} {
+  const [state, setState] = useState<{
+    topRanking: LiveRankingEntry[];
+    upcoming: Match[];
+    loading: boolean;
+  }>({ topRanking: [], upcoming: [], loading: true });
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getHomeBootstrap();
+        if (cancelled) return;
+        const teamFlag = new Map(catalogTeams.map((t) => [t.id, t.flag]));
+        const ranking: LiveRankingEntry[] = data.topRanking.map((r) => ({
+          userId: r.userId,
+          position: r.position,
+          username: r.username,
+          avatar: (r.favoriteTeamId && teamFlag.get(r.favoriteTeamId)) || "⚽",
+          points: r.points,
+          exact: r.exact,
+          partial: r.partial,
+          streak: 0,
+        }));
+
+        const now = Date.now();
+        const scoreMap = new Map(data.liveMatchScores.map((s) => [s.id, s]));
+        const merged = catalogMatches.map((m) => {
+          const s = scoreMap.get(m.id);
+          if (!s) return m;
+          const isFuture = new Date(m.date).getTime() > now;
+          if (isFuture && s.status === "finished") return m;
+          return {
+            ...m,
+            homeScore: s.homeScore ?? m.homeScore,
+            awayScore: s.awayScore ?? m.awayScore,
+            status: isFuture ? m.status : s.status,
+          };
+        });
+        const upcoming = merged
+          .filter(
+            (m) => m.status !== "finished" && new Date(m.date).getTime() > now - 3 * 3600_000,
+          )
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .slice(0, 3);
+
+        setState({ topRanking: ranking, upcoming, loading: false });
+      } catch {
+        if (!cancelled) setState({ topRanking: [], upcoming: [], loading: false });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return state;
 }
