@@ -64,7 +64,7 @@ function HomePage() {
                 alt=""
                 aria-hidden
                 className="hidden sm:block absolute -top-4 -right-2 md:-right-4 lg:-right-2 h-24 md:h-32 lg:h-40 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] rotate-[8deg]"
-                loading="eager"
+                loading="lazy"
                 decoding="async"
               />
             </div>
