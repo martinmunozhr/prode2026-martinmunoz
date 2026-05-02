@@ -63,7 +63,7 @@ function HomePage() {
                 src={trofeo2026}
                 alt=""
                 aria-hidden
-                className="hidden sm:block absolute -top-4 -right-2 md:-right-4 lg:-right-2 h-24 md:h-32 lg:h-40 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)] rotate-[8deg]"
+                className="hidden sm:block absolute top-1/2 -translate-y-1/2 right-2 md:right-4 lg:right-6 h-28 md:h-36 lg:h-44 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
                 loading="lazy"
                 decoding="async"
               />
