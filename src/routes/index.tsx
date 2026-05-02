@@ -109,8 +109,8 @@ function HomePage() {
                 src={heroChampion}
                 alt="El Capitán levantando la copa del Mundial 2026"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="eager"
-                fetchPriority="high"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-3">
