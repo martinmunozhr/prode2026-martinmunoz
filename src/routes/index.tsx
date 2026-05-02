@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { CountdownHero } from "@/components/countdown-hero";
 import { MatchCard } from "@/components/match-card";
 import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
-import { useUpcomingLiveMatches, useLiveRanking } from "@/lib/live-data";
+import { useHomeBootstrap } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
 import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.webp";
@@ -33,9 +34,10 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { user, loading: authLoading } = useAuth();
-  const { matches: upcoming, loading: loadingMatches } = useUpcomingLiveMatches(3);
-  const { ranking: liveRanking, loading: loadingRanking } = useLiveRanking();
-  const top3 = liveRanking.slice(0, 3);
+  const { upcoming, topRanking, loading } = useHomeBootstrap();
+  const top3 = topRanking.slice(0, 3);
+  const loadingMatches = loading;
+  const loadingRanking = loading;
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-6">
