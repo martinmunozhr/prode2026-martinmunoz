@@ -129,17 +129,8 @@ function HomePage() {
                 </div>
               </div>
               <CountdownHero />
-              <div className="mt-3 flex justify-center">
-                <iframe
-                  src="https://aztecbracket.com/widget/en/supporter/ARG"
-                  width="240"
-                  height="70"
-                  frameBorder="0"
-                  style={{ border: "none", borderRadius: "14px" }}
-                  title="Aztec Bracket — Supporter ARG"
-                  loading="lazy"
-                />
-              </div>
+              <DeferredAztecWidget />
+            </div>
             </div>
           </div>
         </div>
