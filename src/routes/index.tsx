@@ -135,6 +135,41 @@ function HomePage() {
         </div>
       </section>
 
+      <section className="mt-10 md:mt-14">
+        <SectionHeader
+          eyebrow="Cómo funciona"
+          title="Jugar es muy fácil"
+          action={
+            <Link
+              to="/reglas"
+              className="text-sm font-semibold uppercase tracking-wider text-primary hover:underline flex items-center gap-1"
+            >
+              Ver reglas <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
+        />
+        <div className="mt-6 grid sm:grid-cols-3 gap-3">
+          <HowStep
+            n="1"
+            icon={<Target className="h-5 w-5" />}
+            title="Pronosticá"
+            desc="Cargá tus resultados antes de cada partido. Tenés hasta el silbato inicial."
+          />
+          <HowStep
+            n="2"
+            icon={<Zap className="h-5 w-5" />}
+            title="Sumá puntos"
+            desc="1 punto por acertar el ganador, 3 si pegás el marcador exacto. +1 por goleador."
+          />
+          <HowStep
+            n="3"
+            icon={<Trophy className="h-5 w-5" />}
+            title="Subí en el ranking"
+            desc="Ganá monedas, abrí sobres y completá tu álbum mientras competís con tus amigos."
+          />
+        </div>
+      </section>
+
       <section className="mt-14">
         <SectionHeader
           eyebrow="Calendario"
