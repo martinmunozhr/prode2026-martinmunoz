@@ -299,3 +299,45 @@ function SectionHeader({
     </div>
   );
 }
+
+// Defer the external Aztec Bracket iframe until it scrolls near the viewport.
+// This avoids a third-party network round-trip during the initial paint on mobile.
+function DeferredAztecWidget() {
+  const [show, setShow] = useState(false);
+  const [ref, setRef] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!ref || show) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setShow(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShow(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    obs.observe(ref);
+    return () => obs.disconnect();
+  }, [ref, show]);
+
+  return (
+    <div ref={setRef} className="mt-3 flex justify-center min-h-[70px]">
+      {show ? (
+        <iframe
+          src="https://aztecbracket.com/widget/en/supporter/ARG"
+          width="240"
+          height="70"
+          frameBorder="0"
+          style={{ border: "none", borderRadius: "14px" }}
+          title="Aztec Bracket — Supporter ARG"
+          loading="lazy"
+        />
+      ) : null}
+    </div>
+  );
+}
