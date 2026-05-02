@@ -131,7 +131,6 @@ function HomePage() {
               <CountdownHero />
               <DeferredAztecWidget />
             </div>
-            </div>
           </div>
         </div>
       </section>
