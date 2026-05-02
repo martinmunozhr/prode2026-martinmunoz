@@ -303,6 +303,31 @@ function HomePage() {
   );
 }
 
+function HowStep({
+  n,
+  icon,
+  title,
+  desc,
+}: {
+  n: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="relative rounded-2xl border border-border/50 bg-gradient-card p-4 md:p-5">
+      <div className="absolute top-3 right-3 font-display text-3xl text-primary/20 leading-none">
+        {n}
+      </div>
+      <div className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-primary/15 text-primary">
+        {icon}
+      </div>
+      <div className="mt-3 font-display text-xl tracking-wide">{title}</div>
+      <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+    </div>
+  );
+}
+
 function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div className="bg-card/40 backdrop-blur border border-border/40 rounded-xl p-3">
