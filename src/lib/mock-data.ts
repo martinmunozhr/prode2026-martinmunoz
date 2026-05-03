@@ -58,71 +58,84 @@ export type RankingEntry = {
   streak: number;
 };
 
-// 48 selecciones (subset realista del Mundial 2026)
+// 48 selecciones del Mundial 2026 — sorteo final (Kennedy Center, 5-dic-2025).
+// IDs en minuscula, 3 letras estilo FIFA. Codes en mayuscula. Flags emoji para
+// fallback visual; el componente <Flag/> usa team-id para mapear a iso2.
 export const teams: Team[] = [
-  // Anfitriones (Grupo A)
+  // Group A
   { id: "mex", name: "México", code: "MEX", flag: "🇲🇽", group: "A", confederation: "CONCACAF" },
-  { id: "can", name: "Canadá", code: "CAN", flag: "🇨🇦", group: "A", confederation: "CONCACAF" },
+  { id: "rsa", name: "Sudáfrica", code: "RSA", flag: "🇿🇦", group: "A", confederation: "CAF" },
+  { id: "kor", name: "Corea del Sur", code: "KOR", flag: "🇰🇷", group: "A", confederation: "AFC" },
+  { id: "cze", name: "Rep. Checa", code: "CZE", flag: "🇨🇿", group: "A", confederation: "UEFA" },
+  // Group B
+  { id: "can", name: "Canadá", code: "CAN", flag: "🇨🇦", group: "B", confederation: "CONCACAF" },
+  { id: "bih", name: "Bosnia y Herz.", code: "BIH", flag: "🇧🇦", group: "B", confederation: "UEFA" },
+  { id: "qat", name: "Qatar", code: "QAT", flag: "🇶🇦", group: "B", confederation: "AFC" },
+  { id: "sui", name: "Suiza", code: "SUI", flag: "🇨🇭", group: "B", confederation: "UEFA" },
+  // Group C
+  { id: "bra", name: "Brasil", code: "BRA", flag: "🇧🇷", group: "C", confederation: "CONMEBOL" },
+  { id: "mar", name: "Marruecos", code: "MAR", flag: "🇲🇦", group: "C", confederation: "CAF" },
+  { id: "hai", name: "Haití", code: "HAI", flag: "🇭🇹", group: "C", confederation: "CONCACAF" },
+  { id: "sco", name: "Escocia", code: "SCO", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", group: "C", confederation: "UEFA" },
+  // Group D
   {
     id: "usa",
     name: "Estados Unidos",
     code: "USA",
     flag: "🇺🇸",
-    group: "B",
+    group: "D",
     confederation: "CONCACAF",
   },
-  // Sudamérica
-  { id: "arg", name: "Argentina", code: "ARG", flag: "🇦🇷", group: "C", confederation: "CONMEBOL" },
-  { id: "bra", name: "Brasil", code: "BRA", flag: "🇧🇷", group: "D", confederation: "CONMEBOL" },
-  { id: "uru", name: "Uruguay", code: "URU", flag: "🇺🇾", group: "E", confederation: "CONMEBOL" },
-  { id: "col", name: "Colombia", code: "COL", flag: "🇨🇴", group: "F", confederation: "CONMEBOL" },
-  { id: "ecu", name: "Ecuador", code: "ECU", flag: "🇪🇨", group: "G", confederation: "CONMEBOL" },
-  { id: "par", name: "Paraguay", code: "PAR", flag: "🇵🇾", group: "H", confederation: "CONMEBOL" },
-  // Europa
-  { id: "fra", name: "Francia", code: "FRA", flag: "🇫🇷", group: "A", confederation: "UEFA" },
-  { id: "esp", name: "España", code: "ESP", flag: "🇪🇸", group: "B", confederation: "UEFA" },
-  { id: "ing", name: "Inglaterra", code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", group: "C", confederation: "UEFA" },
-  { id: "ger", name: "Alemania", code: "GER", flag: "🇩🇪", group: "D", confederation: "UEFA" },
-  { id: "ita", name: "Italia", code: "ITA", flag: "🇮🇹", group: "E", confederation: "UEFA" },
-  { id: "por", name: "Portugal", code: "POR", flag: "🇵🇹", group: "F", confederation: "UEFA" },
-  { id: "ned", name: "Países Bajos", code: "NED", flag: "🇳🇱", group: "G", confederation: "UEFA" },
-  { id: "bel", name: "Bélgica", code: "BEL", flag: "🇧🇪", group: "H", confederation: "UEFA" },
-  { id: "cro", name: "Croacia", code: "CRO", flag: "🇭🇷", group: "I", confederation: "UEFA" },
-  { id: "den", name: "Dinamarca", code: "DEN", flag: "🇩🇰", group: "I", confederation: "UEFA" },
-  { id: "sui", name: "Suiza", code: "SUI", flag: "🇨🇭", group: "J", confederation: "UEFA" },
-  { id: "pol", name: "Polonia", code: "POL", flag: "🇵🇱", group: "J", confederation: "UEFA" },
-  { id: "aut", name: "Austria", code: "AUT", flag: "🇦🇹", group: "K", confederation: "UEFA" },
-  { id: "tur", name: "Turquía", code: "TUR", flag: "🇹🇷", group: "K", confederation: "UEFA" },
-  { id: "ser", name: "Serbia", code: "SER", flag: "🇷🇸", group: "L", confederation: "UEFA" },
-  { id: "nor", name: "Noruega", code: "NOR", flag: "🇳🇴", group: "L", confederation: "UEFA" },
-  // CONCACAF extra
-  { id: "crc", name: "Costa Rica", code: "CRC", flag: "🇨🇷", group: "B", confederation: "CONCACAF" },
-  { id: "pan", name: "Panamá", code: "PAN", flag: "🇵🇦", group: "I", confederation: "CONCACAF" },
-  { id: "jam", name: "Jamaica", code: "JAM", flag: "🇯🇲", group: "K", confederation: "CONCACAF" },
-  // AFC
-  { id: "jpn", name: "Japón", code: "JPN", flag: "🇯🇵", group: "C", confederation: "AFC" },
-  { id: "kor", name: "Corea del Sur", code: "KOR", flag: "🇰🇷", group: "D", confederation: "AFC" },
-  { id: "aus", name: "Australia", code: "AUS", flag: "🇦🇺", group: "E", confederation: "AFC" },
-  { id: "irn", name: "Irán", code: "IRN", flag: "🇮🇷", group: "F", confederation: "AFC" },
-  { id: "ksa", name: "Arabia Saudita", code: "KSA", flag: "🇸🇦", group: "G", confederation: "AFC" },
-  { id: "qat", name: "Qatar", code: "QAT", flag: "🇶🇦", group: "H", confederation: "AFC" },
-  // CAF
-  { id: "mar", name: "Marruecos", code: "MAR", flag: "🇲🇦", group: "A", confederation: "CAF" },
-  { id: "sen", name: "Senegal", code: "SEN", flag: "🇸🇳", group: "B", confederation: "CAF" },
-  { id: "egy", name: "Egipto", code: "EGY", flag: "🇪🇬", group: "C", confederation: "CAF" },
-  { id: "nga", name: "Nigeria", code: "NGA", flag: "🇳🇬", group: "D", confederation: "CAF" },
-  { id: "civ", name: "Costa de Marfil", code: "CIV", flag: "🇨🇮", group: "G", confederation: "CAF" },
-  { id: "alg", name: "Argelia", code: "ALG", flag: "🇩🇿", group: "H", confederation: "CAF" },
-  { id: "cmr", name: "Camerún", code: "CMR", flag: "🇨🇲", group: "J", confederation: "CAF" },
+  { id: "par", name: "Paraguay", code: "PAR", flag: "🇵🇾", group: "D", confederation: "CONMEBOL" },
+  { id: "aus", name: "Australia", code: "AUS", flag: "🇦🇺", group: "D", confederation: "AFC" },
+  { id: "tur", name: "Turquía", code: "TUR", flag: "🇹🇷", group: "D", confederation: "UEFA" },
+  // Group E
+  { id: "ger", name: "Alemania", code: "GER", flag: "🇩🇪", group: "E", confederation: "UEFA" },
+  { id: "cuw", name: "Curazao", code: "CUW", flag: "🇨🇼", group: "E", confederation: "CONCACAF" },
+  { id: "civ", name: "Costa de Marfil", code: "CIV", flag: "🇨🇮", group: "E", confederation: "CAF" },
+  { id: "ecu", name: "Ecuador", code: "ECU", flag: "🇪🇨", group: "E", confederation: "CONMEBOL" },
+  // Group F
+  { id: "ned", name: "Países Bajos", code: "NED", flag: "🇳🇱", group: "F", confederation: "UEFA" },
+  { id: "jpn", name: "Japón", code: "JPN", flag: "🇯🇵", group: "F", confederation: "AFC" },
+  { id: "swe", name: "Suecia", code: "SWE", flag: "🇸🇪", group: "F", confederation: "UEFA" },
+  { id: "tun", name: "Túnez", code: "TUN", flag: "🇹🇳", group: "F", confederation: "CAF" },
+  // Group G
+  { id: "irn", name: "Irán", code: "IRN", flag: "🇮🇷", group: "G", confederation: "AFC" },
+  { id: "nzl", name: "Nueva Zelanda", code: "NZL", flag: "🇳🇿", group: "G", confederation: "OFC" },
+  { id: "bel", name: "Bélgica", code: "BEL", flag: "🇧🇪", group: "G", confederation: "UEFA" },
+  { id: "egy", name: "Egipto", code: "EGY", flag: "🇪🇬", group: "G", confederation: "CAF" },
+  // Group H
+  { id: "esp", name: "España", code: "ESP", flag: "🇪🇸", group: "H", confederation: "UEFA" },
+  { id: "cpv", name: "Cabo Verde", code: "CPV", flag: "🇨🇻", group: "H", confederation: "CAF" },
+  {
+    id: "ksa",
+    name: "Arabia Saudita",
+    code: "KSA",
+    flag: "🇸🇦",
+    group: "H",
+    confederation: "AFC",
+  },
+  { id: "uru", name: "Uruguay", code: "URU", flag: "🇺🇾", group: "H", confederation: "CONMEBOL" },
+  // Group I
+  { id: "fra", name: "Francia", code: "FRA", flag: "🇫🇷", group: "I", confederation: "UEFA" },
+  { id: "sen", name: "Senegal", code: "SEN", flag: "🇸🇳", group: "I", confederation: "CAF" },
+  { id: "irq", name: "Irak", code: "IRQ", flag: "🇮🇶", group: "I", confederation: "AFC" },
+  { id: "nor", name: "Noruega", code: "NOR", flag: "🇳🇴", group: "I", confederation: "UEFA" },
+  // Group J
+  { id: "arg", name: "Argentina", code: "ARG", flag: "🇦🇷", group: "J", confederation: "CONMEBOL" },
+  { id: "alg", name: "Argelia", code: "ALG", flag: "🇩🇿", group: "J", confederation: "CAF" },
+  { id: "aut", name: "Austria", code: "AUT", flag: "🇦🇹", group: "J", confederation: "UEFA" },
+  { id: "jor", name: "Jordania", code: "JOR", flag: "🇯🇴", group: "J", confederation: "AFC" },
+  // Group K
+  { id: "por", name: "Portugal", code: "POR", flag: "🇵🇹", group: "K", confederation: "UEFA" },
+  { id: "cod", name: "RD Congo", code: "COD", flag: "🇨🇩", group: "K", confederation: "CAF" },
+  { id: "uzb", name: "Uzbekistán", code: "UZB", flag: "🇺🇿", group: "K", confederation: "AFC" },
+  { id: "col", name: "Colombia", code: "COL", flag: "🇨🇴", group: "K", confederation: "CONMEBOL" },
+  // Group L
+  { id: "ing", name: "Inglaterra", code: "ENG", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", group: "L", confederation: "UEFA" },
+  { id: "cro", name: "Croacia", code: "CRO", flag: "🇭🇷", group: "L", confederation: "UEFA" },
   { id: "gha", name: "Ghana", code: "GHA", flag: "🇬🇭", group: "L", confederation: "CAF" },
-  { id: "tun", name: "Túnez", code: "TUN", flag: "🇹🇳", group: "I", confederation: "CAF" },
-  { id: "rsa", name: "Sudáfrica", code: "RSA", flag: "🇿🇦", group: "F", confederation: "CAF" },
-  // OFC
-  { id: "nzl", name: "Nueva Zelanda", code: "NZL", flag: "🇳🇿", group: "E", confederation: "OFC" },
-  // Repechaje fillers
-  { id: "uae", name: "Emiratos Árabes", code: "UAE", flag: "🇦🇪", group: "L", confederation: "AFC" },
-  { id: "irq", name: "Irak", code: "IRQ", flag: "🇮🇶", group: "K", confederation: "AFC" },
-  { id: "ven", name: "Venezuela", code: "VEN", flag: "🇻🇪", group: "J", confederation: "CONMEBOL" },
+  { id: "pan", name: "Panamá", code: "PAN", flag: "🇵🇦", group: "L", confederation: "CONCACAF" },
 ];
 
 export function getTeam(id: string): Team | undefined {

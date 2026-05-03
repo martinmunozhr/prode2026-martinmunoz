@@ -97,8 +97,7 @@ async function visitRoute(browser, route, viewport, label) {
 
   await context.close();
 
-  const hasErrors =
-    consoleErrors.length > 0 || pageErrors.length > 0 || failedRequests.length > 0;
+  const hasErrors = consoleErrors.length > 0 || pageErrors.length > 0 || failedRequests.length > 0;
   if (hasErrors) status = status === "ok" ? "errors" : status;
   else if (consoleWarnings.length > 0 && status === "ok") status = "warnings";
 
@@ -124,13 +123,10 @@ function renderMarkdown(results) {
   lines.push(`Base URL: \`${BASE_URL}\``);
   lines.push("");
 
-  const summary = results.reduce(
-    (acc, r) => {
-      acc[r.status] = (acc[r.status] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
+  const summary = results.reduce((acc, r) => {
+    acc[r.status] = (acc[r.status] || 0) + 1;
+    return acc;
+  }, {});
   lines.push("## Resumen");
   for (const [k, v] of Object.entries(summary)) lines.push(`- **${k}**: ${v}`);
   lines.push("");
@@ -140,8 +136,7 @@ function renderMarkdown(results) {
   lines.push("| Ruta | Viewport | Status | HTTP | Tiempo (ms) | Errores | Warnings | Red |");
   lines.push("|------|----------|--------|------|-------------|---------|----------|-----|");
   for (const r of results) {
-    const icon =
-      r.status === "ok" ? "✅" : r.status === "warnings" ? "⚠️" : "❌";
+    const icon = r.status === "ok" ? "✅" : r.status === "warnings" ? "⚠️" : "❌";
     lines.push(
       `| \`${r.path}\` | ${r.viewport} | ${icon} ${r.status} | ${r.httpStatus ?? "—"} | ${r.elapsedMs} | ${r.consoleErrors.length + r.pageErrors.length} | ${r.consoleWarnings.length} | ${r.failedRequests.length} |`,
     );
@@ -175,9 +170,7 @@ function renderMarkdown(results) {
       }
       if (r.failedRequests.length) {
         lines.push("**Failed requests:**");
-        r.failedRequests.forEach((req) =>
-          lines.push(`- ${req.url} → ${req.failure}`),
-        );
+        r.failedRequests.forEach((req) => lines.push(`- ${req.url} → ${req.failure}`));
       }
       lines.push("");
     }
@@ -202,12 +195,7 @@ async function main() {
         process.stdout.write(`  · ${route.path} (${label}) ... `);
         const result = await visitRoute(browser, route, viewport, label);
         results.push(result);
-        const icon =
-          result.status === "ok"
-            ? "✅"
-            : result.status === "warnings"
-              ? "⚠️"
-              : "❌";
+        const icon = result.status === "ok" ? "✅" : result.status === "warnings" ? "⚠️" : "❌";
         console.log(`${icon} ${result.status} (${result.elapsedMs}ms)`);
       }
     }

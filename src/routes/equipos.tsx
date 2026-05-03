@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { teams, groupLetters } from "@/lib/mock-data";
+import { groupLetters } from "@/lib/mock-data";
+import { useTeamsCatalog } from "@/lib/live-data";
 import { Flag } from "@/components/flag";
 
 export const Route = createFileRoute("/equipos")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/equipos")({
 
 function EquiposPage() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const { teams } = useTeamsCatalog();
 
   if (pathname !== "/equipos") {
     return <Outlet />;

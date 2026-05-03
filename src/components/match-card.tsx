@@ -1,5 +1,6 @@
 import { Match, getTeam } from "@/lib/mock-data";
 import { Flag } from "@/components/flag";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { MapPin, Clock, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getTeamPalette } from "@/lib/team-colors";
@@ -12,6 +13,16 @@ const STAGE_MULTIPLIER: Record<Match["stage"], number> = {
   Semifinal: 2.5,
   "Tercer Puesto": 2,
   Final: 3,
+};
+
+const STAGE_TOOLTIP: Record<Match["stage"], string> = {
+  Grupos: "Fase de grupos · puntos x1",
+  Dieciseisavos: "Dieciseisavos · puntos x1",
+  Octavos: "Octavos de final · cada acierto multiplica x1.5",
+  Cuartos: "Cuartos de final · cada acierto multiplica x2",
+  Semifinal: "Semifinal · cada acierto multiplica x2.5",
+  "Tercer Puesto": "Partido por el 3er puesto · puntos x2",
+  Final: "¡La gran final! Cada acierto multiplica x3",
 };
 
 type Props = {
@@ -120,12 +131,20 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           )}
           <span className="text-muted-foreground/70">{match.stage}</span>
           {STAGE_MULTIPLIER[match.stage] > 1 && (
-            <span
-              title={`Los puntos en esta fase se multiplican x${STAGE_MULTIPLIER[match.stage]}`}
-              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 border border-accent/40 text-accent text-[10px] font-bold"
-            >
-              <Zap className="h-2.5 w-2.5" />x{STAGE_MULTIPLIER[match.stage]}
-            </span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={STAGE_TOOLTIP[match.stage]}
+                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 border border-accent/40 text-accent text-[10px] font-bold hover:bg-accent/25 focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-help"
+                >
+                  <Zap className="h-2.5 w-2.5" />x{STAGE_MULTIPLIER[match.stage]}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[220px] text-center">
+                {STAGE_TOOLTIP[match.stage]}
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
         {isLive && (

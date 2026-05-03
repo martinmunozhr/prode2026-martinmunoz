@@ -38,10 +38,7 @@ export const getHomeBootstrap = createServerFn({ method: "GET" }).handler(
       sb.from("predictions").select("user_id, points_earned, home_score, away_score, match_id"),
       sb.from("crystal_ball").select("user_id, points_earned"),
       sb.from("goalscorer_predictions").select("user_id, points_earned"),
-      sb
-        .from("matches")
-        .select("id, home_score, away_score")
-        .eq("status", "finished"),
+      sb.from("matches").select("id, home_score, away_score").eq("status", "finished"),
       sb.from("matches").select("id, home_score, away_score, status"),
     ]);
 

@@ -9,7 +9,14 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "deploy": "vite build && wrangler deploy",
+    "deploy:dry": "wrangler deploy --dry-run --outdir=dist-dry",
+    "cf:login": "wrangler login",
+    "cf:whoami": "wrangler whoami",
+    "cf:secrets": "wrangler secret list",
+    "cf:logs": "wrangler tail"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

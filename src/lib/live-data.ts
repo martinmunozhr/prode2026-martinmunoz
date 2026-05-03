@@ -6,54 +6,74 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   matches as catalogMatches,
   teams as catalogTeams,
+  getRoster,
+  isRealRoster,
   type Match,
+  type Player,
   type RankingEntry,
+  type Team,
 } from "@/lib/mock-data";
 import { getHomeBootstrap } from "@/lib/home.functions";
 
-type LiveScore = {
-  home: number | null;
-  away: number | null;
-  status: "scheduled" | "live" | "finished";
+type DbMatchRow = {
+  id: string;
+  home_id: string;
+  away_id: string;
+  match_date: string;
+  stadium: string;
+  city: string;
+  stage: string;
+  group_letter: string | null;
+  home_score: number | null;
+  away_score: number | null;
+  status: string;
 };
 
-// Load live scores keyed by match id from Supabase and merge with catalog matches.
+function dbRowToMatch(m: DbMatchRow): Match {
+  return {
+    id: m.id,
+    homeId: m.home_id,
+    awayId: m.away_id,
+    date: m.match_date,
+    stadium: m.stadium,
+    city: m.city,
+    stage: m.stage as Match["stage"],
+    group: m.group_letter ?? undefined,
+    homeScore: m.home_score ?? undefined,
+    awayScore: m.away_score ?? undefined,
+    status: m.status as Match["status"],
+  };
+}
+
+// Lee TODOS los matches desde Supabase (fixture + scores). Si la tabla esta vacia,
+// usa el catalogo del mock como fallback para que la pagina nunca se rompa.
 export function useLiveMatches(): { matches: Match[]; loading: boolean } {
-  const [scores, setScores] = useState<Map<string, LiveScore>>(new Map());
+  const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const { data } = await supabase.from("matches").select("id, home_score, away_score, status");
+      const { data, error } = await supabase
+        .from("matches")
+        .select(
+          "id, home_id, away_id, match_date, stadium, city, stage, group_letter, home_score, away_score, status",
+        );
       if (cancelled) return;
-      const map = new Map<string, LiveScore>();
-      for (const m of data ?? [])
-        map.set(m.id, {
-          home: m.home_score,
-          away: m.away_score,
-          status: m.status as LiveScore["status"],
-        });
-      setScores(map);
+      const rows = (data as DbMatchRow[] | null) ?? [];
+      if (error || rows.length === 0) {
+        setMatches(catalogMatches);
+        setLoading(false);
+        return;
+      }
+      setMatches(rows.map(dbRowToMatch));
       setLoading(false);
     };
     load();
 
     const ch = supabase
       .channel("matches-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, (payload) => {
-        const row = payload.new as {
-          id: string;
-          home_score: number | null;
-          away_score: number | null;
-          status: LiveScore["status"];
-        };
-        setScores((prev) => {
-          const next = new Map(prev);
-          next.set(row.id, { home: row.home_score, away: row.away_score, status: row.status });
-          return next;
-        });
-      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "matches" }, () => load())
       .subscribe();
 
     return () => {
@@ -61,22 +81,6 @@ export function useLiveMatches(): { matches: Match[]; loading: boolean } {
       supabase.removeChannel(ch);
     };
   }, []);
-
-  const now = Date.now();
-  const matches = catalogMatches.map((m) => {
-    const s = scores.get(m.id);
-    if (!s) return m;
-    // Safety: if the catalog match is still in the future, ignore stale "finished" rows
-    // from the DB (e.g. seed/test data) so we don't show fake results before kickoff.
-    const isFuture = new Date(m.date).getTime() > now;
-    if (isFuture && s.status === "finished") return m;
-    return {
-      ...m,
-      homeScore: s.home ?? m.homeScore,
-      awayScore: s.away ?? m.awayScore,
-      status: isFuture ? m.status : s.status,
-    };
-  });
 
   return { matches, loading };
 }
@@ -215,10 +219,18 @@ export function useHomeBootstrap(): {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getHomeBootstrap();
+        const [bootstrap, matchesRes] = await Promise.all([
+          getHomeBootstrap(),
+          supabase
+            .from("matches")
+            .select(
+              "id, home_id, away_id, match_date, stadium, city, stage, group_letter, home_score, away_score, status",
+            ),
+        ]);
         if (cancelled) return;
+
         const teamFlag = new Map(catalogTeams.map((t) => [t.id, t.flag]));
-        const ranking: LiveRankingEntry[] = data.topRanking.map((r) => ({
+        const ranking: LiveRankingEntry[] = bootstrap.topRanking.map((r) => ({
           userId: r.userId,
           position: r.position,
           username: r.username,
@@ -229,23 +241,17 @@ export function useHomeBootstrap(): {
           streak: 0,
         }));
 
+        const dbRows = (matchesRes.data as DbMatchRow[] | null) ?? [];
+        const allMatches = dbRows.length > 0 ? dbRows.map(dbRowToMatch) : catalogMatches;
+
         const now = Date.now();
-        const scoreMap = new Map(data.liveMatchScores.map((s) => [s.id, s]));
-        const merged = catalogMatches.map((m) => {
-          const s = scoreMap.get(m.id);
-          if (!s) return m;
-          const isFuture = new Date(m.date).getTime() > now;
-          if (isFuture && s.status === "finished") return m;
-          return {
-            ...m,
-            homeScore: s.homeScore ?? m.homeScore,
-            awayScore: s.awayScore ?? m.awayScore,
-            status: isFuture ? m.status : s.status,
-          };
-        });
-        const upcoming = merged
+        const upcoming = allMatches
           .filter(
-            (m) => m.status !== "finished" && new Date(m.date).getTime() > now - 3 * 3600_000,
+            (m) =>
+              m.homeId !== "tbd" &&
+              m.awayId !== "tbd" &&
+              m.status !== "finished" &&
+              new Date(m.date).getTime() > now - 3 * 3600_000,
           )
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
           .slice(0, 3);
@@ -259,6 +265,115 @@ export function useHomeBootstrap(): {
       cancelled = true;
     };
   }, []);
+
+  return state;
+}
+
+// Catalogo de selecciones desde Supabase con fallback al mock.
+// Util para la pagina de Equipos: si la tabla `teams` esta poblada manda DB,
+// si no usa el catalogo estatico para que la pagina nunca se rompa.
+export function useTeamsCatalog(): { teams: Team[]; loading: boolean } {
+  const [teams, setTeams] = useState<Team[]>(catalogTeams);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("teams")
+        .select("id, name, code, flag, group_letter, confederation")
+        .neq("id", "tbd");
+      if (cancelled) return;
+      if (error || !data || data.length === 0) {
+        setLoading(false);
+        return;
+      }
+      setTeams(
+        data.map((r) => ({
+          id: r.id,
+          name: r.name,
+          code: r.code,
+          flag: r.flag,
+          group: r.group_letter,
+          confederation: r.confederation as Team["confederation"],
+        })),
+      );
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { teams, loading };
+}
+
+function mapDbPosition(dbPos: string | null | undefined): Player["position"] {
+  const p = (dbPos ?? "").toUpperCase();
+  if (p === "GK" || p === "POR") return "POR";
+  if (p === "DEF") return "DEF";
+  if (p === "MID" || p === "MED") return "MED";
+  if (p === "FWD" || p === "DEL") return "DEL";
+  return "MED";
+}
+
+function rarityFromIndex(idx: number): Player["rarity"] {
+  if (idx === 9 || idx === 19) return "legendary";
+  if (idx < 3) return "epic";
+  if (idx % 7 === 0) return "rare";
+  return "common";
+}
+
+// Roster desde Supabase con fallback al mock.
+// Si la tabla `players` tiene jugadores cargados para el equipo, manda DB;
+// si esta vacia usa getRoster(teamId) del mock para que el album nunca quede en blanco.
+export function useTeamRoster(teamId: string): {
+  roster: Player[];
+  isReal: boolean;
+  loading: boolean;
+} {
+  const [state, setState] = useState<{
+    roster: Player[];
+    isReal: boolean;
+    loading: boolean;
+  }>({
+    roster: getRoster(teamId),
+    isReal: isRealRoster(teamId),
+    loading: true,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("players")
+        .select("id, name, position, jersey_number, club")
+        .eq("team_id", teamId)
+        .order("jersey_number", { ascending: true });
+      if (cancelled) return;
+      if (error || !data || data.length === 0) {
+        setState({
+          roster: getRoster(teamId),
+          isReal: isRealRoster(teamId),
+          loading: false,
+        });
+        return;
+      }
+      const mapped: Player[] = data.map((r, i) => ({
+        id: r.id,
+        name: r.name,
+        number: r.jersey_number ?? i + 1,
+        position: mapDbPosition(r.position),
+        age: 0,
+        club: r.club ?? "—",
+        rarity: rarityFromIndex(i),
+      }));
+      setState({ roster: mapped, isReal: true, loading: false });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [teamId]);
 
   return state;
 }

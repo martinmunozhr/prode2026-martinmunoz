@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, LogOut, User as UserIcon, Shield, Coins, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut, Shield, Coins, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useCoins } from "@/hooks/use-coins";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { UserAvatar } from "@/components/user-avatar";
 import logoMundial from "@/assets/logo-mundial-2026.webp";
 
 // Links principales (siempre visibles en desktop)
@@ -141,9 +142,15 @@ export function SiteHeader() {
               )}
               <Link
                 to="/perfil"
-                className="flex items-center gap-1.5 px-2.5 py-2 rounded-md bg-muted/40 border border-border/30 hover:border-primary/40 transition-colors max-w-[140px]"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-muted/40 border border-border/30 hover:border-primary/40 transition-colors max-w-[160px]"
+                title="Mi perfil"
               >
-                <UserIcon className="h-4 w-4 text-primary shrink-0" />
+                <UserAvatar
+                  name={profile?.username}
+                  email={user.email}
+                  color={profile?.avatar_color}
+                  size="sm"
+                />
                 <span className="text-sm font-semibold truncate">{profile?.username ?? "..."}</span>
               </Link>
               <ThemeToggle />
@@ -223,7 +230,12 @@ export function SiteHeader() {
                     onClick={() => setOpen(false)}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-muted/40 border border-border/30 text-sm font-semibold"
                   >
-                    <UserIcon className="h-4 w-4 text-primary" />
+                    <UserAvatar
+                      name={profile?.username}
+                      email={user.email}
+                      color={profile?.avatar_color}
+                      size="sm"
+                    />
                     {profile?.username ?? "Mi perfil"}
                   </Link>
                   {isAdmin && (

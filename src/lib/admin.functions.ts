@@ -129,17 +129,15 @@ export const syncSquads = createServerFn({ method: "POST" })
       }
     }
 
-    await supabaseAdmin
-      .from("app_settings")
-      .upsert(
-        {
-          key: "squads_locked",
-          value: true as never,
-          is_public: true,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "key" },
-      );
+    await supabaseAdmin.from("app_settings").upsert(
+      {
+        key: "squads_locked",
+        value: true as never,
+        is_public: true,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "key" },
+    );
 
     await logSync("squads", inserted > 0 ? "success" : "partial", requestsUsed, {
       inserted,

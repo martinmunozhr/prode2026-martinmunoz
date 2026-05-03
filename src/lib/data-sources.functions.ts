@@ -194,8 +194,7 @@ export const syncResultsWC2026 = createServerFn({ method: "POST" })
           (m) =>
             m.home_id === home &&
             m.away_id === away &&
-            (fxDate == null ||
-              Math.abs(new Date(m.match_date).getTime() - fxDate) < 36 * 3600_000),
+            (fxDate == null || Math.abs(new Date(m.match_date).getTime() - fxDate) < 36 * 3600_000),
         );
         if (!ourMatch) continue;
 
@@ -232,14 +231,12 @@ export const syncResultsWC2026 = createServerFn({ method: "POST" })
 
 // ---------------- MANUAL ROSTER IMPORT ----------------
 export const importRosterText = createServerFn({ method: "POST" })
-  .inputValidator(
-    (data: { teamId: string; text: string; replace: boolean }) => {
-      if (!data.teamId || typeof data.teamId !== "string") throw new Error("teamId requerido");
-      if (!data.text || typeof data.text !== "string") throw new Error("texto requerido");
-      if (data.text.length > 50_000) throw new Error("texto demasiado largo");
-      return data;
-    },
-  )
+  .inputValidator((data: { teamId: string; text: string; replace: boolean }) => {
+    if (!data.teamId || typeof data.teamId !== "string") throw new Error("teamId requerido");
+    if (!data.text || typeof data.text !== "string") throw new Error("texto requerido");
+    if (data.text.length > 50_000) throw new Error("texto demasiado largo");
+    return data;
+  })
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     try {

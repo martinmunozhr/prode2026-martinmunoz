@@ -288,11 +288,11 @@ function AdminSync() {
           <h3 className="font-bold uppercase tracking-wider">Carga manual de plantilla</h3>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          Pegá la lista de jugadores de un equipo, uno por línea. Detecta dorsal, posición (GK/DEF/MID/FWD
-          y sus variantes), capitán <code>(C)</code> y club. Ejemplos válidos:
+          Pegá la lista de jugadores de un equipo, uno por línea. Detecta dorsal, posición
+          (GK/DEF/MID/FWD y sus variantes), capitán <code>(C)</code> y club. Ejemplos válidos:
         </p>
         <pre className="text-xs bg-muted/30 rounded p-3 mb-4 overflow-x-auto">
-{`10 Lionel Messi FWD Inter Miami (C)
+          {`10 Lionel Messi FWD Inter Miami (C)
 1 Emiliano Martinez GK Aston Villa
 Rodrigo De Paul, MID, 7, Atletico Madrid
 Julian Alvarez - FWD - #9 - Atletico`}
@@ -301,9 +301,7 @@ Julian Alvarez - FWD - #9 - Atletico`}
         <div className="grid gap-3 md:grid-cols-[300px_1fr]">
           <div className="space-y-3">
             <label className="block">
-              <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                Equipo
-              </span>
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Equipo</span>
               <select
                 value={selectedTeam}
                 onChange={(e) => setSelectedTeam(e.target.value)}

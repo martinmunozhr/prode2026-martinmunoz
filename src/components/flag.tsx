@@ -2,56 +2,81 @@ import "flag-icons/css/flag-icons.min.css";
 import { cn } from "@/lib/utils";
 
 // Map team id (our internal ids) → ISO 3166-1 alpha-2 country code used by flag-icons.
-// Special-case GB-ENG for England (uses sub-region code).
+// Cubre las 48 selecciones del Mundial 2026 + algunos legacy ids del proyecto viejo
+// que pueden seguir referenciandose en codigo o screenshots.
+// Casos especiales: gb-eng (Inglaterra), gb-sct (Escocia) usan sub-region.
 const ID_TO_ISO2: Record<string, string> = {
+  // Group A
   mex: "mx",
-  can: "ca",
-  usa: "us",
-  arg: "ar",
-  bra: "br",
-  uru: "uy",
-  col: "co",
-  ecu: "ec",
-  par: "py",
-  ven: "ve",
-  fra: "fr",
-  esp: "es",
-  ing: "gb-eng",
-  ger: "de",
-  ita: "it",
-  por: "pt",
-  ned: "nl",
-  bel: "be",
-  cro: "hr",
-  den: "dk",
-  sui: "ch",
-  pol: "pl",
-  aut: "at",
-  tur: "tr",
-  ser: "rs",
-  nor: "no",
-  crc: "cr",
-  pan: "pa",
-  jam: "jm",
-  jpn: "jp",
-  kor: "kr",
-  aus: "au",
-  irn: "ir",
-  ksa: "sa",
-  qat: "qa",
-  uae: "ae",
-  irq: "iq",
-  mar: "ma",
-  sen: "sn",
-  egy: "eg",
-  nga: "ng",
-  civ: "ci",
-  alg: "dz",
-  cmr: "cm",
-  gha: "gh",
-  tun: "tn",
   rsa: "za",
+  kor: "kr",
+  cze: "cz",
+  // Group B
+  can: "ca",
+  bih: "ba",
+  qat: "qa",
+  sui: "ch",
+  // Group C
+  bra: "br",
+  mar: "ma",
+  hai: "ht",
+  sco: "gb-sct",
+  // Group D
+  usa: "us",
+  par: "py",
+  aus: "au",
+  tur: "tr",
+  // Group E
+  ger: "de",
+  cuw: "cw",
+  civ: "ci",
+  ecu: "ec",
+  // Group F
+  ned: "nl",
+  jpn: "jp",
+  swe: "se",
+  tun: "tn",
+  // Group G
+  irn: "ir",
   nzl: "nz",
+  bel: "be",
+  egy: "eg",
+  // Group H
+  esp: "es",
+  cpv: "cv",
+  ksa: "sa",
+  uru: "uy",
+  // Group I
+  fra: "fr",
+  sen: "sn",
+  irq: "iq",
+  nor: "no",
+  // Group J
+  arg: "ar",
+  alg: "dz",
+  aut: "at",
+  jor: "jo",
+  // Group K
+  por: "pt",
+  cod: "cd",
+  uzb: "uz",
+  col: "co",
+  // Group L
+  ing: "gb-eng",
+  cro: "hr",
+  gha: "gh",
+  pan: "pa",
+  // Legacy ids (no clasificaron pero pueden aparecer en codigo viejo)
+  ita: "it",
+  den: "dk",
+  pol: "pl",
+  ser: "rs",
+  ven: "ve",
+  crc: "cr",
+  jam: "jm",
+  uae: "ae",
+  nga: "ng",
+  cmr: "cm",
 };
 
 export function teamIdToIso2(id: string): string | null {

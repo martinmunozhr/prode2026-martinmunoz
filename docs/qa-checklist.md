@@ -13,12 +13,14 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 ## 🏠 Home (`/`)
 
 ### Smoke
+
 - [ ] Carga en <2s, sin errores rojos en consola.
 - [ ] Hero visible con título "EL PRODE DEL MUNDIAL 2026".
 - [ ] Countdown muestra días/horas/min/seg y se actualiza cada segundo.
 - [ ] Stats (48 / 104 / 1) visibles.
 
 ### Criterios de aceptación
+
 - [ ] CTA "Sumate al prode" → `/registro`.
 - [ ] CTA "Ver fixture" → `/fixture`.
 - [ ] Sección "Próximos partidos" muestra 3 `MatchCard` con banderas SVG (no siglas, no emojis rotos en Windows).
@@ -32,17 +34,20 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 ## 🛡 Equipos (`/equipos` y `/equipos/$equipoId`)
 
 ### Smoke listado
+
 - [ ] 12 grupos (A–L) visibles, cada uno con 4 selecciones.
 - [ ] Cada card tiene bandera SVG + nombre + confederación.
 - [ ] Hover resalta borde.
 
 ### Smoke detalle
+
 - [ ] `/equipos/ger` (y otros) carga sin pantalla blanca.
 - [ ] Header con bandera grande, nombre, grupo, confederación.
 - [ ] Álbum de figuritas visible **por defecto** (sin necesidad de hover).
 - [ ] Stagger de aparición rápido y suave (<1s total).
 
 ### Criterios de aceptación
+
 - [ ] Click en figurita abre `PlayerModal` con datos del jugador.
 - [ ] Modal cierra con ESC y con click fuera.
 - [ ] Sección "Próximos partidos del equipo" debajo del álbum.
@@ -55,11 +60,13 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 ## 📅 Fixture (`/fixture`)
 
 ### Smoke
+
 - [ ] 12 botones de grupo (A–L) sticky en el top.
 - [ ] Tabla de posiciones del grupo activo visible.
 - [ ] Lista de partidos del grupo a la derecha (md+) o debajo (mobile).
 
 ### Criterios de aceptación
+
 - [ ] Click en grupo cambia tabla **y** lista de partidos.
 - [ ] Selector activo destacado con `bg-gradient-pitch` y `scale-110`.
 - [ ] Scroll suave al top al cambiar de grupo.
@@ -72,11 +79,13 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 ## 🎯 Mis Pronósticos (`/mis-pronosticos`)
 
 ### Smoke (logueado)
+
 - [ ] Resumen con total de puntos calculado dinámicamente (no "0" hardcoded).
 - [ ] Lista de partidos próximos con inputs editables.
 - [ ] Lista de partidos finalizados con puntos por partido.
 
 ### Criterios de aceptación
+
 - [ ] Inputs de score: rango 0–20, bloquean `e`, `+`, `-`.
 - [ ] `onWheel` no cambia el valor accidentalmente.
 - [ ] "Guardar" persiste a Supabase y muestra "Guardado ✓".
@@ -88,10 +97,12 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 ## 📊 Insights (`/insights`)
 
 ### Smoke
+
 - [ ] Stats del usuario logueado (aciertos exactos, parciales, racha).
 - [ ] Sin `as any` ni errores de tipos en consola.
 
 ### Criterios de aceptación
+
 - [ ] Banderas SVG en cards de equipos predichos.
 - [ ] Si el usuario no tiene predicciones: empty state claro.
 - [ ] Cálculos coinciden con `scoring.ts` (1 punto resultado, 3 ganador).
@@ -101,11 +112,13 @@ Smoke tests por página + criterios de aceptación. Ejecutar en **dark + light**
 ## 👤 Perfil (`/perfil`)
 
 ### Smoke
+
 - [ ] Avatar con color actual visible.
 - [ ] Username editable.
 - [ ] Equipo favorito seleccionable (select nativo muestra `CODE — Nombre`, no emojis).
 
 ### Criterios de aceptación
+
 - [ ] Cambio de color de avatar persiste a `profiles.avatar_color`.
 - [ ] Toast de confirmación al guardar.
 - [ ] Logout funciona y redirige a `/`.

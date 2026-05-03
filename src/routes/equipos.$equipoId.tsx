@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { getTeam, getRoster, matches, isRealRoster, type Player, type Team } from "@/lib/mock-data";
+import { getTeam, getRoster, isRealRoster, type Player, type Team } from "@/lib/mock-data";
+import { useTeamRoster, useLiveMatches } from "@/lib/live-data";
 import { PlayerCard } from "@/components/player-card";
 import { PlayerModal } from "@/components/player-modal";
 import { MatchCard } from "@/components/match-card";
@@ -47,10 +48,20 @@ type PosFilter = "ALL" | Player["position"];
 type RarityFilter = "ALL" | Player["rarity"];
 
 function EquipoDetailPage() {
-  const { team, roster, real } = Route.useLoaderData() as LoaderData;
-  const teamMatches = matches
-    .filter((m) => m.homeId === team.id || m.awayId === team.id)
-    .slice(0, 3);
+  const { team, roster: loaderRoster, real: loaderReal } = Route.useLoaderData() as LoaderData;
+  const { roster: liveRoster, isReal: liveReal, loading: rosterLoading } = useTeamRoster(team.id);
+  const roster = rosterLoading ? loaderRoster : liveRoster;
+  const real = rosterLoading ? loaderReal : liveReal;
+
+  const { matches: allMatches } = useLiveMatches();
+  const teamMatches = useMemo(() => {
+    const now = Date.now() - 3 * 3600_000; // muestra hasta 3h despues del kickoff
+    return allMatches
+      .filter((m) => m.homeId === team.id || m.awayId === team.id)
+      .filter((m) => m.status !== "finished" && new Date(m.date).getTime() > now)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 3);
+  }, [allMatches, team.id]);
 
   const [posFilter, setPosFilter] = useState<PosFilter>("ALL");
   const [rarityFilter, setRarityFilter] = useState<RarityFilter>("ALL");

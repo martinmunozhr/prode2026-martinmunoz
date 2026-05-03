@@ -6,4 +6,18 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+// host: true → escucha en 0.0.0.0 (todas las interfaces) para que la familia
+// pueda entrar al prode desde su teléfono o PC en la misma red WiFi.
+// Acceso típico: http://<IP-de-la-PC>:8080 (ej: http://192.168.0.10:8080)
+export default defineConfig({
+  vite: {
+    server: {
+      host: true,
+      port: 8080,
+    },
+    preview: {
+      host: true,
+      port: 8080,
+    },
+  },
+});

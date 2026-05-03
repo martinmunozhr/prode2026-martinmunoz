@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthProvider } from "@/contexts/auth-context";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { OnboardingModal } from "@/components/onboarding-modal";
 
 import appCss from "../styles.css?url";
@@ -56,14 +57,37 @@ export const Route = createRootRoute({
       { property: "og:locale", content: "es_AR" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Prode Mundial 2026" },
-      { name: "description", content: "World Cup Predictor: A football prediction app with real player images and a sticker collection system." },
-      { property: "og:description", content: "World Cup Predictor: A football prediction app with real player images and a sticker collection system." },
-      { name: "twitter:description", content: "World Cup Predictor: A football prediction app with real player images and a sticker collection system." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7c877d0b-d52e-4c3c-9fa9-a97b2935da1d/id-preview-95b13599--e2158aea-e2c1-4c86-ba3f-5af952e45d56.lovable.app-1777274208139.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7c877d0b-d52e-4c3c-9fa9-a97b2935da1d/id-preview-95b13599--e2158aea-e2c1-4c86-ba3f-5af952e45d56.lovable.app-1777274208139.png" },
+      {
+        name: "description",
+        content:
+          "World Cup Predictor: A football prediction app with real player images and a sticker collection system.",
+      },
+      {
+        property: "og:description",
+        content:
+          "World Cup Predictor: A football prediction app with real player images and a sticker collection system.",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "World Cup Predictor: A football prediction app with real player images and a sticker collection system.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7c877d0b-d52e-4c3c-9fa9-a97b2935da1d/id-preview-95b13599--e2158aea-e2c1-4c86-ba3f-5af952e45d56.lovable.app-1777274208139.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7c877d0b-d52e-4c3c-9fa9-a97b2935da1d/id-preview-95b13599--e2158aea-e2c1-4c86-ba3f-5af952e45d56.lovable.app-1777274208139.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", type: "image/webp", href: "/icon.webp" },
+      { rel: "apple-touch-icon", href: "/icon.webp" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -106,15 +130,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <AuthProvider>
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <SiteFooter />
-        <Toaster />
-        <OnboardingModal />
-      </div>
+      <TooltipProvider delayDuration={150}>
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <SiteFooter />
+          <Toaster />
+          <OnboardingModal />
+        </div>
+      </TooltipProvider>
     </AuthProvider>
   );
 }

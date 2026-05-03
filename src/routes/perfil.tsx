@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { AvatarColorPicker, AVATAR_COLORS } from "@/components/avatar-color-picker";
+import { AvatarColorPicker } from "@/components/avatar-color-picker";
+import { UserAvatar } from "@/components/user-avatar";
 import { AchievementsPanel } from "@/components/achievements-panel";
 import { toast } from "sonner";
 import { LogIn, Save } from "lucide-react";
@@ -92,8 +93,6 @@ function PerfilPage() {
     );
   }
 
-  const colorClass = AVATAR_COLORS.find((c) => c.id === color)?.className ?? "bg-violet-500";
-
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
       <header className="mb-10">
@@ -105,11 +104,13 @@ function PerfilPage() {
 
       <div className="bg-gradient-card border border-border/50 rounded-3xl p-6 md:p-8 shadow-elevated mb-6">
         <div className="flex items-center gap-4 mb-8">
-          <div
-            className={`h-20 w-20 rounded-full flex items-center justify-center text-white shadow-elevated font-display text-3xl tracking-wider ${colorClass}`}
-          >
-            {(profile?.username ?? user.email ?? "?").charAt(0).toUpperCase()}
-          </div>
+          <UserAvatar
+            name={profile?.username}
+            email={user.email}
+            color={color}
+            size="xl"
+            className="shadow-elevated"
+          />
           <div>
             <div className="font-display text-3xl tracking-wide">{profile?.username ?? "—"}</div>
             <div className="text-sm text-muted-foreground">{user.email}</div>

@@ -73,7 +73,7 @@ function MisPronosticosPage() {
         .select("*")
         .order("match_date", { ascending: true });
 
-      let predMap: Record<string, { home: number; away: number }> = {};
+      const predMap: Record<string, { home: number; away: number }> = {};
       if (user) {
         const { data: ps } = await supabase
           .from("predictions")

@@ -131,7 +131,10 @@ export function parseRosterText(text: string): ParsedPlayer[] {
     // split by common delimiters; if only spaces, also try spaces
     const parts =
       line.includes(",") || line.includes("|") || line.includes(";") || line.includes(" - ")
-        ? line.split(/[,|;]| - /).map((p) => p.trim()).filter(Boolean)
+        ? line
+            .split(/[,|;]| - /)
+            .map((p) => p.trim())
+            .filter(Boolean)
         : line.split(/\s+/);
 
     let jersey: number | null = null;
@@ -162,7 +165,10 @@ export function parseRosterText(text: string): ParsedPlayer[] {
     let name = "";
     let club: string | null = null;
 
-    if (parts.length > 1 && (line.includes(",") || line.includes("|") || line.includes(";") || line.includes(" - "))) {
+    if (
+      parts.length > 1 &&
+      (line.includes(",") || line.includes("|") || line.includes(";") || line.includes(" - "))
+    ) {
       // delimited: first remaining = name, rest = club
       name = remaining[0] ?? "";
       club = remaining.slice(1).join(" ").trim() || null;

@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { RankingRow } from "@/components/ranking-row";
 import { useLiveRanking, type LiveRankingEntry } from "@/lib/live-data";
-import { Trophy, Medal, Award, Users } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
+import { Trophy, Medal, Award, Users, Share2 } from "lucide-react";
 import figRonaldo from "@/assets/figuras/ronaldo.webp";
 
 export const Route = createFileRoute("/ranking")({
@@ -20,10 +23,53 @@ export const Route = createFileRoute("/ranking")({
   component: RankingPage,
 });
 
+function ordinal(n: number): string {
+  return `${n}°`;
+}
+
+async function shareRanking(myPosition: number, myPoints: number, total: number) {
+  const url = typeof window !== "undefined" ? window.location.origin : "";
+  const text =
+    total > 0
+      ? `Voy ${ordinal(myPosition)} de ${total} en el Prode Mundial 2026 con ${myPoints} pts. ¿Te animás a superarme? ${url}`
+      : `Estoy jugando el Prode Mundial 2026. Sumate al ranking. ${url}`;
+  const data = { title: "Prode Mundial 2026", text, url };
+
+  if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    try {
+      await navigator.share(data);
+      return;
+    } catch (e) {
+      // El usuario canceló o el navegador rechazó: silencio, no es error real.
+      const isAbort = e instanceof Error && e.name === "AbortError";
+      if (isAbort) return;
+    }
+  }
+
+  // Fallback: copiar al portapapeles
+  if (typeof navigator !== "undefined" && navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Texto copiado al portapapeles");
+      return;
+    } catch {
+      // sigue al fallback final
+    }
+  }
+
+  toast.error("No se pudo compartir desde este navegador");
+}
+
 function RankingPage() {
   const { ranking, loading } = useLiveRanking();
+  const { user } = useAuth();
   const podium = ranking.slice(0, 3);
   const rest = ranking.slice(3);
+
+  const myEntry = useMemo(() => {
+    if (!user) return null;
+    return ranking.find((e) => e.userId === user.id) ?? null;
+  }, [ranking, user]);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -63,6 +109,28 @@ function RankingPage() {
         </div>
       ) : (
         <>
+          {myEntry && (
+            <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+                  Tu posición
+                </span>
+                <span className="font-display text-2xl tracking-wider text-primary">
+                  {ordinal(myEntry.position)}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  · {myEntry.points} pts · {myEntry.exact} exactos
+                </span>
+              </div>
+              <button
+                onClick={() => shareRanking(myEntry.position, myEntry.points, ranking.length)}
+                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider hover:scale-105 transition-transform"
+              >
+                <Share2 className="h-3.5 w-3.5" /> Compartir
+              </button>
+            </div>
+          )}
+
           {/* Podio (sólo si hay 3 o más) */}
           {podium.length >= 3 && (
             <section className="mb-10">
