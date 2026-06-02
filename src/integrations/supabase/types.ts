@@ -393,6 +393,7 @@ export type Database = {
           club: string | null;
           created_at: string;
           id: string;
+          image_url: string | null;
           is_captain: boolean;
           jersey_number: number | null;
           name: string;
@@ -406,6 +407,7 @@ export type Database = {
           club?: string | null;
           created_at?: string;
           id?: string;
+          image_url?: string | null;
           is_captain?: boolean;
           jersey_number?: number | null;
           name: string;
@@ -419,6 +421,7 @@ export type Database = {
           club?: string | null;
           created_at?: string;
           id?: string;
+          image_url?: string | null;
           is_captain?: boolean;
           jersey_number?: number | null;
           name?: string;
@@ -622,6 +625,7 @@ export type Database = {
           code: string;
           confederation: string;
           created_at: string;
+          description: string | null;
           flag: string;
           group_letter: string;
           id: string;
@@ -631,6 +635,7 @@ export type Database = {
           code: string;
           confederation: string;
           created_at?: string;
+          description?: string | null;
           flag: string;
           group_letter: string;
           id: string;
@@ -640,6 +645,7 @@ export type Database = {
           code?: string;
           confederation?: string;
           created_at?: string;
+          description?: string | null;
           flag?: string;
           group_letter?: string;
           id?: string;

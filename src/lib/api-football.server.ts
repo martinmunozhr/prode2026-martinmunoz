@@ -113,10 +113,10 @@ export async function logSync(
 }
 
 // Position mapping API-Football -> our enum
-export function mapPosition(p: string | null | undefined): "GK" | "DEF" | "MID" | "FWD" {
+export function mapPosition(p: string | null | undefined): "POR" | "DEF" | "MED" | "DEL" {
   const v = (p ?? "").toLowerCase();
-  if (v.startsWith("g")) return "GK";
+  if (v.startsWith("g")) return "POR";
   if (v.startsWith("d")) return "DEF";
-  if (v.startsWith("m") || v.includes("attacker midfielder")) return "MID";
-  return "FWD";
+  if (v.startsWith("m") || v.includes("attacker midfielder")) return "MED";
+  return "DEL";
 }

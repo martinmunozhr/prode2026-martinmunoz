@@ -70,7 +70,7 @@ export function PlayerCard({
             isLegendary ? "text-background" : "text-foreground",
           )}
         >
-          {player.number}
+          {player.number ?? ""}
         </div>
         <div
           className={cn(
@@ -82,9 +82,19 @@ export function PlayerCard({
         </div>
       </div>
 
-      {/* Avatar — bandera SVG del país */}
-      <div className="flex-1 flex items-center justify-center relative z-10">
-        {teamId && teamIdToIso2(teamId) ? (
+      {/* Avatar — foto Panini o bandera como fallback */}
+      <div className="flex-1 flex items-center justify-center relative z-10 overflow-hidden">
+        {player.imageUrl ? (
+          <img
+            src={player.imageUrl}
+            alt={player.name}
+            className={cn(
+              "w-full h-full object-cover object-top rounded-lg shadow-lg transition-transform group-hover:scale-105",
+              isLegendary && "drop-shadow-2xl",
+            )}
+            loading="lazy"
+          />
+        ) : teamId && teamIdToIso2(teamId) ? (
           <Flag
             teamId={teamId}
             className={cn(

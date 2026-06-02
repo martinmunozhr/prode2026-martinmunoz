@@ -8,6 +8,7 @@ export type Team = {
   flag: string; // emoji
   group: string;
   confederation: "CONMEBOL" | "UEFA" | "CONCACAF" | "AFC" | "CAF" | "OFC";
+  description?: string;
 };
 
 export type Match = {
@@ -34,11 +35,12 @@ export type Match = {
 export type Player = {
   id: string;
   name: string;
-  number: number;
+  number?: number;
   position: "POR" | "DEF" | "MED" | "DEL";
-  age: number;
+  age?: number;
   club: string;
   rarity: "common" | "rare" | "epic" | "legendary";
+  imageUrl?: string;
 };
 
 export type Prediction = {
