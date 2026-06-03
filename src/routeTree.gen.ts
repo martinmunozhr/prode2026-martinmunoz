@@ -26,6 +26,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as EquiposEquipoIdRouteImport } from './routes/equipos.$equipoId'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminSyncRouteImport } from './routes/admin.sync'
 import { Route as AdminSobresRouteImport } from './routes/admin.sobres'
 import { Route as AdminPredictorRouteImport } from './routes/admin.predictor'
@@ -119,6 +120,11 @@ const EquiposEquipoIdRoute = EquiposEquipoIdRouteImport.update({
   path: '/$equipoId',
   getParentRoute: () => EquiposRoute,
 } as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSyncRoute = AdminSyncRouteImport.update({
   id: '/sync',
   path: '/sync',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/admin/predictor': typeof AdminPredictorRoute
   '/admin/sobres': typeof AdminSobresRoute
   '/admin/sync': typeof AdminSyncRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/cron/sync-results': typeof ApiPublicCronSyncResultsRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/admin/predictor': typeof AdminPredictorRoute
   '/admin/sobres': typeof AdminSobresRoute
   '/admin/sync': typeof AdminSyncRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/cron/sync-results': typeof ApiPublicCronSyncResultsRoute
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/admin/predictor': typeof AdminPredictorRoute
   '/admin/sobres': typeof AdminSobresRoute
   '/admin/sync': typeof AdminSyncRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/equipos/$equipoId': typeof EquiposEquipoIdRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/cron/sync-results': typeof ApiPublicCronSyncResultsRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/admin/predictor'
     | '/admin/sobres'
     | '/admin/sync'
+    | '/admin/usuarios'
     | '/equipos/$equipoId'
     | '/admin/'
     | '/api/public/cron/sync-results'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/admin/predictor'
     | '/admin/sobres'
     | '/admin/sync'
+    | '/admin/usuarios'
     | '/equipos/$equipoId'
     | '/admin'
     | '/api/public/cron/sync-results'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/admin/predictor'
     | '/admin/sobres'
     | '/admin/sync'
+    | '/admin/usuarios'
     | '/equipos/$equipoId'
     | '/admin/'
     | '/api/public/cron/sync-results'
@@ -454,6 +466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquiposEquipoIdRouteImport
       parentRoute: typeof EquiposRoute
     }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sync': {
       id: '/admin/sync'
       path: '/sync'
@@ -513,6 +532,7 @@ interface AdminRouteChildren {
   AdminPredictorRoute: typeof AdminPredictorRoute
   AdminSobresRoute: typeof AdminSobresRoute
   AdminSyncRoute: typeof AdminSyncRoute
+  AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -523,6 +543,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPredictorRoute: AdminPredictorRoute,
   AdminSobresRoute: AdminSobresRoute,
   AdminSyncRoute: AdminSyncRoute,
+  AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

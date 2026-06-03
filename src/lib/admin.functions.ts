@@ -258,19 +258,55 @@ export const updateMatchManually = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ---------------- EDITAR NOMBRE DE USUARIO ----------------
+export const updateUsername = createServerFn({ method: "POST" })
+  .inputValidator((data: { userId: string; username: string }) => data)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const username = data.username.trim();
+    if (username.length < 3) {
+      return { ok: false as const, error: "El nombre debe tener al menos 3 caracteres." };
+    }
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({ username, updated_at: new Date().toISOString() })
+      .eq("id", data.userId);
+    if (error) {
+      const dup = error.message.includes("duplicate") || error.message.includes("unique");
+      return {
+        ok: false as const,
+        error: dup ? "Ya existe otro usuario con ese nombre." : error.message,
+      };
+    }
+    return { ok: true as const };
+  });
+
 // ---------------- PREDICTOR (top 5 likely scores) ----------------
 export const predictMatch = createServerFn({ method: "GET" })
   .inputValidator((data: { homeId: string; awayId: string }) => data)
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const { data: rows, error } = await supabaseAdmin.rpc("predict_match", {
-      _home_id: data.homeId,
-      _away_id: data.awayId,
-    });
-    if (error) return { ok: false, error: error.message, predictions: [] };
-    return { ok: true, predictions: rows ?? [] };
+    const [scores, wdl] = await Promise.all([
+      supabaseAdmin.rpc("predict_match", { _home_id: data.homeId, _away_id: data.awayId }),
+      supabaseAdmin.rpc("predict_match_wdl", { _home_id: data.homeId, _away_id: data.awayId }),
+    ]);
+    if (scores.error) return { ok: false, error: scores.error.message, predictions: [], wdl: null };
+    return {
+      ok: true,
+      predictions: scores.data ?? [],
+      wdl: (wdl.data?.[0] as WdlRow | undefined) ?? null,
+    };
   });
+
+type WdlRow = {
+  p_home: number;
+  p_draw: number;
+  p_away: number;
+  lambda_home: number;
+  lambda_away: number;
+};
 
 // ---------------- MATCH EVENTS (goalscorers) ----------------
 export const addMatchEvent = createServerFn({ method: "POST" })

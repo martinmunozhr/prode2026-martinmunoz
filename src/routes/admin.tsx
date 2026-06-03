@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Shield, Calendar, Users, Activity, BarChart3, Trophy, Package } from "lucide-react";
+import { Shield, Calendar, Users, Activity, BarChart3, Trophy, Package, UserCog } from "lucide-react";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -13,6 +13,7 @@ const tabs = [
   { to: "/admin" as const, label: "Resumen", icon: Shield, exact: true },
   { to: "/admin/partidos" as const, label: "Partidos", icon: Calendar, exact: false },
   { to: "/admin/jugadores" as const, label: "Jugadores", icon: Users, exact: false },
+  { to: "/admin/usuarios" as const, label: "Usuarios", icon: UserCog, exact: false },
   { to: "/admin/awards" as const, label: "Premios", icon: Trophy, exact: false },
   { to: "/admin/sobres" as const, label: "Sobres", icon: Package, exact: false },
   { to: "/admin/sync" as const, label: "Sync API", icon: Activity, exact: false },
