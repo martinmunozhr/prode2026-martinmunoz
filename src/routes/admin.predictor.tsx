@@ -69,9 +69,15 @@ function AdminPredictor() {
   const teamMap = useMemo(() => new Map(teams.map((t) => [t.id, t])), [teams]);
 
   const run = async (h: string, a: string) => {
-    if (!h || !a || h === a) return;
+    // Actualizar la selección SIEMPRE (aunque falte el otro equipo), si no el
+    // <select> controlado no retiene la primera elección.
     setHome(h);
     setAway(a);
+    if (!h || !a || h === a) {
+      setPreds([]);
+      setWdl(null);
+      return;
+    }
     setLoading(true);
     try {
       const r = await predFn({ data: { homeId: h, awayId: a } });
