@@ -26,6 +26,7 @@ function RegistroPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState({ username: false, password: false });
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -74,6 +75,9 @@ function RegistroPage() {
             onChange={setUsername}
             required
             autoComplete="username"
+            hint="Mínimo 3 caracteres"
+            error={touched.username && username.length > 0 && username.length < 3 ? "Muy corto, elegí al menos 3 caracteres" : undefined}
+            onBlur={() => setTouched((t) => ({ ...t, username: true }))}
           />
           <Field
             label="Email"
@@ -92,6 +96,9 @@ function RegistroPage() {
             onChange={setPassword}
             required
             autoComplete="new-password"
+            hint="Mínimo 6 caracteres"
+            error={touched.password && password.length > 0 && password.length < 6 ? "Contraseña muy corta" : undefined}
+            onBlur={() => setTouched((t) => ({ ...t, password: true }))}
           />
           <button
             type="submit"
@@ -121,6 +128,9 @@ function Field({
   onChange,
   required,
   autoComplete,
+  hint,
+  error,
+  onBlur,
 }: {
   label: string;
   type: string;
@@ -129,6 +139,9 @@ function Field({
   onChange: (v: string) => void;
   required?: boolean;
   autoComplete?: string;
+  hint?: string;
+  error?: string;
+  onBlur?: () => void;
 }) {
   return (
     <div>
@@ -140,10 +153,16 @@ function Field({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         required={required}
         autoComplete={autoComplete}
-        className="w-full px-4 py-3 rounded-xl bg-input border border-border/50 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:shadow-glow-pitch transition-all"
+        className={`w-full px-4 py-3 rounded-xl bg-input border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:shadow-glow-pitch transition-all ${error ? "border-destructive focus:border-destructive" : "border-border/50 focus:border-primary"}`}
       />
+      {error ? (
+        <p className="mt-1 text-[11px] text-destructive">{error}</p>
+      ) : hint ? (
+        <p className="mt-1 text-[11px] text-muted-foreground/70">{hint}</p>
+      ) : null}
     </div>
   );
 }

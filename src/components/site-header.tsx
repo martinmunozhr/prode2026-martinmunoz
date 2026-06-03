@@ -79,7 +79,7 @@ export function SiteHeader() {
               inactiveProps={{
                 className: "text-muted-foreground hover:text-foreground hover:bg-muted",
               }}
-              className="px-2.5 py-2 rounded-md text-xs xl:text-sm font-bold uppercase tracking-wider transition-colors"
+              className="px-2.5 py-2 rounded-md text-sm font-bold uppercase tracking-wide transition-colors"
             >
               {l.label}
             </Link>
@@ -88,7 +88,7 @@ export function SiteHeader() {
             <button
               onClick={() => setMoreOpen((v) => !v)}
               className={cn(
-                "px-2.5 py-2 rounded-md text-xs xl:text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-1",
+                "px-2.5 py-2 rounded-md text-sm font-bold uppercase tracking-wide transition-colors flex items-center gap-1",
                 moreOpen
                   ? "text-primary bg-primary/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted",
@@ -156,7 +156,7 @@ export function SiteHeader() {
               <ThemeToggle />
               <button
                 onClick={handleSignOut}
-                className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                className="p-2.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 aria-label="Cerrar sesión"
                 title="Cerrar sesión"
               >

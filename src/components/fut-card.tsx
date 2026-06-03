@@ -17,6 +17,7 @@ export type FutCardProps = {
   jerseyNumber?: number | null;
   club?: string | null;
   rarity: CardRarity;
+  imageUrl?: string;
   /** Si está bloqueada (no la tenés todavía). */
   locked?: boolean;
   /** Cantidad poseída (si > 1, se muestra como repetida). */
@@ -93,6 +94,7 @@ export function FutCard({
   jerseyNumber,
   club,
   rarity,
+  imageUrl,
   locked = false,
   quantity,
   size = "md",
@@ -199,9 +201,16 @@ export function FutCard({
         </div>
       </div>
 
-      {/* Bandera */}
-      <div className="relative z-10 flex-1 flex items-center justify-center">
-        {teamIdToIso2(teamId) ? (
+      {/* Imagen del jugador o bandera */}
+      <div className="relative z-10 flex-1 flex items-center justify-center overflow-hidden">
+        {imageUrl && !locked ? (
+          <img
+            src={imageUrl}
+            alt={name}
+            className="w-full h-full object-cover object-top rounded-lg drop-shadow-xl"
+            loading="lazy"
+          />
+        ) : teamIdToIso2(teamId) ? (
           <Flag teamId={teamId} className={cn(sz.flag, "!rounded-md drop-shadow-xl")} />
         ) : (
           <span className={cn(sz.flag, "drop-shadow-xl")}>🏳️</span>

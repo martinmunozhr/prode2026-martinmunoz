@@ -145,7 +145,8 @@ export function GoalscorerPicker({
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Error";
-      toast.error(msg);
+      const isRls = msg.includes("row-level security") || msg.includes("violates");
+      toast.error(isRls ? "El partido ya arrancó — no podés cambiar los goleadores." : msg);
     } finally {
       setSaving(false);
     }
@@ -153,12 +154,16 @@ export function GoalscorerPicker({
 
   if (predHome + predAway === 0) {
     return (
-      <div className="mt-3 text-[11px] text-muted-foreground/80 italic flex items-center gap-1.5">
-        <Info className="h-3 w-3" />
-        Si tu pronóstico es 0-0 no hay goleadores para elegir.
+      <div className="mt-3 text-xs text-muted-foreground flex items-center gap-1.5">
+        <Info className="h-3.5 w-3.5" />
+        Pronóstico 0-0: no hay goles para asignar goleadores.
       </div>
     );
   }
+
+  const totalPicked = homePicked + awayPicked;
+  const totalNeeded = predHome + predAway;
+  const isComplete = totalPicked === totalNeeded;
 
   return (
     <div className="mt-3">
@@ -166,33 +171,35 @@ export function GoalscorerPicker({
         type="button"
         onClick={() => setOpen((o) => !o)}
         disabled={locked}
-        className="w-full text-left px-3 py-2 rounded-lg border border-border/50 bg-secondary/30 hover:bg-secondary/60 transition flex items-center justify-between gap-2 disabled:opacity-60"
+        className="w-full text-left px-4 py-2.5 rounded-lg border border-border/50 bg-secondary/30 hover:bg-secondary/60 transition flex items-center justify-between gap-2 disabled:opacity-60"
       >
-        <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
-          <Trophy className="h-3.5 w-3.5 text-accent" />
-          Goleadores (opcional)
+        <span className="flex items-center gap-2 text-sm font-bold">
+          <Trophy className="h-4 w-4 text-accent" />
+          {locked ? "Goleadores elegidos" : "Elegir goleadores"}
+          <span className="text-xs font-normal text-muted-foreground">(+1 pt por acierto)</span>
         </span>
-        <span className="text-[11px] text-muted-foreground tabular-nums">
-          {totalAlreadyPicked > 0 ? `${homePicked + awayPicked}/${predHome + predAway}` : "elegir"}
+        <span className="text-xs font-semibold tabular-nums">
+          {totalAlreadyPicked > 0
+            ? isComplete
+              ? <span className="text-primary">{totalPicked}/{totalNeeded} ✓</span>
+              : `${totalPicked}/${totalNeeded} elegidos`
+            : locked
+              ? "ninguno"
+              : "opcional →"}
         </span>
       </button>
 
       {open && (
         <div className="mt-2 rounded-xl border border-border/50 bg-card/50 p-3 space-y-3">
-          <div className="flex items-start gap-2 text-[11px] text-muted-foreground bg-secondary/30 rounded-md p-2">
-            <Info className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
+          <div className="flex items-start gap-2 text-xs text-muted-foreground bg-secondary/30 rounded-md p-2.5">
+            <Info className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
             <span>
-              Es <strong>opcional</strong>. Si lo hacés, sumás{" "}
-              <strong>+1 punto extra por cada goleador acertado</strong> (× multiplicador de fase).
-              Si pronosticaste {predHome}-{predAway}, debés elegir{" "}
-              <strong>
-                {predHome} de {homeName}
-              </strong>{" "}
-              y{" "}
-              <strong>
-                {predAway} de {awayName}
-              </strong>
-              . Podés repetir el mismo jugador (ej: hat-trick).
+              <strong>Opcional.</strong> Elegí quién convierte cada gol — sumás{" "}
+              <strong>+1 punto extra por cada acierto</strong> (multiplicado por la fase).
+              Con pronóstico {predHome}-{predAway} tenés que elegir{" "}
+              <strong>{predHome} {predHome === 1 ? "goleador" : "goleadores"} de {homeName}</strong>{" "}
+              y <strong>{predAway} {predAway === 1 ? "goleador" : "goleadores"} de {awayName}</strong>.
+              Podés repetir al mismo jugador si pronosticás que hace 2 o más goles.
             </span>
           </div>
 
@@ -249,53 +256,51 @@ function TeamColumn({
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <div className="text-[11px] font-bold uppercase tracking-widest">{title}</div>
-        <div
-          className={`text-[11px] tabular-nums ${complete ? "text-primary" : "text-muted-foreground"}`}
-        >
-          {picked}/{allowed}
+        <div className="text-xs font-bold uppercase tracking-wide">{title}</div>
+        <div className={`text-xs font-semibold tabular-nums ${complete ? "text-primary" : "text-muted-foreground"}`}>
+          {picked}/{allowed} {complete && "✓"}
         </div>
       </div>
       {allowed === 0 ? (
-        <div className="text-[11px] text-muted-foreground italic px-2 py-3 border border-dashed border-border/40 rounded-md text-center">
-          0 goles pronosticados
+        <div className="text-xs text-muted-foreground px-2 py-3 border border-dashed border-border/40 rounded-md text-center">
+          0 goles pronosticados para este equipo
         </div>
       ) : players.length === 0 ? (
-        <div className="text-[11px] text-muted-foreground italic px-2 py-3 border border-dashed border-border/40 rounded-md text-center">
+        <div className="text-xs text-muted-foreground px-2 py-3 border border-dashed border-border/40 rounded-md text-center">
           Plantilla aún no cargada
         </div>
       ) : (
-        <div className="max-h-48 overflow-y-auto rounded-md border border-border/40 divide-y divide-border/30">
+        <div className="max-h-52 overflow-y-auto rounded-md border border-border/40 divide-y divide-border/30">
           {players
             .filter((p) => p.position !== "Goalkeeper" && p.position !== "Arquero")
             .map((p) => {
               const pick = picks.find((x) => x.player_id === p.id);
               const qty = pick?.goals_predicted ?? 0;
               return (
-                <div key={p.id} className="flex items-center gap-2 px-2 py-1.5 text-xs">
-                  <span className="w-6 text-center text-[10px] text-muted-foreground tabular-nums">
+                <div key={p.id} className={`flex items-center gap-2 px-2 py-2 text-xs ${qty > 0 ? "bg-primary/5" : ""}`}>
+                  <span className="w-6 text-center text-xs text-muted-foreground tabular-nums font-medium">
                     {p.jersey_number ?? "—"}
                   </span>
-                  <span className="flex-1 truncate">{p.name}</span>
+                  <span className="flex-1 truncate font-medium">{p.name}</span>
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
                       disabled={locked || qty === 0}
                       onClick={() => onAdjust(p, -1)}
-                      className="h-6 w-6 rounded bg-secondary hover:bg-secondary/80 disabled:opacity-30 flex items-center justify-center"
+                      className="h-7 w-7 rounded bg-secondary hover:bg-secondary/80 disabled:opacity-30 flex items-center justify-center"
                       aria-label={`Quitar gol de ${p.name}`}
                     >
-                      <Minus className="h-3 w-3" />
+                      <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="w-5 text-center font-bold tabular-nums">{qty}</span>
+                    <span className="w-6 text-center font-bold tabular-nums text-sm">{qty > 0 ? qty : "—"}</span>
                     <button
                       type="button"
                       disabled={locked || (picked >= allowed && qty === 0)}
                       onClick={() => onAdjust(p, +1)}
-                      className="h-6 w-6 rounded bg-primary/20 hover:bg-primary/40 disabled:opacity-30 flex items-center justify-center"
+                      className="h-7 w-7 rounded bg-primary/20 hover:bg-primary/40 disabled:opacity-30 flex items-center justify-center"
                       aria-label={`Sumar gol de ${p.name}`}
                     >
-                      <Plus className="h-3 w-3" />
+                      <Plus className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>

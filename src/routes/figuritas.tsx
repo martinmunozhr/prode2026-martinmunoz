@@ -21,7 +21,31 @@ import { teams as MOCK_TEAMS } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+function FiguritasError({ error }: { error: unknown }) {
+  // El detalle técnico va a la consola, no a la cara del usuario.
+  useEffect(() => {
+    console.error("Figuritas render error:", error);
+  }, [error]);
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 px-4 py-20 text-center" style={{ minHeight: "60vh" }}>
+      <Package className="h-12 w-12 text-muted-foreground/60" />
+      <h2 className="font-display text-2xl tracking-wider">No pudimos abrir las figuritas</h2>
+      <p className="max-w-sm text-sm text-muted-foreground">
+        Hubo un problema cargando esta sección. Probá recargar la página.
+      </p>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="mt-2 inline-flex items-center justify-center rounded-xl bg-gradient-pitch px-6 py-3 font-bold uppercase tracking-wider text-primary-foreground shadow-glow-pitch hover:scale-105 transition-transform"
+      >
+        Recargar
+      </button>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/figuritas")({
+  errorComponent: FiguritasError,
   head: () => ({
     meta: [
       { title: "Figuritas y Sobres — Prode Mundial 2026" },
@@ -310,6 +334,7 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
                     jerseyNumber={c.jersey_number}
                     club={c.club}
                     rarity={c.rarity}
+                    imageUrl={c.image_url ?? undefined}
                     animationDelay={i * 60}
                     size="md"
                   />
@@ -364,6 +389,7 @@ function RevealModal({ cards, onClose }: { cards: OpenedCard[]; onClose: () => v
                     jerseyNumber={current.jersey_number}
                     club={current.club}
                     rarity={current.rarity}
+                    imageUrl={current.image_url ?? undefined}
                     size="lg"
                   />
                   {current.is_new && (
@@ -413,6 +439,7 @@ type CollectionItem = {
     jersey_number: number | null;
     club: string | null;
     rarity: CardRarity;
+    image_url: string | null;
   };
 };
 
@@ -421,13 +448,14 @@ function ColeccionTab() {
   const [items, setItems] = useState<CollectionItem[] | null>(null);
   const [filter, setFilter] = useState<"todas" | "repetidas" | CardRarity>("todas");
   const [recycling, setRecycling] = useState<string | null>(null);
+  const [confirmRecycle, setConfirmRecycle] = useState<string | null>(null);
 
   const load = async () => {
     if (!user) return;
     const { data } = await supabase
       .from("user_collection")
       .select(
-        "player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity)",
+        "player_id, quantity, player:players(id, name, team_id, position, jersey_number, club, rarity, image_url)",
       )
       .eq("user_id", user.id)
       .gt("quantity", 0);
@@ -527,23 +555,40 @@ function ColeccionTab() {
                 jerseyNumber={it.player.jersey_number}
                 club={it.player.club}
                 rarity={it.player.rarity}
+                imageUrl={it.player.image_url ?? undefined}
                 quantity={it.quantity}
                 animationDelay={i * 18}
               />
               {it.quantity > 1 && (
-                <button
-                  disabled={recycling === it.player_id}
-                  onClick={() => handleRecycle(it.player_id)}
-                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
-                  title="Reciclar 1 repetida"
-                >
-                  {recycling === it.player_id ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
+                confirmRecycle === it.player_id ? (
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 bg-card border border-border rounded-full px-2 py-1 shadow-elevated">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground whitespace-nowrap">¿Seguro?</span>
+                    <button
+                      disabled={recycling === it.player_id}
+                      onClick={() => { setConfirmRecycle(null); handleRecycle(it.player_id); }}
+                      className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 px-1"
+                    >
+                      {recycling === it.player_id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Sí"}
+                    </button>
+                    <span className="text-muted-foreground/50 text-[9px]">|</span>
+                    <button
+                      onClick={() => setConfirmRecycle(null)}
+                      className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground px-1"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    disabled={recycling === it.player_id}
+                    onClick={() => setConfirmRecycle(it.player_id)}
+                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
+                    title="Reciclar 1 repetida"
+                  >
                     <Recycle className="h-3 w-3" />
-                  )}
-                  Reciclar
-                </button>
+                    Reciclar
+                  </button>
+                )
               )}
             </div>
           ))}

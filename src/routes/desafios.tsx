@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Swords, Check, X, Clock, Trophy, AlertCircle } from "lucide-react";
+import { Swords, Check, X, Clock, Trophy, AlertCircle, Info } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import {
   useRounds,
@@ -11,6 +11,9 @@ import {
   rejectChallenge,
   cancelChallenge,
   isRoundLocked,
+  isRoundActive,
+  isRoundFuture,
+  isRoundEnded,
   describeChallengeOutcome,
   type Round,
 } from "@/lib/challenges";
@@ -72,18 +75,30 @@ function DesafiosPage() {
     return s;
   }, [challenges, activeRound]);
 
+  // Active/resolved challenges for the current user — cancelled and rejected disappear
+  const VISIBLE_STATUSES: import("@/lib/challenges").ChallengeStatus[] = ["pending", "accepted", "resolved"];
   const myChallenges = useMemo(
     () =>
       user
-        ? challenges.filter((c) => c.challenger_id === user.id || c.opponent_id === user.id)
+        ? challenges.filter(
+            (c) =>
+              (c.challenger_id === user.id || c.opponent_id === user.id) &&
+              VISIBLE_STATUSES.includes(c.status),
+          )
         : [],
     [challenges, user],
   );
+  // Other users' challenges: only show active ones (pending/accepted)
   const otherChallenges = useMemo(
     () =>
       user
-        ? challenges.filter((c) => c.challenger_id !== user.id && c.opponent_id !== user.id)
-        : challenges,
+        ? challenges.filter(
+            (c) =>
+              c.challenger_id !== user.id &&
+              c.opponent_id !== user.id &&
+              (c.status === "pending" || c.status === "accepted"),
+          )
+        : challenges.filter((c) => c.status === "pending" || c.status === "accepted"),
     [challenges, user],
   );
 
@@ -117,6 +132,22 @@ function DesafiosPage() {
       toast.error("Elegí jornada y rival");
       return;
     }
+    if (!activeRound.starts_at) {
+      toast.error("Esa jornada aún no tiene fecha confirmada");
+      return;
+    }
+    if (isRoundFuture(activeRound)) {
+      toast.error("Esta jornada todavía no arrancó — los desafíos se abren cuando empiece");
+      return;
+    }
+    if (isRoundEnded(activeRound)) {
+      toast.error("Esta jornada ya finalizó — no podés crear nuevos desafíos");
+      return;
+    }
+    if (!isRoundActive(activeRound)) {
+      toast.error("Esta jornada no está disponible para desafíos");
+      return;
+    }
     if (myActiveRounds.has(activeRound.id)) {
       toast.error("Ya tenés un desafío activo en esta jornada");
       return;
@@ -128,7 +159,7 @@ function DesafiosPage() {
     setSubmitting(true);
     try {
       await createChallenge(user.id, selectedOpponent, activeRound.id);
-      toast.success("Desafío enviado. Esperá que tu rival lo acepte.");
+      toast.success("Desafío enviado. Esperá que tu rival lo acepte antes de que arranque la jornada.");
       setSelectedOpponent("");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "No se pudo crear el desafío");
@@ -137,22 +168,35 @@ function DesafiosPage() {
     }
   };
 
+  const roundLockedForCreate =
+    !activeRound ||
+    !activeRound.starts_at ||
+    isRoundLocked(activeRound) ||
+    myActiveRounds.has(activeRound.id);
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-14">
       <header className="max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent text-[11px] font-bold uppercase tracking-widest">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wide">
           <Swords className="h-3.5 w-3.5" />
-          Nuevo modo
+          Modo especial
         </div>
         <h1 className="mt-3 font-display text-4xl sm:text-5xl tracking-tight">
           Desafíos por jornada
         </h1>
         <p className="mt-3 text-sm sm:text-base text-muted-foreground max-w-2xl">
-          Desafiá a un participante por los puntos que sume en una jornada.{" "}
-          <strong>1 desafío por jornada</strong>. El ganador se lleva sus puntos{" "}
-          <em>+ los del rival</em>. En caso de empate, cada uno se lleva la mitad de los puntos del
-          otro.
+          Elegís una jornada y un rival. Al final de esa jornada, quien hizo más puntos gana los puntos del otro como bonus.{" "}
+          <strong>Solo un desafío por jornada</strong>. En caso de empate, cada uno suma la mitad de los puntos del otro.
         </p>
+
+        {/* Ventana de desafío */}
+        <div className="mt-4 flex items-start gap-2.5 text-sm text-muted-foreground bg-secondary/30 border border-border/40 rounded-xl px-4 py-3">
+          <Info className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
+          <span>
+            Los desafíos se habilitan <strong>cuando arranca cada jornada</strong> y se cierran cuando termina.
+            No podés desafiar jornadas futuras ni pasadas.
+          </span>
+        </div>
       </header>
 
       {/* Crear desafío */}
@@ -166,7 +210,7 @@ function DesafiosPage() {
         ) : (
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
+              <label className="block text-xs uppercase tracking-wide font-semibold text-muted-foreground mb-1.5">
                 Jornada
               </label>
               <select
@@ -174,12 +218,23 @@ function DesafiosPage() {
                 onChange={(e) => setSelectedRound(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg bg-input border border-border text-foreground focus:outline-none focus:border-primary"
               >
-                {rounds.map((r) => (
-                  <option key={r.id} value={r.id} disabled={isRoundLocked(r)}>
-                    {r.name}
-                    {isRoundLocked(r) ? " (cerrada)" : ""}
-                  </option>
-                ))}
+                {rounds.map((r) => {
+                  const locked = isRoundLocked(r);
+                  const future = isRoundFuture(r);
+                  const ended = isRoundEnded(r);
+                  const suffix = !r.starts_at
+                    ? " (sin fecha)"
+                    : future
+                      ? " (aún no arrancó)"
+                      : ended
+                        ? " (finalizada)"
+                        : " ✓ activa";
+                  return (
+                    <option key={r.id} value={r.id} disabled={locked}>
+                      {r.name}{suffix}
+                    </option>
+                  );
+                })}
               </select>
               {activeRound && (
                 <RoundMeta round={activeRound} alreadyHas={myActiveRounds.has(activeRound.id)} />
@@ -187,22 +242,20 @@ function DesafiosPage() {
             </div>
 
             <div>
-              <label className="block text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
+              <label className="block text-xs uppercase tracking-wide font-semibold text-muted-foreground mb-1.5">
                 Rival
               </label>
               <select
                 value={selectedOpponent}
                 onChange={(e) => setSelectedOpponent(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg bg-input border border-border text-foreground focus:outline-none focus:border-primary"
-                disabled={
-                  !activeRound || isRoundLocked(activeRound) || myActiveRounds.has(activeRound.id)
-                }
+                disabled={roundLockedForCreate}
               >
                 <option value="">Elegí un rival…</option>
                 {allProfiles.map((p) => (
                   <option key={p.id} value={p.id} disabled={blockedOpponents.has(p.id)}>
                     {p.username}
-                    {blockedOpponents.has(p.id) ? " (ocupado)" : ""}
+                    {blockedOpponents.has(p.id) ? " (ocupado esta jornada)" : ""}
                   </option>
                 ))}
               </select>
@@ -211,13 +264,7 @@ function DesafiosPage() {
             <div className="sm:col-span-2 flex justify-end">
               <button
                 onClick={handleCreate}
-                disabled={
-                  submitting ||
-                  !activeRound ||
-                  !selectedOpponent ||
-                  isRoundLocked(activeRound) ||
-                  myActiveRounds.has(activeRound.id)
-                }
+                disabled={submitting || loadingCh || roundLockedForCreate || !selectedOpponent}
                 className="px-5 py-2.5 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider text-sm shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100"
               >
                 {submitting ? "Enviando…" : "Enviar desafío"}
@@ -240,39 +287,42 @@ function DesafiosPage() {
           />
         ) : (
           <div className="grid md:grid-cols-2 gap-3">
-            {myChallenges.map((c) => (
-              <ChallengeCard
-                key={c.id}
-                c={c}
-                rounds={rounds}
-                profiles={profiles}
-                viewerId={user.id}
-                onAccept={async () => {
-                  try {
-                    await acceptChallenge(c.id);
-                    toast.success("Desafío aceptado");
-                  } catch (e) {
-                    toast.error(e instanceof Error ? e.message : "Error");
-                  }
-                }}
-                onReject={async () => {
-                  try {
-                    await rejectChallenge(c.id);
-                    toast.success("Desafío rechazado");
-                  } catch (e) {
-                    toast.error(e instanceof Error ? e.message : "Error");
-                  }
-                }}
-                onCancel={async () => {
-                  try {
-                    await cancelChallenge(c.id);
-                    toast.success("Desafío cancelado");
-                  } catch (e) {
-                    toast.error(e instanceof Error ? e.message : "Error");
-                  }
-                }}
-              />
-            ))}
+            {myChallenges.map((c) => {
+              const round = rounds.find((r) => r.id === c.round_id);
+              return (
+                <ChallengeCard
+                  key={c.id}
+                  c={c}
+                  round={round}
+                  profiles={profiles}
+                  viewerId={user.id}
+                  onAccept={async () => {
+                    try {
+                      await acceptChallenge(c.id);
+                      toast.success("Desafío aceptado");
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : "Error");
+                    }
+                  }}
+                  onReject={async () => {
+                    try {
+                      await rejectChallenge(c.id);
+                      toast.success("Desafío rechazado");
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : "Error");
+                    }
+                  }}
+                  onCancel={async () => {
+                    try {
+                      await cancelChallenge(c.id);
+                      toast.success("Desafío cancelado");
+                    } catch (e) {
+                      toast.error(e instanceof Error ? e.message : "Error");
+                    }
+                  }}
+                />
+              );
+            })}
           </div>
         )}
       </section>
@@ -282,16 +332,19 @@ function DesafiosPage() {
         <section className="mt-10">
           <h2 className="font-display text-2xl tracking-wide mb-4">Otros desafíos en juego</h2>
           <div className="grid md:grid-cols-2 gap-3">
-            {otherChallenges.slice(0, 8).map((c) => (
-              <ChallengeCard
-                key={c.id}
-                c={c}
-                rounds={rounds}
-                profiles={profiles}
-                viewerId={user.id}
-                readOnly
-              />
-            ))}
+            {otherChallenges.slice(0, 8).map((c) => {
+              const round = rounds.find((r) => r.id === c.round_id);
+              return (
+                <ChallengeCard
+                  key={c.id}
+                  c={c}
+                  round={round}
+                  profiles={profiles}
+                  viewerId={user.id}
+                  readOnly
+                />
+              );
+            })}
           </div>
         </section>
       )}
@@ -300,26 +353,40 @@ function DesafiosPage() {
 }
 
 function RoundMeta({ round, alreadyHas }: { round: Round; alreadyHas: boolean }) {
+  const active = isRoundActive(round);
+  const future = isRoundFuture(round);
+  const ended = isRoundEnded(round);
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleString("es-AR", {
+      weekday: "long", day: "numeric", month: "long",
+      hour: "2-digit", minute: "2-digit",
+    });
+
   return (
     <div className="mt-2 text-xs text-muted-foreground flex flex-wrap items-center gap-2">
-      {round.starts_at ? (
-        <span className="inline-flex items-center gap-1">
-          <Clock className="h-3 w-3" /> Arranca{" "}
-          {new Date(round.starts_at).toLocaleString("es-AR", {
-            day: "2-digit",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+      {!round.starts_at ? (
+        <span className="inline-flex items-center gap-1 text-amber-400">
+          <AlertCircle className="h-3.5 w-3.5" /> Fecha aún no confirmada
         </span>
-      ) : (
-        <span className="inline-flex items-center gap-1">
-          <Clock className="h-3 w-3" /> Sin partidos cargados todavía
+      ) : future ? (
+        <span className="inline-flex items-center gap-1 text-amber-400">
+          <Clock className="h-3.5 w-3.5" />
+          Los desafíos se abren el {fmt(round.starts_at)} — cuando arranque la jornada
         </span>
-      )}
+      ) : ended ? (
+        <span className="inline-flex items-center gap-1 text-muted-foreground">
+          <AlertCircle className="h-3.5 w-3.5" /> Esta jornada ya finalizó
+        </span>
+      ) : active ? (
+        <span className="inline-flex items-center gap-1 text-emerald-400">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          Jornada activa — desafíos abiertos hasta el {round.ends_at ? fmt(round.ends_at) : "fin de jornada"}
+        </span>
+      ) : null}
       {alreadyHas && (
         <span className="inline-flex items-center gap-1 text-accent">
-          <AlertCircle className="h-3 w-3" /> Ya tenés un desafío activo en esta jornada
+          <AlertCircle className="h-3.5 w-3.5" /> Ya tenés un desafío activo en esta jornada
         </span>
       )}
     </div>
@@ -328,7 +395,7 @@ function RoundMeta({ round, alreadyHas }: { round: Round; alreadyHas: boolean })
 
 function ChallengeCard({
   c,
-  rounds,
+  round,
   profiles,
   viewerId,
   onAccept,
@@ -337,7 +404,7 @@ function ChallengeCard({
   readOnly,
 }: {
   c: import("@/lib/challenges").Challenge;
-  rounds: Round[];
+  round: Round | undefined;
   profiles: Map<string, import("@/lib/challenges").ProfileLite>;
   viewerId: string;
   onAccept?: () => void;
@@ -345,42 +412,51 @@ function ChallengeCard({
   onCancel?: () => void;
   readOnly?: boolean;
 }) {
-  const round = rounds.find((r) => r.id === c.round_id);
   const challenger = profiles.get(c.challenger_id);
   const opponent = profiles.get(c.opponent_id);
   const iAmChallenger = c.challenger_id === viewerId;
   const iAmOpponent = c.opponent_id === viewerId;
   const outcomeText = describeChallengeOutcome(c, viewerId);
+  const roundLocked = round ? isRoundLocked(round) : false;
+  // A pending challenge in a locked round is "expired" — opponent can no longer accept
+  const isExpired = c.status === "pending" && roundLocked;
 
   const statusBadge = (() => {
+    if (isExpired) {
+      return (
+        <span className="px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold uppercase tracking-wide">
+          Expirado
+        </span>
+      );
+    }
     switch (c.status) {
       case "pending":
         return (
-          <span className="px-2 py-0.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wide">
             Pendiente
           </span>
         );
       case "accepted":
         return (
-          <span className="px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-bold uppercase tracking-wide">
             En curso
           </span>
         );
       case "rejected":
         return (
-          <span className="px-2 py-0.5 rounded-full bg-muted/40 border border-border text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-full bg-muted/40 border border-border text-muted-foreground text-xs font-bold uppercase tracking-wide">
             Rechazado
           </span>
         );
       case "cancelled":
         return (
-          <span className="px-2 py-0.5 rounded-full bg-muted/40 border border-border text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-full bg-muted/40 border border-border text-muted-foreground text-xs font-bold uppercase tracking-wide">
             Cancelado
           </span>
         );
       case "resolved":
         return (
-          <span className="px-2 py-0.5 rounded-full bg-trophy/20 border border-trophy/40 text-trophy text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-full bg-trophy/20 border border-trophy/40 text-trophy text-xs font-bold uppercase tracking-wide">
             Resuelto
           </span>
         );
@@ -390,11 +466,28 @@ function ChallengeCard({
   return (
     <div className="rounded-2xl border border-border/50 bg-gradient-card p-4 shadow-card-sport">
       <div className="flex items-start justify-between gap-2">
-        <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">
+        <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
           {round?.name ?? c.round_id}
         </div>
         {statusBadge}
       </div>
+
+      {/* Context text for pending */}
+      {c.status === "pending" && !readOnly && (
+        <div className="mt-2 text-xs text-muted-foreground">
+          {isExpired ? (
+            <span className="text-amber-400/80">
+              La jornada ya arrancó y este desafío no fue respondido a tiempo.
+            </span>
+          ) : iAmOpponent ? (
+            <span className="text-accent">
+              <strong>{challenger?.username ?? "Tu rival"}</strong> te desafió — ¿lo aceptás?
+            </span>
+          ) : (
+            <span>Esperando que <strong>{opponent?.username ?? "tu rival"}</strong> acepte.</span>
+          )}
+        </div>
+      )}
 
       <div className="mt-3 flex items-center justify-between gap-3">
         <PlayerSide
@@ -416,35 +509,37 @@ function ChallengeCard({
       </div>
 
       {outcomeText && (
-        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-trophy">
-          <Trophy className="h-3.5 w-3.5" /> {outcomeText}
+        <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-trophy">
+          <Trophy className="h-4 w-4" /> {outcomeText}
         </div>
       )}
 
       {!readOnly && c.status === "pending" && (
         <div className="mt-3 flex gap-2">
-          {iAmOpponent && (
+          {/* Opponent can only accept/reject before round starts */}
+          {iAmOpponent && !isExpired && (
             <>
               <button
                 onClick={onAccept}
-                className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-gradient-pitch text-primary-foreground text-xs font-bold uppercase tracking-wider"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wide"
               >
-                <Check className="h-3.5 w-3.5" /> Aceptar
+                <Check className="h-4 w-4" /> Aceptar
               </button>
               <button
                 onClick={onReject}
-                className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg border border-border text-xs font-bold uppercase tracking-wider hover:bg-muted/40"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg border border-border text-sm font-bold uppercase tracking-wide hover:bg-muted/40"
               >
-                <X className="h-3.5 w-3.5" /> Rechazar
+                <X className="h-4 w-4" /> Rechazar
               </button>
             </>
           )}
+          {/* Challenger can always cancel a pending challenge */}
           {iAmChallenger && (
             <button
               onClick={onCancel}
-              className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg border border-border text-xs font-bold uppercase tracking-wider hover:bg-muted/40"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg border border-border text-sm font-bold uppercase tracking-wide hover:bg-muted/40"
             >
-              <X className="h-3.5 w-3.5" /> Cancelar
+              <X className="h-4 w-4" /> Cancelar
             </button>
           )}
         </div>
@@ -470,14 +565,14 @@ function PlayerSide({
 }) {
   return (
     <div className={`flex-1 min-w-0 ${alignRight ? "text-right" : ""}`}>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">
         {side}
         {you && " · vos"}
       </div>
       <div className={`font-display text-lg tracking-wide truncate ${winner ? "text-trophy" : ""}`}>
         {name}
       </div>
-      {points !== null && <div className="text-xs text-muted-foreground">{points} pts</div>}
+      {points !== null && <div className="text-sm text-muted-foreground">{points} pts</div>}
     </div>
   );
 }

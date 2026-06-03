@@ -347,7 +347,7 @@ export function useTeamRoster(teamId: string): {
     (async () => {
       const { data, error } = await supabase
         .from("players")
-        .select("id, name, position, jersey_number, club")
+        .select("id, name, position, jersey_number, club, rarity, image_url")
         .eq("team_id", teamId)
         .order("jersey_number", { ascending: true });
       if (cancelled) return;
@@ -359,6 +359,9 @@ export function useTeamRoster(teamId: string): {
         });
         return;
       }
+      const dbRarityMap: Record<string, Player["rarity"]> = {
+        legendario: "legendary", epico: "epic", raro: "rare", comun: "common",
+      };
       const mapped: Player[] = data.map((r, i) => ({
         id: r.id,
         name: r.name,
@@ -366,7 +369,8 @@ export function useTeamRoster(teamId: string): {
         position: mapDbPosition(r.position),
         age: 0,
         club: r.club ?? "—",
-        rarity: rarityFromIndex(i),
+        rarity: dbRarityMap[r.rarity ?? ""] ?? rarityFromIndex(i),
+        imageUrl: r.image_url ?? undefined,
       }));
       setState({ roster: mapped, isReal: true, loading: false });
     })();

@@ -1,7 +1,7 @@
 import { Match, getTeam } from "@/lib/mock-data";
 import { Flag } from "@/components/flag";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { MapPin, Clock, Zap } from "lucide-react";
+import { MapPin, Clock, Zap, Lock, CalendarDays } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getTeamPalette } from "@/lib/team-colors";
 
@@ -28,6 +28,7 @@ const STAGE_TOOLTIP: Record<Match["stage"], string> = {
 type Props = {
   match: Match;
   editable?: boolean;
+  predState?: 'open' | 'future' | 'locked';
   initialPrediction?: { home: number; away: number } | null;
   onSave?: (home: number, away: number) => Promise<void> | void;
 };
@@ -47,7 +48,23 @@ function fmtDate(iso: string) {
   }
 }
 
-export function MatchCard({ match, editable, initialPrediction, onSave }: Props) {
+function fmtDay(iso: string) {
+  try {
+    return new Intl.DateTimeFormat("es-AR", {
+      weekday: "long", day: "numeric", month: "long",
+    }).format(new Date(iso));
+  } catch { return iso; }
+}
+
+function fmtTime(iso: string) {
+  try {
+    return new Intl.DateTimeFormat("es-AR", {
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    }).format(new Date(iso));
+  } catch { return iso; }
+}
+
+export function MatchCard({ match, editable, predState, initialPrediction, onSave }: Props) {
   const home = getTeam(match.homeId) ?? {
     id: match.homeId,
     name: "Por definir",
@@ -67,6 +84,9 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   const isFinished = match.status === "finished";
   const isLive = match.status === "live";
   const isTbd = match.homeId === "tbd" || match.awayId === "tbd";
+
+  // Derive effective editable state: predState takes priority over editable prop
+  const isEditable = predState === 'open' || (editable && !predState);
 
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
@@ -102,7 +122,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
   const awayPal = getTeamPalette(away.id);
 
   return (
-    <div className="group bg-gradient-card border border-border/50 rounded-2xl p-5 shadow-card-sport hover:shadow-elevated hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+    <div className={`group bg-gradient-card border rounded-2xl p-5 shadow-card-sport hover:shadow-elevated hover:border-primary/30 transition-all duration-300 relative overflow-hidden ${predState === 'open' ? 'border-emerald-500/40 shadow-[0_0_20px_oklch(0.72_0.19_145/0.15)]' : 'border-border/50'}`}>
       {/* Team color accents */}
       <div
         aria-hidden
@@ -123,22 +143,22 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
       />
       {/* Status badge */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest font-semibold text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wide font-semibold text-muted-foreground">
           {match.group && (
             <span className="px-2 py-0.5 rounded bg-secondary text-secondary-foreground">
               Grupo {match.group}
             </span>
           )}
-          <span className="text-muted-foreground/70">{match.stage}</span>
+          <span className="text-muted-foreground">{match.stage}</span>
           {STAGE_MULTIPLIER[match.stage] > 1 && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
                   type="button"
                   aria-label={STAGE_TOOLTIP[match.stage]}
-                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 border border-accent/40 text-accent text-[10px] font-bold hover:bg-accent/25 focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-help"
+                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-accent/15 border border-accent/40 text-accent text-xs font-bold hover:bg-accent/25 focus:outline-none focus:ring-2 focus:ring-accent/40 cursor-help"
                 >
-                  <Zap className="h-2.5 w-2.5" />x{STAGE_MULTIPLIER[match.stage]}
+                  <Zap className="h-3 w-3" />x{STAGE_MULTIPLIER[match.stage]}
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[220px] text-center">
@@ -147,17 +167,29 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
             </Tooltip>
           )}
         </div>
-        {isLive && (
-          <span className="flex items-center gap-1.5 text-xs font-bold uppercase text-alert">
-            <span className="h-2 w-2 rounded-full bg-alert animate-pulse" />
-            En vivo
-          </span>
-        )}
-        {isFinished && (
-          <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
-            Final
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {predState === 'open' && (
+            <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-emerald-400">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              Abierto
+            </span>
+          )}
+          {predState === 'locked' && (
+            <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-amber-400">
+              <Lock className="h-3.5 w-3.5" />
+              Cerrado
+            </span>
+          )}
+          {isLive && !predState && (
+            <span className="flex items-center gap-1.5 text-xs font-bold uppercase text-alert">
+              <span className="h-2 w-2 rounded-full bg-alert animate-pulse" />
+              En vivo
+            </span>
+          )}
+          {isFinished && (
+            <span className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">Final</span>
+          )}
+        </div>
       </div>
 
       {/* Teams + Score */}
@@ -167,7 +199,7 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           <div className="font-display text-base md:text-lg tracking-wide leading-tight">
             {home.name}
           </div>
-          <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
+          <div className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
             {home.code}
           </div>
         </div>
@@ -175,39 +207,51 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
         <div className="flex flex-col items-center gap-2 px-2">
           {isFinished ? (
             <div className="font-display text-4xl md:text-5xl tabular-nums text-primary">
-              {match.homeScore} <span className="text-muted-foreground/50">-</span>{" "}
-              {match.awayScore}
+              {match.homeScore} <span className="text-muted-foreground/50">-</span> {match.awayScore}
             </div>
-          ) : editable && !isTbd ? (
+          ) : predState === 'future' ? (
+            <div className="flex flex-col items-center gap-2">
+              <Lock className="h-6 w-6 text-muted-foreground/60" />
+              <div className="text-xs text-center leading-relaxed text-muted-foreground px-1" suppressHydrationWarning>
+                {mounted ? `Disponible\nel ${fmtDay(match.date)}` : ''}
+              </div>
+            </div>
+          ) : predState === 'locked' ? (
+            initialPrediction ? (
+              <div className="flex flex-col items-center gap-1">
+                <div className="font-display text-4xl md:text-5xl tabular-nums text-foreground/80">
+                  {initialPrediction.home} <span className="text-muted-foreground/60">-</span> {initialPrediction.away}
+                </div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">Tu pronóstico</div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-1">
+                <div className="font-display text-3xl text-muted-foreground/60">?  :  ?</div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground text-center">No pronosticaste</div>
+              </div>
+            )
+          ) : isEditable && !isTbd ? (
             <div className="flex items-center gap-2">
               <ScoreInput
                 label={`Goles ${home.name}`}
                 value={pred.home}
-                onChange={(v) => {
-                  setPred({ ...pred, home: v });
-                  setSaved(false);
-                }}
+                onChange={(v) => { setPred({ ...pred, home: v }); setSaved(false); }}
               />
-              <span className="text-muted-foreground font-display text-2xl" aria-hidden>
-                :
-              </span>
+              <span className="text-muted-foreground font-display text-2xl" aria-hidden>:</span>
               <ScoreInput
                 label={`Goles ${away.name}`}
                 value={pred.away}
-                onChange={(v) => {
-                  setPred({ ...pred, away: v });
-                  setSaved(false);
-                }}
+                onChange={(v) => { setPred({ ...pred, away: v }); setSaved(false); }}
               />
             </div>
           ) : (
             <div className="font-display text-3xl text-muted-foreground/70">
-              {isTbd ? "TBD" : "VS"}
+              {isTbd ? 'TBD' : 'VS'}
             </div>
           )}
-          {!isFinished && (
-            <div className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-              <Clock className="h-3 w-3" />
+          {!isFinished && predState !== 'future' && (
+            <div className="flex items-center gap-1 text-xs uppercase tracking-wide text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" />
               <span suppressHydrationWarning>{mounted ? fmtDate(match.date) : ""}</span>
             </div>
           )}
@@ -218,28 +262,40 @@ export function MatchCard({ match, editable, initialPrediction, onSave }: Props)
           <div className="font-display text-base md:text-lg tracking-wide leading-tight">
             {away.name}
           </div>
-          <div className="text-[10px] text-muted-foreground uppercase tracking-widest">
+          <div className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
             {away.code}
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between text-xs text-muted-foreground">
+      <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <MapPin className="h-3 w-3" />
+          <MapPin className="h-3.5 w-3.5" />
           <span>
             {match.stadium} · {match.city}
           </span>
         </div>
-        {editable && !isTbd && (
+        {isEditable && !isTbd && (
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-wider disabled:opacity-60 hover:scale-105 transition-transform"
+            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wide disabled:opacity-60 hover:scale-105 transition-transform"
           >
             {saving ? "Guardando..." : saved ? "Guardado ✓" : "Guardar"}
           </button>
+        )}
+        {predState === 'locked' && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Lock className="h-3.5 w-3.5" />
+            <span suppressHydrationWarning>{mounted ? `Empezó a las ${fmtTime(match.date)}` : 'Cerrado'}</span>
+          </div>
+        )}
+        {predState === 'future' && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <CalendarDays className="h-3.5 w-3.5" />
+            <span>Solo podés pronosticar el día del partido</span>
+          </div>
         )}
       </div>
     </div>

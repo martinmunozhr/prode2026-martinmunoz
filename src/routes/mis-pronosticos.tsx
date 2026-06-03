@@ -57,6 +57,20 @@ function dbToMatch(m: DbMatch): Match {
   };
 }
 
+function getMatchPredState(match: Match): 'open' | 'future' | 'locked' {
+  if (match.status === 'live') return 'locked';
+  const now = new Date();
+  const kickoff = new Date(match.date);
+  if (kickoff > now) {
+    const isToday =
+      kickoff.getFullYear() === now.getFullYear() &&
+      kickoff.getMonth() === now.getMonth() &&
+      kickoff.getDate() === now.getDate();
+    return isToday ? 'open' : 'future';
+  }
+  return 'locked';
+}
+
 function MisPronosticosPage() {
   const { user, loading: authLoading } = useAuth();
   const [matches, setMatches] = useState<Match[]>([]);
@@ -96,6 +110,11 @@ function MisPronosticosPage() {
 
   const savePrediction = async (matchId: string, home: number, away: number) => {
     if (!user) return;
+    const match = matches.find(m => m.id === matchId);
+    if (!match || getMatchPredState(match) !== 'open') {
+      toast.error("Este partido ya no está disponible para pronosticar.");
+      return;
+    }
     const { error } = await supabase
       .from("predictions")
       .upsert(
@@ -103,7 +122,8 @@ function MisPronosticosPage() {
         { onConflict: "user_id,match_id" },
       );
     if (error) {
-      toast.error("No se pudo guardar: " + error.message);
+      const isRls = error.message.includes("row-level security") || error.message.includes("violates");
+      toast.error(isRls ? "Este partido ya arrancó — no se pueden guardar más pronósticos." : "No se pudo guardar: " + error.message);
       throw error;
     }
     setPreds((p) => ({ ...p, [matchId]: { home, away } }));
@@ -112,14 +132,20 @@ function MisPronosticosPage() {
 
   // Filtrar partidos con equipos TBD (fase final aún por definir)
   const playable = matches.filter((m) => m.homeId !== "tbd" && m.awayId !== "tbd");
-  const pending = playable.filter((m) => m.status === "scheduled");
+  // upcoming includes both scheduled and live matches (not yet finished)
+  const upcoming = playable.filter((m) => m.status !== "finished");
   const finished = playable.filter((m) => m.status === "finished");
   const myCount = Object.keys(preds).length;
+
+  const todayKey = useMemo(() => {
+    const now = new Date();
+    return dayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+  }, []);
 
   // Agrupar pendientes por día
   const dayBuckets = useMemo<DayBucket[]>(() => {
     const map = new Map<string, DayBucket>();
-    pending.forEach((m) => {
+    upcoming.forEach((m) => {
       const d = new Date(m.date);
       const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
       const k = dayKey(local);
@@ -133,28 +159,30 @@ function MisPronosticosPage() {
       }
     });
     return Array.from(map.values()).sort((a, b) => a.date.getTime() - b.date.getTime());
-  }, [pending, preds]);
+  }, [upcoming, preds]);
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-  // Auto-seleccionar el primer día con partidos sin pronosticar, o el primer día disponible
+  // Auto-seleccionar: preferir hoy si tiene partidos, luego primer día sin pronosticar, luego el primero
   useEffect(() => {
-    if (dayBuckets.length === 0) {
-      setSelectedDay(null);
+    if (dayBuckets.length === 0) { setSelectedDay(null); return; }
+    if (selectedDay && dayBuckets.find((d) => d.key === selectedDay)) return;
+    // Prefer today if it has matches
+    if (dayBuckets.find((d) => d.key === todayKey)) {
+      setSelectedDay(todayKey);
       return;
     }
-    if (selectedDay && dayBuckets.find((d) => d.key === selectedDay)) return;
     const firstUndone = dayBuckets.find((d) => d.predicted < d.count);
     setSelectedDay((firstUndone ?? dayBuckets[0]).key);
-  }, [dayBuckets, selectedDay]);
+  }, [dayBuckets, selectedDay, todayKey]);
 
   const dayMatches = useMemo(() => {
     if (!selectedDay) return [];
-    return pending.filter((m) => {
+    return upcoming.filter((m) => {
       const d = new Date(m.date);
       return dayKey(new Date(d.getFullYear(), d.getMonth(), d.getDate())) === selectedDay;
     });
-  }, [pending, selectedDay]);
+  }, [upcoming, selectedDay]);
 
   const totalPoints = useMemo(() => {
     let pts = 0;
@@ -231,7 +259,7 @@ function MisPronosticosPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <header className="mb-8">
-        <div className="text-[11px] uppercase tracking-widest text-primary font-bold">Tu juego</div>
+        <div className="text-xs uppercase tracking-wide text-primary font-bold">Tu juego</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Mis Pronósticos</h1>
         <p className="mt-2 text-muted-foreground">
           Cargá tus marcadores antes del inicio de cada partido.
@@ -242,8 +270,8 @@ function MisPronosticosPage() {
         <StatCard icon={<Target />} value={String(myCount)} label="Cargados" tone="primary" />
         <StatCard
           icon={<Clock />}
-          value={String(pending.length)}
-          label="Pendientes"
+          value={String(upcoming.length)}
+          label="Por jugar"
           tone="accent"
         />
         <StatCard icon={<Lock />} value={String(finished.length)} label="Cerrados" tone="muted" />
@@ -262,12 +290,12 @@ function MisPronosticosPage() {
           <CalendarDays className="h-5 w-5 text-accent" />
           <h2 className="font-display text-2xl tracking-wider">Por jornada</h2>
           <span className="ml-auto text-xs text-muted-foreground">
-            {pending.length} partidos en {dayBuckets.length}{" "}
+            {upcoming.length} partidos en {dayBuckets.length}{" "}
             {dayBuckets.length === 1 ? "día" : "días"}
           </span>
         </div>
 
-        {pending.length === 0 ? (
+        {upcoming.length === 0 ? (
           <div className="rounded-2xl border border-border/40 bg-gradient-card p-10 text-center">
             <CalendarDays className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
             <h3 className="font-display text-2xl tracking-wide">
@@ -286,26 +314,26 @@ function MisPronosticosPage() {
           </div>
         ) : (
           <>
-            <DayPickerStrip days={dayBuckets} selected={selectedDay} onSelect={setSelectedDay} />
+            <DayPickerStrip days={dayBuckets} selected={selectedDay} onSelect={setSelectedDay} todayKey={todayKey} />
 
-            {selectedDay && <DayHeader dayKeyValue={selectedDay} count={dayMatches.length} />}
+            {selectedDay && <DayHeader dayKeyValue={selectedDay} count={dayMatches.length} isToday={selectedDay === todayKey} />}
 
             <div className="grid md:grid-cols-2 gap-4 mt-4">
               {dayMatches.map((m) => {
                 const home = getTeam(m.homeId);
                 const away = getTeam(m.awayId);
                 const pred = preds[m.id];
+                const predStateValue = getMatchPredState(m);
                 return (
                   <div key={m.id} className="space-y-0">
                     <MatchCard
                       match={m}
-                      editable
+                      predState={predStateValue}
                       initialPrediction={pred ?? null}
-                      onSave={(h, a) => savePrediction(m.id, h, a)}
+                      onSave={predStateValue === 'open' ? (h, a) => savePrediction(m.id, h, a) : undefined}
                     />
-                    {home &&
-                      away &&
-                      (pred ? (
+                    {home && away && predStateValue === 'open' && (
+                      pred ? (
                         <GoalscorerPicker
                           matchId={m.id}
                           homeId={m.homeId}
@@ -317,14 +345,27 @@ function MisPronosticosPage() {
                           locked={false}
                         />
                       ) : (
-                        <div className="mt-3 rounded-lg border border-dashed border-border/50 bg-secondary/20 px-3 py-2 text-[11px] text-muted-foreground flex items-center gap-2">
-                          <Trophy className="h-3.5 w-3.5 text-accent shrink-0" />
+                        <div className="mt-3 rounded-lg border border-dashed border-border/50 bg-secondary/20 px-3 py-2.5 text-xs text-muted-foreground flex items-center gap-2">
+                          <Trophy className="h-4 w-4 text-accent shrink-0" />
                           <span>
-                            Guardá el marcador y vas a poder elegir <strong>goleadores</strong>{" "}
-                            (suman +1 punto extra cada uno)
+                            Guardá el marcador para poder elegir <strong>goleadores</strong>{" "}
+                            y sumar <strong>+1 punto extra</strong> por cada acierto.
                           </span>
                         </div>
-                      ))}
+                      )
+                    )}
+                    {home && away && predStateValue === 'locked' && pred && (
+                      <GoalscorerPicker
+                        matchId={m.id}
+                        homeId={m.homeId}
+                        awayId={m.awayId}
+                        homeName={home.name}
+                        awayName={away.name}
+                        predHome={pred.home}
+                        predAway={pred.away}
+                        locked={true}
+                      />
+                    )}
                   </div>
                 );
               })}
@@ -363,7 +404,7 @@ function InfoBanner() {
           <Info className="h-4 w-4 text-primary" />
         </div>
         <div className="flex-1">
-          <div className="text-[11px] uppercase tracking-widest font-bold text-primary">
+          <div className="text-xs uppercase tracking-wide font-bold text-primary">
             Cómo se juega
           </div>
           <h3 className="font-display text-xl mt-0.5">Reglas en 30 segundos</h3>
@@ -393,7 +434,7 @@ function InfoBanner() {
   );
 }
 
-function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number }) {
+function DayHeader({ dayKeyValue, count, isToday }: { dayKeyValue: string; count: number; isToday?: boolean }) {
   // dayKeyValue is "YYYY-MM-DD" — parse as local
   const [y, m, d] = dayKeyValue.split("-").map(Number);
   const date = new Date(y, m - 1, d);
@@ -407,8 +448,16 @@ function DayHeader({ dayKeyValue, count }: { dayKeyValue: string; count: number 
   return (
     <div className="mt-5 flex items-end justify-between gap-3 flex-wrap">
       <div>
-        <div className="text-[10px] uppercase tracking-widest text-accent font-bold">Jornada</div>
-        <h3 className="font-display text-2xl md:text-3xl tracking-tight">{label}</h3>
+        <div className="text-xs uppercase tracking-wide text-accent font-bold">Jornada</div>
+        <h3 className="font-display text-2xl md:text-3xl tracking-tight flex items-center gap-1">
+          {label}
+          {isToday && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-emerald-400 ml-3">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              Hoy
+            </span>
+          )}
+        </h3>
       </div>
       <div className="text-xs text-muted-foreground">
         {count} {count === 1 ? "partido" : "partidos"} para pronosticar
@@ -438,7 +487,7 @@ function StatCard({
     <div className="bg-gradient-card border border-border/50 rounded-xl p-4 shadow-card-sport">
       <div className={toneClass}>{icon}</div>
       <div className="font-display text-3xl mt-2 tabular-nums">{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">
+      <div className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">
         {label}
       </div>
     </div>

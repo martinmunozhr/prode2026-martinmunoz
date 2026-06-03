@@ -1,4 +1,4 @@
-import "flag-icons/css/flag-icons.min.css";
+// El CSS de flag-icons se importa globalmente en src/styles.css (ver nota allí).
 import { cn } from "@/lib/utils";
 
 // Map team id (our internal ids) → ISO 3166-1 alpha-2 country code used by flag-icons.

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { teams } from "@/lib/mock-data";
 import figYamal from "@/assets/figuras/yamal.webp";
 import { isCrystalBallLocked, WORLD_CUP_KICKOFF, crystalBallPoints } from "@/lib/scoring";
-import { Sparkles, Lock, LogIn, Trophy, Save } from "lucide-react";
+import { Sparkles, Lock, LogIn, Trophy, Save, Check } from "lucide-react";
 import { toast } from "sonner";
 import { PlayerAutocomplete } from "@/components/player-autocomplete";
 
@@ -59,6 +59,7 @@ function BolaDeCristalPage() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [t, setT] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
@@ -90,6 +91,8 @@ function BolaDeCristalPage() {
     };
   }, [user, authLoading]);
 
+  useEffect(() => { setSaved(false); }, [data]);
+
   const locked = isCrystalBallLocked() || data.locked;
 
   const save = async () => {
@@ -108,8 +111,12 @@ function BolaDeCristalPage() {
       .from("crystal_ball")
       .upsert(payload, { onConflict: "user_id" });
     setSaving(false);
-    if (error) toast.error("No se pudo guardar: " + error.message);
-    else toast.success("Bola de Cristal guardada");
+    if (error) {
+      const isRls = error.message.includes("row-level security") || error.message.includes("violates");
+      toast.error(isRls ? "La Bola de Cristal está bloqueada — el Mundial ya arrancó." : "No se pudo guardar: " + error.message);
+    } else {
+      setSaved(true);
+    }
   };
 
   if (authLoading || loading) {
@@ -298,10 +305,16 @@ function BolaDeCristalPage() {
 
       <button
         onClick={save}
-        disabled={saving || locked}
+        disabled={saving || locked || saved}
         className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-60 disabled:hover:scale-100"
       >
-        <Save className="h-4 w-4" /> {saving ? "Guardando..." : "Guardar Bola de Cristal"}
+        {saving ? (
+          <><Save className="h-4 w-4" /> Guardando...</>
+        ) : saved ? (
+          <><Check className="h-4 w-4" /> Guardado</>
+        ) : (
+          <><Save className="h-4 w-4" /> Guardar Bola de Cristal</>
+        )}
       </button>
     </div>
   );

@@ -1,6 +1,11 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+/* Banderas SVG (flag-icons). Importado acá, en el stylesheet global que __root.tsx
+ * linkea siempre, para que las banderas carguen en todas las pantallas del build
+ * deployado. Como import por efecto dentro de flag.tsx quedaba en un chunk CSS
+ * aparte que el SSR de Workers no inyectaba, y las banderas no aparecían en prod. */
+@import "flag-icons/css/flag-icons.min.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -91,7 +96,7 @@
   --secondary-foreground: oklch(0.98 0.005 290);
 
   --muted: oklch(0.26 0.06 293);
-  --muted-foreground: oklch(0.74 0.04 288);
+  --muted-foreground: oklch(0.82 0.04 288);
 
   /* Accent = magenta-pink glow */
   --accent: oklch(0.75 0.22 340);
@@ -164,7 +169,7 @@
   --secondary: oklch(0.32 0.1 290);
   --secondary-foreground: oklch(0.98 0.005 290);
   --muted: oklch(0.26 0.06 293);
-  --muted-foreground: oklch(0.74 0.04 288);
+  --muted-foreground: oklch(0.82 0.04 288);
   --accent: oklch(0.75 0.22 340);
   --accent-foreground: oklch(0.16 0.05 290);
   --destructive: oklch(0.65 0.25 25);

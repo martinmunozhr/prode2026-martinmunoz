@@ -28,6 +28,12 @@ dist-ssr
 # .env.example SI se commitea (es el template para nuevos devs)
 !.env.example
 
+# Panini: los scripts .py se commitean, las imágenes pesadas (scans + crops) no.
+scripts/panini/*.jpeg
+scripts/panini/*.jpg
+scripts/panini/*.png
+scripts/panini/crops/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

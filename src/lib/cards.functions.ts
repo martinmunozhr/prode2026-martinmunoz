@@ -17,6 +17,7 @@ export type OpenedCard = {
   position: string;
   jersey_number: number | null;
   club: string | null;
+  image_url: string | null;
 };
 
 export const openPackFn = createServerFn({ method: "POST" })
@@ -32,7 +33,7 @@ export const openPackFn = createServerFn({ method: "POST" })
     const playerIds = (opened ?? []).map((c) => c.player_id);
     const { data: players } = await supabase
       .from("players")
-      .select("id, name, team_id, position, jersey_number, club")
+      .select("id, name, team_id, position, jersey_number, club, image_url")
       .in("id", playerIds);
 
     const byId = new Map((players ?? []).map((p) => [p.id, p]));
@@ -48,6 +49,7 @@ export const openPackFn = createServerFn({ method: "POST" })
         position: p?.position ?? "",
         jersey_number: p?.jersey_number ?? null,
         club: p?.club ?? null,
+        image_url: p?.image_url ?? null,
       };
     });
 
@@ -227,7 +229,7 @@ export const simulateOpenPackFn = createServerFn({ method: "POST" })
     const uniqueRarities = Array.from(new Set(rarities));
     const { data: players, error } = await supabase
       .from("players")
-      .select("id, name, team_id, position, jersey_number, club, rarity")
+      .select("id, name, team_id, position, jersey_number, club, rarity, image_url")
       .in("rarity", uniqueRarities);
     if (error) throw new Error(error.message);
 
@@ -261,6 +263,7 @@ export const simulateOpenPackFn = createServerFn({ method: "POST" })
         position: p.position,
         jersey_number: p.jersey_number,
         club: p.club,
+        image_url: p.image_url ?? null,
       };
     });
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeftRight,
   Loader2,
@@ -205,7 +205,7 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
   const [profiles, setProfiles] = useState<Record<string, ProfileLite>>({});
   const [busy, setBusy] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     if (!user) return;
     let q = supabase.from("trades").select("*").order("created_at", { ascending: false });
     if (kind === "recibidas") q = q.eq("receiver_id", user.id).eq("status", "pending");
@@ -234,11 +234,19 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
     } else {
       setItems([]);
     }
-  };
+  }, [user?.id, kind]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    load(); /* eslint-disable-next-line */
-  }, [user?.id, kind]);
+    load();
+    if (!user) return;
+    const ch = supabase
+      .channel(`trades-live-${user.id}-${kind}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "trades" }, () => load())
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [load]);
 
   const handleAccept = async (id: string) => {
     setBusy(id);

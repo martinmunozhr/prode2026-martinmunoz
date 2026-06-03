@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth-context";
+
+// Module-level counter: each hook instance gets a unique channel name,
+// preventing the Supabase "cannot add callbacks after subscribe()" error
+// when multiple components call useCoins() simultaneously.
+let _instanceCount = 0;
 
 export function useCoins() {
   const { user } = useAuth();
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const instanceId = useRef(++_instanceCount);
 
   const refetch = async () => {
     if (!user) {
@@ -28,7 +34,7 @@ export function useCoins() {
     if (!user) return;
     // Realtime: actualizar saldo si cambia
     const channel = supabase
-      .channel(`coins-${user.id}`)
+      .channel(`coins-${instanceId.current}-${user.id}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "user_coins", filter: `user_id=eq.${user.id}` },

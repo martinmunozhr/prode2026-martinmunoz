@@ -16,6 +16,7 @@ type Props = {
   days: DayBucket[];
   selected: string | null;
   onSelect: (key: string) => void;
+  todayKey?: string;
 };
 
 const WD = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
@@ -28,7 +29,7 @@ export function dayKey(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-export function DayPickerStrip({ days, selected, onSelect }: Props) {
+export function DayPickerStrip({ days, selected, onSelect, todayKey }: Props) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const selectedRef = useRef<HTMLButtonElement>(null);
 
@@ -65,10 +66,10 @@ export function DayPickerStrip({ days, selected, onSelect }: Props) {
     <div className="relative">
       <div className="flex items-center gap-2 mb-2">
         <CalendarDays className="h-4 w-4 text-primary" />
-        <span className="text-[11px] uppercase tracking-widest font-bold text-muted-foreground">
+        <span className="text-xs uppercase tracking-wide font-bold text-muted-foreground">
           Elegí el día
         </span>
-        <span className="ml-auto text-[10px] uppercase tracking-widest text-muted-foreground/70">
+        <span className="ml-auto text-xs uppercase tracking-wide text-muted-foreground">
           {days.length} {days.length === 1 ? "jornada" : "jornadas"}
         </span>
       </div>
@@ -103,6 +104,7 @@ export function DayPickerStrip({ days, selected, onSelect }: Props) {
         >
           {grouped.map((d) => {
             const isSelected = selected === d.key;
+            const isToday = !!(todayKey && d.key === todayKey);
             const allDone = d.predicted >= d.count && d.count > 0;
             return (
               <button
@@ -112,35 +114,37 @@ export function DayPickerStrip({ days, selected, onSelect }: Props) {
                 aria-selected={isSelected}
                 onClick={() => onSelect(d.key)}
                 className={cn(
-                  "snap-start shrink-0 w-20 sm:w-24 rounded-2xl border p-2.5 text-center transition-all relative overflow-hidden",
+                  "snap-start shrink-0 w-[88px] sm:w-[100px] rounded-2xl border p-3 text-center transition-all relative overflow-hidden",
                   isSelected
                     ? "bg-gradient-pitch text-primary-foreground border-primary shadow-glow-pitch scale-[1.02]"
-                    : "bg-card border-border/50 hover:border-primary/40 hover:bg-card/80",
+                    : isToday
+                      ? "bg-card border-emerald-500/40 hover:border-emerald-500/60 hover:bg-card/80"
+                      : "bg-card border-border/50 hover:border-primary/40 hover:bg-card/80",
                 )}
               >
                 <div
                   className={cn(
-                    "text-[10px] uppercase tracking-widest font-bold",
-                    isSelected ? "text-primary-foreground/80" : "text-muted-foreground",
+                    "text-xs uppercase tracking-wide font-bold",
+                    isSelected ? "text-primary-foreground/90" : isToday ? "text-emerald-400" : "text-muted-foreground",
                   )}
                 >
-                  {WD[d.date.getDay()]}
+                  {isToday ? "HOY" : WD[d.date.getDay()]}
                 </div>
                 <div className="font-display text-3xl tabular-nums leading-none mt-1">
                   {String(d.date.getDate()).padStart(2, "0")}
                 </div>
                 <div
                   className={cn(
-                    "text-[10px] uppercase tracking-widest font-bold mt-0.5",
-                    isSelected ? "text-primary-foreground/80" : "text-muted-foreground",
+                    "text-xs uppercase tracking-wide font-bold mt-0.5",
+                    isSelected ? "text-primary-foreground/90" : "text-muted-foreground",
                   )}
                 >
                   {MONTHS[d.date.getMonth()]}
                 </div>
-                <div className="mt-1.5 flex items-center justify-center gap-1">
+                <div className="mt-2 flex items-center justify-center gap-1">
                   <span
                     className={cn(
-                      "text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full",
+                      "text-xs font-bold tabular-nums px-2 py-0.5 rounded-full",
                       isSelected
                         ? "bg-white/20 text-primary-foreground"
                         : allDone
@@ -152,7 +156,7 @@ export function DayPickerStrip({ days, selected, onSelect }: Props) {
                   </span>
                 </div>
                 {allDone && !isSelected && (
-                  <div className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                  <div className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary" />
                 )}
               </button>
             );

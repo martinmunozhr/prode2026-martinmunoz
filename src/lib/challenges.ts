@@ -144,6 +144,11 @@ export function useAllProfiles(excludeUserId?: string): {
 
 // ---------- ACTIONS ----------
 
+function rlsError(raw: { message: string }, friendlyMsg: string): Error {
+  const isRls = raw.message.includes("row-level security") || raw.message.includes("violates");
+  return new Error(isRls ? friendlyMsg : raw.message);
+}
+
 export async function createChallenge(challengerId: string, opponentId: string, roundId: string) {
   const { error } = await supabase.from("challenges").insert({
     challenger_id: challengerId,
@@ -151,7 +156,7 @@ export async function createChallenge(challengerId: string, opponentId: string, 
     round_id: roundId,
     status: "pending",
   });
-  if (error) throw new Error(error.message);
+  if (error) throw rlsError(error, "No se pudo crear el desafío: la jornada ya arrancó o ya tenés uno activo en esa jornada.");
 }
 
 export async function acceptChallenge(challengeId: string) {
@@ -159,7 +164,7 @@ export async function acceptChallenge(challengeId: string) {
     .from("challenges")
     .update({ status: "accepted" })
     .eq("id", challengeId);
-  if (error) throw new Error(error.message);
+  if (error) throw rlsError(error, "No se pudo aceptar el desafío: la jornada ya arrancó.");
 }
 
 export async function rejectChallenge(challengeId: string) {
@@ -167,7 +172,7 @@ export async function rejectChallenge(challengeId: string) {
     .from("challenges")
     .update({ status: "rejected" })
     .eq("id", challengeId);
-  if (error) throw new Error(error.message);
+  if (error) throw rlsError(error, "No se pudo rechazar el desafío: la jornada ya arrancó.");
 }
 
 export async function cancelChallenge(challengeId: string) {
@@ -175,14 +180,37 @@ export async function cancelChallenge(challengeId: string) {
     .from("challenges")
     .update({ status: "cancelled" })
     .eq("id", challengeId);
-  if (error) throw new Error(error.message);
+  if (error) throw rlsError(error, "No se pudo cancelar el desafío.");
 }
 
 // Helpers de visualización
 
-export function isRoundLocked(round: Round): boolean {
+/** Ventana de desafío: la jornada arrancó Y todavía no terminó. */
+export function isRoundActive(round: Round): boolean {
   if (!round.starts_at) return false;
-  return new Date(round.starts_at).getTime() <= Date.now();
+  const now = Date.now();
+  const start = new Date(round.starts_at).getTime();
+  if (start > now) return false;
+  if (round.ends_at) {
+    const end = new Date(round.ends_at).getTime();
+    if (end <= now) return false;
+  }
+  return true;
+}
+
+export function isRoundFuture(round: Round): boolean {
+  if (!round.starts_at) return false;
+  return new Date(round.starts_at).getTime() > Date.now();
+}
+
+export function isRoundEnded(round: Round): boolean {
+  if (!round.ends_at) return false;
+  return new Date(round.ends_at).getTime() <= Date.now();
+}
+
+/** Alias para compatibilidad con código existente que chequea si crear está bloqueado. */
+export function isRoundLocked(round: Round): boolean {
+  return !isRoundActive(round);
 }
 
 export function describeChallengeOutcome(c: Challenge, viewerId?: string): string {

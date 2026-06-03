@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -36,7 +37,31 @@ function NotFoundComponent() {
   );
 }
 
+function RootError({ error }: { error: unknown }) {
+  // El detalle técnico va a la consola, no a la cara del usuario.
+  useEffect(() => {
+    console.error("Root render error:", error);
+  }, [error]);
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 bg-background text-foreground text-center">
+      <div className="text-5xl">⚠️</div>
+      <h2 className="font-display text-3xl tracking-wider">Algo se rompió</h2>
+      <p className="max-w-sm text-sm text-muted-foreground">
+        Tuvimos un problema cargando esta pantalla. Probá recargar; si sigue, avisanos.
+      </p>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="mt-2 inline-flex items-center justify-center rounded-xl bg-gradient-pitch px-6 py-3 font-bold uppercase tracking-wider text-primary-foreground shadow-glow-pitch hover:scale-105 transition-transform"
+      >
+        Recargar
+      </button>
+    </div>
+  );
+}
+
 export const Route = createRootRoute({
+  errorComponent: ({ error }) => <RootError error={error} />,
   head: () => ({
     meta: [
       { charSet: "utf-8" },

@@ -20,6 +20,7 @@ type SimCard = {
   position: string;
   jersey_number: number | null;
   club: string | null;
+  image_url?: string | null;
 };
 
 const RARITY_COLOR: Record<CardRarity, string> = {
@@ -298,6 +299,7 @@ function SimRevealModal({ cards, onClose }: { cards: SimCard[]; onClose: () => v
                   jerseyNumber={c.jersey_number}
                   club={c.club}
                   rarity={c.rarity}
+                  imageUrl={c.image_url ?? undefined}
                   animationDelay={i * 60}
                   size="md"
                 />
@@ -335,6 +337,7 @@ function SimRevealModal({ cards, onClose }: { cards: SimCard[]; onClose: () => v
                     jerseyNumber={current.jersey_number}
                     club={current.club}
                     rarity={current.rarity}
+                    imageUrl={current.image_url ?? undefined}
                     size="lg"
                   />
                 </div>
