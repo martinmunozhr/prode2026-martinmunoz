@@ -10,7 +10,33 @@ type Player = {
   position: string;
   jersey_number: number | null;
   team_id: string;
+  rarity: string;
 };
+
+// Orden de relevancia para goleadores: figuras y delanteros arriba, arqueros al final.
+const RARITY_RANK: Record<string, number> = { legendario: 0, epico: 1, raro: 2, comun: 3 };
+const POSITION_RANK: Record<string, number> = { DEL: 0, MED: 1, DEF: 2, POR: 3 };
+const POSITION_LABEL: Record<string, string> = {
+  DEL: "DEL",
+  MED: "MED",
+  DEF: "DEF",
+  POR: "ARQ",
+};
+const RARITY_DOT: Record<string, string> = {
+  legendario: "bg-fuchsia-400",
+  epico: "bg-amber-400",
+  raro: "bg-sky-400",
+  comun: "bg-zinc-500",
+};
+
+/** Goleadores primero: por rareza (amenaza de gol), luego puesto, luego nombre. */
+function byGoalThreat(a: Player, b: Player): number {
+  const r = (RARITY_RANK[a.rarity] ?? 9) - (RARITY_RANK[b.rarity] ?? 9);
+  if (r !== 0) return r;
+  const p = (POSITION_RANK[a.position] ?? 9) - (POSITION_RANK[b.position] ?? 9);
+  if (p !== 0) return p;
+  return a.name.localeCompare(b.name);
+}
 
 type GSP = {
   id: string;
@@ -59,14 +85,16 @@ export function GoalscorerPicker({
       setLoading(true);
       const { data: ps } = await supabase
         .from("players")
-        .select("id,name,position,jersey_number,team_id")
-        .in("team_id", [homeId, awayId])
-        .order("jersey_number", { ascending: true });
+        .select("id,name,position,jersey_number,team_id,rarity")
+        .in("team_id", [homeId, awayId]);
       if (!active) return;
       const byTeam: Record<string, Player[]> = { [homeId]: [], [awayId]: [] };
       ((ps as Player[] | null) ?? []).forEach((p) => {
         if (byTeam[p.team_id]) byTeam[p.team_id].push(p);
       });
+      // Goleadores potenciales arriba (delanteros y figuras), arqueros al final.
+      byTeam[homeId].sort(byGoalThreat);
+      byTeam[awayId].sort(byGoalThreat);
       setPlayers(byTeam);
 
       if (user) {
@@ -200,6 +228,7 @@ export function GoalscorerPicker({
               <strong>{predHome} {predHome === 1 ? "goleador" : "goleadores"} de {homeName}</strong>{" "}
               y <strong>{predAway} {predAway === 1 ? "goleador" : "goleadores"} de {awayName}</strong>.
               Podés repetir al mismo jugador si pronosticás que hace 2 o más goles.
+              {" "}Están ordenados por probabilidad de gol: arriba los delanteros y figuras.
             </span>
           </div>
 
@@ -271,15 +300,17 @@ function TeamColumn({
         </div>
       ) : (
         <div className="max-h-52 overflow-y-auto rounded-md border border-border/40 divide-y divide-border/30">
-          {players
-            .filter((p) => p.position !== "Goalkeeper" && p.position !== "Arquero")
-            .map((p) => {
+          {players.map((p) => {
               const pick = picks.find((x) => x.player_id === p.id);
               const qty = pick?.goals_predicted ?? 0;
               return (
                 <div key={p.id} className={`flex items-center gap-2 px-2 py-2 text-xs ${qty > 0 ? "bg-primary/5" : ""}`}>
-                  <span className="w-6 text-center text-xs text-muted-foreground tabular-nums font-medium">
-                    {p.jersey_number ?? "—"}
+                  <span
+                    className={`h-2 w-2 shrink-0 rounded-full ${RARITY_DOT[p.rarity] ?? "bg-zinc-500"}`}
+                    title={p.rarity}
+                  />
+                  <span className="w-9 shrink-0 text-center text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                    {POSITION_LABEL[p.position] ?? p.position}
                   </span>
                   <span className="flex-1 truncate font-medium">{p.name}</span>
                   <div className="flex items-center gap-1">

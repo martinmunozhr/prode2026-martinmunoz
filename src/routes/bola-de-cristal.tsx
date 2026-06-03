@@ -277,7 +277,7 @@ function BolaDeCristalPage() {
             placeholder="Ej: Emiliano Martínez"
             value={data.mejor_arquero_nombre}
             onChange={(v) => setData((d) => ({ ...d, mejor_arquero_nombre: v }))}
-            positionFilter="Goalkeeper"
+            positionFilter="POR"
           />
         </CrystalField>
 

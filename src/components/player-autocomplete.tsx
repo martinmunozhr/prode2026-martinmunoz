@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, X } from "lucide-react";
+import { Flag } from "@/components/flag";
 
 type PlayerLite = {
   id: string;
@@ -9,15 +10,19 @@ type PlayerLite = {
   team_name?: string;
   team_flag?: string;
   position: string;
+  rarity: string;
 };
+
+// Códigos de posición tal como viven en la DB.
+const RARITY_RANK: Record<string, number> = { legendario: 0, epico: 1, raro: 2, comun: 3 };
 
 type Props = {
   value: string | null;
   onChange: (name: string | null) => void;
   placeholder?: string;
   disabled?: boolean;
-  /** Si se setea, filtra solo jugadores de esa posición ("Goalkeeper" para arquero) */
-  positionFilter?: "Goalkeeper" | "Forward" | "Midfielder" | "Defender";
+  /** Si se setea, filtra solo jugadores de esa posición (POR=arquero, DEL=delantero, etc.) */
+  positionFilter?: "POR" | "DEL" | "MED" | "DEF";
 };
 
 /**
@@ -46,7 +51,7 @@ export function PlayerAutocomplete({
     (async () => {
       let q = supabase
         .from("players")
-        .select("id,name,position,team_id, teams:team_id (name, flag)")
+        .select("id,name,position,rarity,team_id, teams:team_id (name, flag)")
         .order("name")
         .limit(2000);
       if (positionFilter) q = q.eq("position", positionFilter);
@@ -59,6 +64,7 @@ export function PlayerAutocomplete({
           name: p.name as string,
           team_id: p.team_id as string,
           position: p.position as string,
+          rarity: (p.rarity as string) ?? "comun",
           team_name: t?.name ?? "",
           team_flag: t?.flag ?? "",
         };
@@ -82,11 +88,17 @@ export function PlayerAutocomplete({
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return players.slice(0, 20);
-    return players
-      .filter(
-        (p) => p.name.toLowerCase().includes(q) || (p.team_name ?? "").toLowerCase().includes(q),
-      )
+    const pool = q
+      ? players.filter(
+          (p) => p.name.toLowerCase().includes(q) || (p.team_name ?? "").toLowerCase().includes(q),
+        )
+      : players;
+    // Figuras primero (por rareza), luego alfabético — facilita reconocer candidatos.
+    return [...pool]
+      .sort((a, b) => {
+        const r = (RARITY_RANK[a.rarity] ?? 9) - (RARITY_RANK[b.rarity] ?? 9);
+        return r !== 0 ? r : a.name.localeCompare(b.name);
+      })
       .slice(0, 20);
   }, [query, players]);
 
@@ -144,7 +156,7 @@ export function PlayerAutocomplete({
               }}
               className="w-full text-left px-3 py-2 hover:bg-muted/50 flex items-center gap-2 text-sm"
             >
-              <span className="text-lg">{p.team_flag}</span>
+              <Flag teamId={p.team_id} iso2={p.team_flag} className="text-base shrink-0" />
               <span className="flex-1 truncate">{p.name}</span>
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
                 {p.team_name}
