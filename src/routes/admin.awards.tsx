@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { updateAwards, recalcAllPoints } from "@/lib/admin.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { Trophy, RefreshCw, Save } from "lucide-react";
 
 export const Route = createFileRoute("/admin/awards")({
@@ -65,7 +66,7 @@ function AdminAwards() {
   const save = async () => {
     setSaving(true);
     try {
-      const r = await updateFn({ data });
+      const r = await updateFn({ data, headers: await authHeaders() });
       if (r.ok) toast.success("Premios actualizados. Bola de Cristal recalculada.");
       else toast.error(r.error ?? "Error");
     } finally {
@@ -76,7 +77,7 @@ function AdminAwards() {
   const recalc = async () => {
     setRecalcing(true);
     try {
-      const r = await recalcFn();
+      const r = await recalcFn({ headers: await authHeaders() });
       if (r.ok) toast.success(`Recalculados ${"recalculated" in r ? r.recalculated : 0} partidos`);
       else toast.error(r.error ?? "Error");
     } finally {

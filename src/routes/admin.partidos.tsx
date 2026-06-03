@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { updateMatchManually, addMatchEvent, deleteMatchEvent } from "@/lib/admin.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import type { Database } from "@/integrations/supabase/types";
 import { ChevronDown, ChevronUp, Plus, X, Trophy, Square } from "lucide-react";
 
@@ -55,6 +56,7 @@ function AdminPartidos() {
     try {
       const r = await updateFn({
         data: { matchId: m.id, homeScore: hs, awayScore: as_, status: st },
+        headers: await authHeaders(),
       });
       if (r.ok) {
         toast.success("Partido actualizado. Recalculando puntos...");
@@ -221,7 +223,7 @@ function EventsPanel({ match }: { match: MatchRow }) {
   const awayPlayers = players.filter((p) => p.team_id === match.away_id);
 
   const remove = async (id: string) => {
-    const r = await delFn({ data: { eventId: id } });
+    const r = await delFn({ data: { eventId: id }, headers: await authHeaders() });
     if (r.ok) {
       toast.success("Evento borrado. Recalculando goleadores...");
       load();
@@ -238,6 +240,7 @@ function EventsPanel({ match }: { match: MatchRow }) {
     if (!playerName.trim()) return toast.error("Falta nombre del jugador");
     const r = await addFn({
       data: { matchId: match.id, teamId, playerId, playerName, eventType: type, minute },
+      headers: await authHeaders(),
     });
     if (r.ok) {
       toast.success("Evento agregado");

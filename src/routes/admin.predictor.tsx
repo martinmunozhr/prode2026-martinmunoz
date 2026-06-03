@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { predictMatch } from "@/lib/admin.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { supabase } from "@/integrations/supabase/client";
 import { Flag } from "@/components/flag";
 import { TrendingUp } from "lucide-react";
@@ -80,7 +81,7 @@ function AdminPredictor() {
     }
     setLoading(true);
     try {
-      const r = await predFn({ data: { homeId: h, awayId: a } });
+      const r = await predFn({ data: { homeId: h, awayId: a }, headers: await authHeaders() });
       setPreds(r.predictions as Pred[]);
       setWdl((r.wdl as Wdl) ?? null);
     } finally {

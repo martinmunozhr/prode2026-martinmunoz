@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { updateUsername } from "@/lib/admin.functions";
+import { authHeaders } from "@/lib/auth-headers";
 import { UserCog, Save, Loader2, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/admin/usuarios")({
@@ -47,7 +48,7 @@ function AdminUsuarios() {
     if (next === u.username) return;
     setSavingId(u.id);
     try {
-      const r = await updateFn({ data: { userId: u.id, username: next } });
+      const r = await updateFn({ data: { userId: u.id, username: next }, headers: await authHeaders() });
       if (r.ok) {
         toast.success(`Nombre actualizado a "${next}"`);
         setUsers((list) => list.map((x) => (x.id === u.id ? { ...x, username: next } : x)));
