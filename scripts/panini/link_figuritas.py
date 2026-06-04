@@ -12,7 +12,7 @@ Uso:
     python link_figuritas.py --key <SERVICE_ROLE_KEY>          # sube + linkea de verdad
     python link_figuritas.py --key <KEY> --team arg            # un solo equipo
 """
-import sys, json, argparse, requests, unicodedata, re
+import sys, json, argparse, requests, unicodedata, re, difflib
 from pathlib import Path
 
 SUPABASE_URL = "https://jcqxskdfpjicptnidzdt.supabase.co"
@@ -61,6 +61,21 @@ def match_player(manifest_name, players):
                  or set(norm(p["name"]).split()).issubset(tset)]
         if len(cands) == 1:
             return cands[0], "subset"
+    # Anagrama de letras (orden de tokens invertido / transliteración: ej. coreanos
+    # "Heungmin Son" vs "Son Heung-min", o "Sekofofana" vs "Seko Fofana"). Único.
+    collapse = lambda s: re.sub(r"\s", "", norm(s))
+    sig = "".join(sorted(collapse(n)))
+    cands = [p for p in players if "".join(sorted(collapse(p["name"]))) == sig]
+    if len(cands) == 1:
+        return cands[0], "anagram"
+    # Fuzzy (distancia de edición) sobre el nombre sin espacios: agarra errores de OCR
+    # (V↔Y: Vildiz=Yildiz) y transliteraciones (Fayzullaev=Fayzullayev). Umbral alto + único.
+    cm = collapse(n)
+    scored = sorted(((difflib.SequenceMatcher(None, cm, collapse(p["name"])).ratio(), p)
+                     for p in players), key=lambda x: -x[0])
+    if scored and scored[0][0] >= 0.82 and (len(scored) == 1
+            or scored[0][0] - scored[1][0] >= 0.06 or scored[0][0] >= 0.90):
+        return scored[0][1], f"fuzzy:{scored[0][0]:.2f}"
     return None, None
 
 
@@ -111,11 +126,14 @@ def main():
         players = fetch_team_players(read_key, t)
         m = u = 0
         misses = []
+        verbose = len(teams) <= 8
         for e in manifest:
             p, how = match_player(e["name"], players)
             if not p:
                 u += 1; misses.append(e["name"]); continue
             m += 1
+            if verbose:
+                print(f"    {e['name'][:24]:24s} -> {p['name'][:24]:24s} ({how})")
             if not dry:
                 local = CROPS_DIR / t / e["file"]
                 if not local.exists():
