@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import type { CardRarity } from "@/lib/cards";
 import { RARITY_LABEL, RARITY_STARS } from "@/lib/cards";
 import { teamGradient } from "@/lib/team-colors";
-import { Star, Lock } from "lucide-react";
+import { Star, Lock, User } from "lucide-react";
 
 /**
  * Carta estilo FUT — diseño común para toda la app.
@@ -210,10 +210,15 @@ export function FutCard({
             className="w-full h-full object-cover object-top rounded-lg drop-shadow-xl"
             loading="lazy"
           />
-        ) : teamIdToIso2(teamId) ? (
-          <Flag teamId={teamId} className={cn(sz.flag, "!rounded-md drop-shadow-xl")} />
         ) : (
-          <span className={cn(sz.flag, "drop-shadow-xl")}>🏳️</span>
+          <div className="relative flex h-full w-full items-center justify-center">
+            <User className="absolute h-16 w-16 text-foreground/[0.06]" aria-hidden />
+            {teamIdToIso2(teamId) ? (
+              <Flag teamId={teamId} className={cn("relative", sz.flag, "!rounded-md drop-shadow-xl")} />
+            ) : (
+              <span className={cn("relative", sz.flag, "drop-shadow-xl")}>🏳️</span>
+            )}
+          </div>
         )}
       </div>
 

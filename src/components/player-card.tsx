@@ -1,6 +1,6 @@
 import { Player } from "@/lib/mock-data";
 import { Flag, teamIdToIso2 } from "@/components/flag";
-import { Star } from "lucide-react";
+import { Star, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const rarityStyles: Record<
@@ -94,22 +94,28 @@ export function PlayerCard({
             )}
             loading="lazy"
           />
-        ) : teamId && teamIdToIso2(teamId) ? (
-          <Flag
-            teamId={teamId}
-            className={cn(
-              "text-6xl md:text-7xl transition-transform group-hover:scale-110 !rounded-md shadow-lg",
-              isLegendary && "drop-shadow-2xl",
-            )}
-          />
         ) : (
-          <div
-            className={cn(
-              "text-6xl md:text-7xl transition-transform group-hover:scale-110",
-              isLegendary && "drop-shadow-2xl",
+          <div className="relative flex h-full w-full items-center justify-center">
+            {/* Silueta tenue: marca "figurita sin foto" para que el grid se vea uniforme */}
+            <User className="absolute h-24 w-24 text-foreground/[0.06]" aria-hidden />
+            {teamId && teamIdToIso2(teamId) ? (
+              <Flag
+                teamId={teamId}
+                className={cn(
+                  "relative text-5xl md:text-6xl transition-transform group-hover:scale-110 !rounded-md shadow-lg",
+                  isLegendary && "drop-shadow-2xl",
+                )}
+              />
+            ) : (
+              <div
+                className={cn(
+                  "relative text-5xl md:text-6xl transition-transform group-hover:scale-110",
+                  isLegendary && "drop-shadow-2xl",
+                )}
+              >
+                {teamFlag}
+              </div>
             )}
-          >
-            {teamFlag}
           </div>
         )}
       </div>

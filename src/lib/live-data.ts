@@ -365,7 +365,7 @@ export function useTeamRoster(teamId: string): {
       const mapped: Player[] = data.map((r, i) => ({
         id: r.id,
         name: r.name,
-        number: r.jersey_number ?? i + 1,
+        number: r.jersey_number ?? undefined,
         position: mapDbPosition(r.position),
         age: 0,
         club: r.club ?? "—",

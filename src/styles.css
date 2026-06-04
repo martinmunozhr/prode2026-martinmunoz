@@ -397,8 +397,14 @@ html.light body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .animate-card-reveal,
+  .animate-holo,
+  .animate-pulse-glow,
+  .animate-card-flip,
+  .animate-pulse {
+    animation: none !important;
+  }
   .animate-card-reveal {
-    animation: none;
     opacity: 1;
     transform: none;
   }
