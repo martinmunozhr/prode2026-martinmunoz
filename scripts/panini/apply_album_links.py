@@ -7,11 +7,12 @@ es el oficial). No inserta, no borra, no toca rareza.
 Uso: python apply_album_links.py --key <SERVICE_ROLE_KEY> --team sen
      python apply_album_links.py --team sen        # dry-run (read-only)
 """
-import sys, json, argparse, requests, unicodedata, re
+import os, sys, json, argparse, requests, unicodedata, re
 from pathlib import Path
 
-SUPABASE_URL = "https://jcqxskdfpjicptnidzdt.supabase.co"
-PUBLISHABLE = "sb_publishable_Vhh41ol_fmUE1bPqz0bmYQ_mntKQ_0t"
+# Configurar via entorno: export SUPABASE_URL=... SUPABASE_PUBLISHABLE_KEY=...
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+PUBLISHABLE = os.environ.get("SUPABASE_PUBLISHABLE_KEY", "")
 CROPS = Path(__file__).parent / "album_crops"
 BUCKET = "stickers"
 

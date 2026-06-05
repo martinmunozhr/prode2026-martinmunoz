@@ -12,11 +12,12 @@ Uso:
     python link_figuritas.py --key <SERVICE_ROLE_KEY>          # sube + linkea de verdad
     python link_figuritas.py --key <KEY> --team arg            # un solo equipo
 """
-import sys, json, argparse, requests, unicodedata, re, difflib
+import os, sys, json, argparse, requests, unicodedata, re, difflib
 from pathlib import Path
 
-SUPABASE_URL = "https://jcqxskdfpjicptnidzdt.supabase.co"
-PUBLISHABLE  = "sb_publishable_Vhh41ol_fmUE1bPqz0bmYQ_mntKQ_0t"
+# Configurar via entorno: export SUPABASE_URL=... SUPABASE_PUBLISHABLE_KEY=...
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+PUBLISHABLE  = os.environ.get("SUPABASE_PUBLISHABLE_KEY", "")
 CROPS_DIR    = Path(__file__).parent / "crops"
 BUCKET       = "stickers"
 

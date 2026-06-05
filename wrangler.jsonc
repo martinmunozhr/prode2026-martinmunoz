@@ -7,6 +7,8 @@
 
   // Vars publicas (commiteables). Las publishable keys de Supabase
   // estan disenadas para vivir en el cliente, no son secretos.
+  // 👇 SI FORKEAS: reemplaza estos dos valores por los de TU proyecto Supabase
+  //    (Dashboard > Settings > API). Y arriba, "name" por el de tu worker.
   "vars": {
     "SUPABASE_URL": "https://jcqxskdfpjicptnidzdt.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_Vhh41ol_fmUE1bPqz0bmYQ_mntKQ_0t",

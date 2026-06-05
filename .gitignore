@@ -37,6 +37,9 @@ scripts/panini/crops/
 scripts/panini/album_crops/**/*.jpg
 scripts/panini/album_crops/**/*.png
 
+# Config local de MCP (apunta a tu proyecto; no se comparte)
+.mcp.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
