@@ -33,6 +33,9 @@ scripts/panini/*.jpeg
 scripts/panini/*.jpg
 scripts/panini/*.png
 scripts/panini/crops/
+# album_crops: imágenes recortadas de los PDFs (pesadas), pero SÍ commiteamos los _map.json revisados
+scripts/panini/album_crops/**/*.jpg
+scripts/panini/album_crops/**/*.png
 
 # Editor directories and files
 .vscode/*
