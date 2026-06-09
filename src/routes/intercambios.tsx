@@ -764,7 +764,7 @@ function CollectionPicker({
                     +{sel}
                   </span>
                 )}
-                <div className="text-[10px] text-muted-foreground mt-0.5">tenés {c.quantity}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">tenés {c.quantity}</div>
               </button>
             );
           })}

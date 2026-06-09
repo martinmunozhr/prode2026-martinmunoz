@@ -354,7 +354,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
     <div className="bg-card/40 backdrop-blur border border-border/40 rounded-xl p-3">
       <div className="text-primary">{icon}</div>
       <div className="font-display text-2xl mt-1">{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
     </div>
   );
 }

@@ -160,7 +160,7 @@ function RankingPage() {
             </section>
           )}
 
-          <div className="hidden md:grid grid-cols-[60px_1fr_100px_100px_100px] gap-4 px-4 pb-2 text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+          <div className="hidden md:grid grid-cols-[60px_1fr_100px_100px_100px] gap-4 px-4 pb-2 text-xs uppercase tracking-widest text-muted-foreground font-bold">
             <div className="text-center">Pos</div>
             <div>Jugador</div>
             <div className="text-center">Exactos</div>

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, LogOut, Shield, Coins, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut, Shield, Coins, ChevronDown, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/auth-context";
 import { useIsAdmin } from "@/hooks/use-is-admin";
@@ -119,6 +119,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-1.5">
+          <Link
+            to="/reglas"
+            title="Cómo se juega · Reglas"
+            aria-label="Cómo se juega · Reglas"
+            className="flex items-center gap-1 px-2 py-2 rounded-md text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
+          >
+            <HelpCircle className="h-4 w-4" />
+            <span className="text-sm font-bold uppercase tracking-wide">Ayuda</span>
+          </Link>
           {loading ? (
             <div className="h-9 w-24 rounded-md bg-muted/40 animate-pulse" />
           ) : user ? (
@@ -192,6 +201,14 @@ export function SiteHeader() {
               <span className="tabular-nums">{balance ?? "—"}</span>
             </Link>
           )}
+          <Link
+            to="/reglas"
+            aria-label="Cómo se juega · Reglas"
+            title="Cómo se juega · Reglas"
+            className="p-2 text-muted-foreground hover:text-primary"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </Link>
           <ThemeToggle />
           <button
             className="p-2 text-foreground"

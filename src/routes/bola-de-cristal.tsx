@@ -200,25 +200,51 @@ function BolaDeCristalPage() {
       </header>
 
       {/* Countdown */}
-      <div className="mb-8 bg-gradient-card border border-border/50 rounded-2xl p-5 flex items-center gap-4 flex-wrap">
-        {locked ? (
-          <div className="flex items-center gap-2 text-accent font-bold uppercase tracking-wider text-sm">
-            <Lock className="h-4 w-4" /> Bola de Cristal bloqueada
+      {(() => {
+        const totalMs = ((t.days * 24 + t.hours) * 60 + t.minutes) * 60000 + t.seconds * 1000;
+        const urgent = totalMs > 0 && totalMs <= 2 * 3600000;
+        const soon = totalMs > 0 && totalMs <= 24 * 3600000;
+        const border = urgent
+          ? "border-alert/50"
+          : soon
+            ? "border-amber-500/50"
+            : "border-border/50";
+        const numColor = urgent ? "text-alert" : soon ? "text-amber-400" : "text-primary";
+        return (
+          <div
+            className={`mb-8 bg-gradient-card border ${border} rounded-2xl p-5 flex items-center gap-4 flex-wrap`}
+          >
+            {locked ? (
+              <div className="flex items-center gap-2 text-accent font-bold uppercase tracking-wider text-sm">
+                <Lock className="h-4 w-4" /> Bola de Cristal bloqueada
+              </div>
+            ) : (
+              <>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold">
+                  Cierra en
+                </div>
+                <div
+                  className={`flex gap-3 font-display text-2xl md:text-3xl tabular-nums ${numColor} ${urgent ? "animate-pulse" : ""}`}
+                >
+                  <span>{String(t.days).padStart(2, "0")}d</span>
+                  <span>{String(t.hours).padStart(2, "0")}h</span>
+                  <span>{String(t.minutes).padStart(2, "0")}m</span>
+                  <span>{String(t.seconds).padStart(2, "0")}s</span>
+                </div>
+                {soon && (
+                  <div
+                    className={`w-full text-sm font-bold ${urgent ? "text-alert" : "text-amber-400"}`}
+                  >
+                    {urgent
+                      ? "¡Último momento! Guardá tus predicciones antes de que arranque el Mundial."
+                      : "Cierra pronto. No te quedes sin cargar tu Bola de Cristal."}
+                  </div>
+                )}
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
-              Cierra en
-            </div>
-            <div className="flex gap-3 font-display text-2xl tabular-nums text-primary">
-              <span>{String(t.days).padStart(2, "0")}d</span>
-              <span>{String(t.hours).padStart(2, "0")}h</span>
-              <span>{String(t.minutes).padStart(2, "0")}m</span>
-              <span>{String(t.seconds).padStart(2, "0")}s</span>
-            </div>
-          </>
-        )}
-      </div>
+        );
+      })()}
 
       <div className="space-y-4">
         <CrystalField
@@ -255,7 +281,7 @@ function BolaDeCristalPage() {
             value={data.goleador_nombre}
             onChange={(v) => setData((d) => ({ ...d, goleador_nombre: v }))}
           />
-          <p className="mt-2 text-[11px] text-muted-foreground">
+          <p className="mt-2 text-xs text-muted-foreground">
             Buscá entre los jugadores del Mundial. Si tu plantel no está cargado todavía, podés
             escribir el nombre libremente.
           </p>
@@ -367,7 +393,7 @@ function CrystalField({
       {!hint && <div className="mb-3" />}
       {children}
       {locked && (
-        <div className="mt-2 text-[11px] text-muted-foreground flex items-center gap-1.5">
+        <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1.5">
           <Lock className="h-3 w-3" /> Bloqueado
         </div>
       )}

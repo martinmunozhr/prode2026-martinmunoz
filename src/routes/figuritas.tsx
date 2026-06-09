@@ -691,7 +691,7 @@ function Stat({
   return (
     <div className="rounded-xl border border-border/50 bg-card/40 p-3">
       <div className={cn("font-display text-3xl", accent)}>{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
     </div>
   );
 }

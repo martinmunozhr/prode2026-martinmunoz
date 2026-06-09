@@ -152,7 +152,8 @@ function FixturePage() {
                 <div className="h-40 rounded-xl bg-muted/30 animate-pulse" />
               ) : groupMatches.length === 0 ? (
                 <div className="text-sm text-muted-foreground border border-border/40 rounded-xl p-6 text-center">
-                  Sin partidos cargados.
+                  Todavía no se definieron los partidos de este grupo. Volvé cuando se confirme el
+                  calendario.
                 </div>
               ) : (
                 groupMatches.map((m) => <MatchCard key={m.id} match={m} />)

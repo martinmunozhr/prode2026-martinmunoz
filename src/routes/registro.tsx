@@ -153,7 +153,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
+      <label className="block text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
         {label}
       </label>
       <input
@@ -167,9 +167,9 @@ function Field({
         className={`w-full px-4 py-3 rounded-xl bg-input border text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:shadow-glow-pitch transition-all ${error ? "border-destructive focus:border-destructive" : "border-border/50 focus:border-primary"}`}
       />
       {error ? (
-        <p className="mt-1 text-[11px] text-destructive">{error}</p>
+        <p className="mt-1 text-xs text-destructive">{error}</p>
       ) : hint ? (
-        <p className="mt-1 text-[11px] text-muted-foreground/70">{hint}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   );

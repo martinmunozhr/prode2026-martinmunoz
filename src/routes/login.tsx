@@ -104,7 +104,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
+      <label className="block text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">
         {label}
       </label>
       <input
