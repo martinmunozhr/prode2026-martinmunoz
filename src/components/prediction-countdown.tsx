@@ -58,9 +58,32 @@ const URGENCY_INLINE: Record<Urgency, string> = {
   urgent: "bg-alert/15 border-alert/50 text-alert",
 };
 
-/** Pill compacto para mostrar dentro de la card del partido. */
-export function PredictionCountdownInline({ target }: { target: string }) {
+/**
+ * Pill compacto para la card del partido.
+ * mode="close" (default): cuenta hasta el kickoff con colores de urgencia ("Cierra en ...").
+ * mode="open": cuenta hasta que se habilita el pronóstico, en tono neutro ("Se abre en ...").
+ */
+export function PredictionCountdownInline({
+  target,
+  mode = "close",
+}: {
+  target: string;
+  mode?: "close" | "open";
+}) {
   const { parts, mounted } = usePartsTo(target);
+
+  if (mode === "open") {
+    return (
+      <span
+        suppressHydrationWarning
+        className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-bold tabular-nums text-primary"
+      >
+        <Clock className="h-3.5 w-3.5" />
+        {mounted ? `Se abre en ${shortText(parts)}` : "Se abre pronto"}
+      </span>
+    );
+  }
+
   const u = urgencyOf(parts.total);
   return (
     <span

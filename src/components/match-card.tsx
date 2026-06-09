@@ -237,12 +237,13 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
             </div>
           ) : predState === "future" ? (
             <div className="flex flex-col items-center gap-2">
-              <Lock className="h-6 w-6 text-muted-foreground/60" />
+              <Lock className="h-5 w-5 text-muted-foreground/60" />
+              <PredictionCountdownInline target={opensAtIso(match.date)} mode="open" />
               <div
-                className="text-xs text-center leading-relaxed text-muted-foreground px-1"
+                className="px-1 text-center text-[11px] leading-relaxed text-muted-foreground"
                 suppressHydrationWarning
               >
-                {mounted ? `Se abre\nel ${fmtDate(opensAtIso(match.date))}` : ""}
+                {mounted ? fmtDate(opensAtIso(match.date)) : ""}
               </div>
             </div>
           ) : predState === "locked" ? (
