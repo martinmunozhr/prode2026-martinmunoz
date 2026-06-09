@@ -163,7 +163,7 @@ function HomePage() {
             n="1"
             icon={<Target className="h-5 w-5" />}
             title="Pronosticá"
-            desc="Cargá tus resultados antes de cada partido. Tenés hasta el silbato inicial."
+            desc="Cada partido se abre 48hs antes. Cargá tu marcador hasta el silbato inicial."
           />
           <HowStep
             n="2"

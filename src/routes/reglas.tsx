@@ -32,8 +32,8 @@ function RulesPage() {
             Reglas del Prode
           </h1>
           <p className="mt-3 text-muted-foreground text-lg max-w-xl">
-            Simple, claro y para toda la familia. Cargá tus pronósticos antes de cada partido y sumá
-            puntos.
+            Simple, claro y para toda la familia. Cada partido se abre 48hs antes: cargá tu marcador
+            y sumá puntos.
           </p>
         </div>
         <img
@@ -135,6 +135,7 @@ function RulesPage() {
 
       <Section icon={<Lock />} title="Cierre y reglas importantes">
         <div className="md:col-span-2 grid md:grid-cols-2 gap-4">
+          <Tip text="Cada partido se habilita para pronosticar 48 horas antes de que empiece. Hasta entonces lo ves con una cuenta regresiva de cuándo se abre." />
           <Tip text="Cada partido se cierra al iniciar el partido. Después no podés modificar tu pronóstico." />
           <Tip text="La Bola de Cristal se cierra al iniciar el primer partido del Mundial." />
           <Tip text="Los puntos se calculan automáticamente al cargarse el resultado oficial." />

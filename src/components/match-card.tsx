@@ -113,6 +113,8 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
       try {
         await onSave(pred.home, pred.away);
         setSaved(true);
+      } catch {
+        // El error ya se le mostró al usuario (toast) en savePrediction; no marcamos guardado.
       } finally {
         setSaving(false);
       }

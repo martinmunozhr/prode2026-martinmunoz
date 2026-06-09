@@ -440,6 +440,14 @@ function InfoBanner() {
               🔥 <strong>Multiplica</strong> en mata-mata: x1.5 a x3 en la Final
             </li>
           </ul>
+          <div className="mt-3 flex items-start gap-2 rounded-lg bg-secondary/30 px-3 py-2.5 text-sm text-foreground/80">
+            <span aria-hidden>⏰</span>
+            <span>
+              Cada partido se abre para pronosticar <strong>48hs antes</strong> de empezar y cierra
+              al inicio. Los que todavía no se abren muestran una cuenta regresiva de cuándo vas a
+              poder cargarlos.
+            </span>
+          </div>
           <Link
             to="/reglas"
             className="inline-flex items-center gap-1 mt-3 text-xs font-bold uppercase tracking-wider text-primary hover:underline"
