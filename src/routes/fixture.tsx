@@ -69,7 +69,8 @@ function FixturePage() {
           </div>
           <h1 className="font-display text-4xl md:text-6xl tracking-tight mt-1">Fixture</h1>
           <p className="mt-2 text-sm md:text-base text-muted-foreground max-w-md">
-            12 grupos de 4. Los 2 mejores y los 8 mejores terceros pasan a dieciseisavos.
+            12 grupos de 4. Los 2 primeros de cada grupo y los 8 mejores terceros pasan a
+            dieciseisavos.
           </p>
         </div>
         <img

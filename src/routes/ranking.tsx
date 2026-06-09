@@ -80,7 +80,8 @@ function RankingPage() {
           </div>
           <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Ranking</h1>
           <p className="mt-2 text-muted-foreground max-w-xl">
-            3 pts por resultado exacto · 1 pt por ganador correcto. Multiplica en mata-mata.
+            3 puntos por marcador exacto · 1 punto por acertar el ganador. Se multiplican en
+            mata-mata, hasta x3 en la final.
           </p>
         </div>
         <img

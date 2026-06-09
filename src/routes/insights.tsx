@@ -10,7 +10,7 @@ import { Activity, Target, TrendingUp, Flame, LogIn } from "lucide-react";
 export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
-      { title: "Radiografía del Prode — Insights" },
+      { title: "Tus estadísticas — Prode Mundial 2026" },
       {
         name: "description",
         content:
@@ -109,7 +109,9 @@ function InsightsPage() {
           <div className="mx-auto h-14 w-14 rounded-2xl bg-gradient-pitch flex items-center justify-center shadow-glow-pitch mb-5">
             <LogIn className="h-7 w-7 text-primary-foreground" />
           </div>
-          <h1 className="font-display text-4xl tracking-tight">Ingresá para ver tus insights</h1>
+          <h1 className="font-display text-4xl tracking-tight">
+            Ingresá para ver tus estadísticas
+          </h1>
           <div className="mt-6 flex gap-3 justify-center">
             <Link
               to="/login"

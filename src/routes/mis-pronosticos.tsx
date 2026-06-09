@@ -251,7 +251,7 @@ function MisPronosticosPage() {
         <div className="text-xs uppercase tracking-wide text-primary font-bold">Tu juego</div>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Mis Pronósticos</h1>
         <p className="mt-2 text-muted-foreground">
-          Cargá tus marcadores antes del inicio de cada partido.
+          Cada partido se abre 48hs antes. Cargá tu marcador hasta que empiece.
         </p>
       </header>
 
