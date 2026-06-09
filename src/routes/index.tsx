@@ -6,6 +6,8 @@ import { RankingRow } from "@/components/ranking-row";
 import { AlbumPreview } from "@/components/album-preview";
 import { useHomeBootstrap } from "@/lib/live-data";
 import { useAuth } from "@/contexts/auth-context";
+import { usePredictions } from "@/hooks/use-predictions";
+import { getMatchPredState } from "@/lib/pred-window";
 import { ArrowRight, Trophy, Users, Zap, Target, CalendarClock, Sparkles } from "lucide-react";
 import heroChampion from "@/assets/hero-champion.webp";
 import figMessi from "@/assets/figuras/messi.webp";
@@ -35,9 +37,17 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const { user, loading: authLoading } = useAuth();
   const { upcoming, topRanking, loading } = useHomeBootstrap();
+  const { preds, savePrediction } = usePredictions();
   const top3 = topRanking.slice(0, 3);
   const loadingMatches = loading;
   const loadingRanking = loading;
+
+  // Reloj que avanza para reclasificar partidos (future → open → locked) sin recargar.
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const i = setInterval(() => setNowMs(Date.now()), 30000);
+    return () => clearInterval(i);
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-6">
@@ -203,9 +213,20 @@ function HomePage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {upcoming.map((m) => (
-              <MatchCard key={m.id} match={m} />
-            ))}
+            {upcoming.map((m) => {
+              const predStateValue = user ? getMatchPredState(m, nowMs) : undefined;
+              return (
+                <MatchCard
+                  key={m.id}
+                  match={m}
+                  predState={predStateValue}
+                  initialPrediction={preds[m.id] ?? null}
+                  onSave={
+                    predStateValue === "open" ? (h, a) => savePrediction(m.id, h, a) : undefined
+                  }
+                />
+              );
+            })}
           </div>
         )}
       </section>

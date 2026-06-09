@@ -1,7 +1,9 @@
 import { Match, getTeam } from "@/lib/mock-data";
 import { Flag } from "@/components/flag";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { MapPin, Clock, Zap, Lock, CalendarDays } from "lucide-react";
+import { PredictionCountdownInline } from "@/components/prediction-countdown";
+import { PRED_WINDOW_MS } from "@/lib/pred-window";
+import { MapPin, Clock, Zap, Lock, CalendarDays, CheckCircle2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getTeamPalette } from "@/lib/team-colors";
 
@@ -28,7 +30,7 @@ const STAGE_TOOLTIP: Record<Match["stage"], string> = {
 type Props = {
   match: Match;
   editable?: boolean;
-  predState?: 'open' | 'future' | 'locked';
+  predState?: "open" | "future" | "locked";
   initialPrediction?: { home: number; away: number } | null;
   onSave?: (home: number, away: number) => Promise<void> | void;
 };
@@ -48,20 +50,21 @@ function fmtDate(iso: string) {
   }
 }
 
-function fmtDay(iso: string) {
-  try {
-    return new Intl.DateTimeFormat("es-AR", {
-      weekday: "long", day: "numeric", month: "long",
-    }).format(new Date(iso));
-  } catch { return iso; }
-}
-
 function fmtTime(iso: string) {
   try {
     return new Intl.DateTimeFormat("es-AR", {
-      hour: "2-digit", minute: "2-digit", hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     }).format(new Date(iso));
-  } catch { return iso; }
+  } catch {
+    return iso;
+  }
+}
+
+// Los pronósticos abren 48hs antes del kickoff (PRED_WINDOW_MS, compartido con la ventana RLS).
+function opensAtIso(kickoffIso: string) {
+  return new Date(new Date(kickoffIso).getTime() - PRED_WINDOW_MS).toISOString();
 }
 
 export function MatchCard({ match, editable, predState, initialPrediction, onSave }: Props) {
@@ -86,7 +89,7 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
   const isTbd = match.homeId === "tbd" || match.awayId === "tbd";
 
   // Derive effective editable state: predState takes priority over editable prop
-  const isEditable = predState === 'open' || (editable && !predState);
+  const isEditable = predState === "open" || (editable && !predState);
 
   const [pred, setPred] = useState(initialPrediction ?? { home: 0, away: 0 });
   const [saved, setSaved] = useState(!!initialPrediction);
@@ -122,7 +125,9 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
   const awayPal = getTeamPalette(away.id);
 
   return (
-    <div className={`group bg-gradient-card border rounded-2xl p-5 shadow-card-sport hover:shadow-elevated hover:border-primary/30 transition-all duration-300 relative overflow-hidden ${predState === 'open' ? 'border-emerald-500/40 shadow-[0_0_20px_oklch(0.72_0.19_145/0.15)]' : 'border-border/50'}`}>
+    <div
+      className={`group bg-gradient-card border rounded-2xl p-5 shadow-card-sport hover:shadow-elevated hover:border-primary/30 transition-all duration-300 relative overflow-hidden ${predState === "open" ? "border-emerald-500/40 shadow-[0_0_20px_oklch(0.72_0.19_145/0.15)]" : "border-border/50"}`}
+    >
       {/* Team color accents */}
       <div
         aria-hidden
@@ -168,13 +173,13 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
           )}
         </div>
         <div className="flex items-center gap-2">
-          {predState === 'open' && (
+          {predState === "open" && (
             <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-emerald-400">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Abierto
             </span>
           )}
-          {predState === 'locked' && (
+          {predState === "locked" && (
             <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-amber-400">
               <Lock className="h-3.5 w-3.5" />
               Cerrado
@@ -187,10 +192,28 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
             </span>
           )}
           {isFinished && (
-            <span className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">Final</span>
+            <span className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+              Final
+            </span>
           )}
         </div>
       </div>
+
+      {/* Tiempo restante para pronosticar + estado de mi pronóstico */}
+      {predState === "open" && (
+        <div className="-mt-2 mb-4 flex flex-wrap items-center justify-between gap-2">
+          <PredictionCountdownInline target={match.date} />
+          {initialPrediction ? (
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
+              <CheckCircle2 className="h-3.5 w-3.5" /> Pronosticado
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-bold text-amber-400">
+              Te falta
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Teams + Score */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -207,27 +230,36 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
         <div className="flex flex-col items-center gap-2 px-2">
           {isFinished ? (
             <div className="font-display text-4xl md:text-5xl tabular-nums text-primary">
-              {match.homeScore} <span className="text-muted-foreground/50">-</span> {match.awayScore}
+              {match.homeScore} <span className="text-muted-foreground/50">-</span>{" "}
+              {match.awayScore}
             </div>
-          ) : predState === 'future' ? (
+          ) : predState === "future" ? (
             <div className="flex flex-col items-center gap-2">
               <Lock className="h-6 w-6 text-muted-foreground/60" />
-              <div className="text-xs text-center leading-relaxed text-muted-foreground px-1" suppressHydrationWarning>
-                {mounted ? `Disponible\nel ${fmtDay(match.date)}` : ''}
+              <div
+                className="text-xs text-center leading-relaxed text-muted-foreground px-1"
+                suppressHydrationWarning
+              >
+                {mounted ? `Se abre\nel ${fmtDate(opensAtIso(match.date))}` : ""}
               </div>
             </div>
-          ) : predState === 'locked' ? (
+          ) : predState === "locked" ? (
             initialPrediction ? (
               <div className="flex flex-col items-center gap-1">
                 <div className="font-display text-4xl md:text-5xl tabular-nums text-foreground/80">
-                  {initialPrediction.home} <span className="text-muted-foreground/60">-</span> {initialPrediction.away}
+                  {initialPrediction.home} <span className="text-muted-foreground/60">-</span>{" "}
+                  {initialPrediction.away}
                 </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">Tu pronóstico</div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Tu pronóstico
+                </div>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-1">
-                <div className="font-display text-3xl text-muted-foreground/60">?  :  ?</div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground text-center">No pronosticaste</div>
+                <div className="font-display text-3xl text-muted-foreground/60">? : ?</div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground text-center">
+                  No pronosticaste
+                </div>
               </div>
             )
           ) : isEditable && !isTbd ? (
@@ -235,21 +267,29 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
               <ScoreInput
                 label={`Goles ${home.name}`}
                 value={pred.home}
-                onChange={(v) => { setPred({ ...pred, home: v }); setSaved(false); }}
+                onChange={(v) => {
+                  setPred({ ...pred, home: v });
+                  setSaved(false);
+                }}
               />
-              <span className="text-muted-foreground font-display text-2xl" aria-hidden>:</span>
+              <span className="text-muted-foreground font-display text-2xl" aria-hidden>
+                :
+              </span>
               <ScoreInput
                 label={`Goles ${away.name}`}
                 value={pred.away}
-                onChange={(v) => { setPred({ ...pred, away: v }); setSaved(false); }}
+                onChange={(v) => {
+                  setPred({ ...pred, away: v });
+                  setSaved(false);
+                }}
               />
             </div>
           ) : (
             <div className="font-display text-3xl text-muted-foreground/70">
-              {isTbd ? 'TBD' : 'VS'}
+              {isTbd ? "TBD" : "VS"}
             </div>
           )}
-          {!isFinished && predState !== 'future' && (
+          {!isFinished && predState !== "future" && (
             <div className="flex items-center gap-1 text-xs uppercase tracking-wide text-muted-foreground">
               <Clock className="h-3.5 w-3.5" />
               <span suppressHydrationWarning>{mounted ? fmtDate(match.date) : ""}</span>
@@ -285,16 +325,18 @@ export function MatchCard({ match, editable, predState, initialPrediction, onSav
             {saving ? "Guardando..." : saved ? "Guardado ✓" : "Guardar"}
           </button>
         )}
-        {predState === 'locked' && (
+        {predState === "locked" && (
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
-            <span suppressHydrationWarning>{mounted ? `Empezó a las ${fmtTime(match.date)}` : 'Cerrado'}</span>
+            <span suppressHydrationWarning>
+              {mounted ? `Empezó a las ${fmtTime(match.date)}` : "Cerrado"}
+            </span>
           </div>
         )}
-        {predState === 'future' && (
+        {predState === "future" && (
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <CalendarDays className="h-3.5 w-3.5" />
-            <span>Solo podés pronosticar el día del partido</span>
+            <span>Se habilita 48hs antes del partido</span>
           </div>
         )}
       </div>

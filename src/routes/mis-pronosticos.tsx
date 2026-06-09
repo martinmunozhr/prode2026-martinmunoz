@@ -2,13 +2,26 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MatchCard } from "@/components/match-card";
 import { GoalscorerPicker } from "@/components/goalscorer-picker";
 import { DayPickerStrip, dayKey, type DayBucket } from "@/components/day-picker-strip";
+import { PredictionCountdownHero } from "@/components/prediction-countdown";
+import { Flag } from "@/components/flag";
 import { getTeam, type Match } from "@/lib/mock-data";
 import { calcMatchPoints } from "@/lib/scoring";
-import { Target, Clock, Lock, LogIn, Info, Trophy, CalendarDays } from "lucide-react";
+import { getMatchPredState } from "@/lib/pred-window";
+import { usePredictions } from "@/hooks/use-predictions";
+import {
+  Target,
+  Clock,
+  Lock,
+  LogIn,
+  Info,
+  Trophy,
+  CalendarDays,
+  AlarmClock,
+  CheckCircle2,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/mis-pronosticos")({
   head: () => ({
@@ -39,8 +52,6 @@ type DbMatch = {
   status: string;
 };
 
-type PredRow = { match_id: string; home_score: number; away_score: number };
-
 function dbToMatch(m: DbMatch): Match {
   return {
     id: m.id,
@@ -57,25 +68,18 @@ function dbToMatch(m: DbMatch): Match {
   };
 }
 
-function getMatchPredState(match: Match): 'open' | 'future' | 'locked' {
-  if (match.status === 'live') return 'locked';
-  const now = new Date();
-  const kickoff = new Date(match.date);
-  if (kickoff > now) {
-    const isToday =
-      kickoff.getFullYear() === now.getFullYear() &&
-      kickoff.getMonth() === now.getMonth() &&
-      kickoff.getDate() === now.getDate();
-    return isToday ? 'open' : 'future';
-  }
-  return 'locked';
-}
-
 function MisPronosticosPage() {
   const { user, loading: authLoading } = useAuth();
   const [matches, setMatches] = useState<Match[]>([]);
-  const [preds, setPreds] = useState<Record<string, { home: number; away: number }>>({});
   const [loading, setLoading] = useState(true);
+  const { preds, savePrediction } = usePredictions();
+
+  // Reloj que avanza para reclasificar partidos (future → open → locked) sin recargar.
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const i = setInterval(() => setNowMs(Date.now()), 30000);
+    return () => clearInterval(i);
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
@@ -86,49 +90,14 @@ function MisPronosticosPage() {
         .from("matches")
         .select("*")
         .order("match_date", { ascending: true });
-
-      const predMap: Record<string, { home: number; away: number }> = {};
-      if (user) {
-        const { data: ps } = await supabase
-          .from("predictions")
-          .select("match_id, home_score, away_score")
-          .eq("user_id", user.id);
-        (ps as PredRow[] | null)?.forEach((p) => {
-          predMap[p.match_id] = { home: p.home_score, away: p.away_score };
-        });
-      }
-
       if (!active) return;
       setMatches(((ms as DbMatch[] | null) ?? []).map(dbToMatch));
-      setPreds(predMap);
       setLoading(false);
     })();
     return () => {
       active = false;
     };
   }, [user, authLoading]);
-
-  const savePrediction = async (matchId: string, home: number, away: number) => {
-    if (!user) return;
-    const match = matches.find(m => m.id === matchId);
-    if (!match || getMatchPredState(match) !== 'open') {
-      toast.error("Este partido ya no está disponible para pronosticar.");
-      return;
-    }
-    const { error } = await supabase
-      .from("predictions")
-      .upsert(
-        { user_id: user.id, match_id: matchId, home_score: home, away_score: away },
-        { onConflict: "user_id,match_id" },
-      );
-    if (error) {
-      const isRls = error.message.includes("row-level security") || error.message.includes("violates");
-      toast.error(isRls ? "Este partido ya arrancó — no se pueden guardar más pronósticos." : "No se pudo guardar: " + error.message);
-      throw error;
-    }
-    setPreds((p) => ({ ...p, [matchId]: { home, away } }));
-    toast.success("Pronóstico guardado");
-  };
 
   // Filtrar partidos con equipos TBD (fase final aún por definir)
   const playable = matches.filter((m) => m.homeId !== "tbd" && m.awayId !== "tbd");
@@ -165,7 +134,10 @@ function MisPronosticosPage() {
 
   // Auto-seleccionar: preferir hoy si tiene partidos, luego primer día sin pronosticar, luego el primero
   useEffect(() => {
-    if (dayBuckets.length === 0) { setSelectedDay(null); return; }
+    if (dayBuckets.length === 0) {
+      setSelectedDay(null);
+      return;
+    }
     if (selectedDay && dayBuckets.find((d) => d.key === selectedDay)) return;
     // Prefer today if it has matches
     if (dayBuckets.find((d) => d.key === todayKey)) {
@@ -197,6 +169,23 @@ function MisPronosticosPage() {
     });
     return Math.round(pts);
   }, [finished, preds]);
+
+  // Partidos abiertos ahora (ventana de 48h hasta el kickoff) y su progreso.
+  const openMatches = useMemo(
+    () => upcoming.filter((m) => getMatchPredState(m, nowMs) === "open"),
+    [upcoming, nowMs],
+  );
+  const nextClosing = useMemo(
+    () =>
+      openMatches
+        .slice()
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? null,
+    [openMatches],
+  );
+  const openPredicted = useMemo(
+    () => openMatches.filter((m) => preds[m.id]).length,
+    [openMatches, preds],
+  );
 
   if (authLoading || loading) {
     return (
@@ -266,6 +255,21 @@ function MisPronosticosPage() {
         </p>
       </header>
 
+      {nextClosing && (
+        <NextClosingHero
+          match={nextClosing}
+          predicted={!!preds[nextClosing.id]}
+          onGo={() => {
+            const d = new Date(nextClosing.date);
+            setSelectedDay(dayKey(new Date(d.getFullYear(), d.getMonth(), d.getDate())));
+          }}
+        />
+      )}
+
+      {openMatches.length > 0 && (
+        <PredictionProgress done={openPredicted} total={openMatches.length} />
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
         <StatCard icon={<Target />} value={String(myCount)} label="Cargados" tone="primary" />
         <StatCard
@@ -314,26 +318,41 @@ function MisPronosticosPage() {
           </div>
         ) : (
           <>
-            <DayPickerStrip days={dayBuckets} selected={selectedDay} onSelect={setSelectedDay} todayKey={todayKey} />
+            <DayPickerStrip
+              days={dayBuckets}
+              selected={selectedDay}
+              onSelect={setSelectedDay}
+              todayKey={todayKey}
+            />
 
-            {selectedDay && <DayHeader dayKeyValue={selectedDay} count={dayMatches.length} isToday={selectedDay === todayKey} />}
+            {selectedDay && (
+              <DayHeader
+                dayKeyValue={selectedDay}
+                count={dayMatches.length}
+                isToday={selectedDay === todayKey}
+              />
+            )}
 
             <div className="grid md:grid-cols-2 gap-4 mt-4">
               {dayMatches.map((m) => {
                 const home = getTeam(m.homeId);
                 const away = getTeam(m.awayId);
                 const pred = preds[m.id];
-                const predStateValue = getMatchPredState(m);
+                const predStateValue = getMatchPredState(m, nowMs);
                 return (
                   <div key={m.id} className="space-y-0">
                     <MatchCard
                       match={m}
                       predState={predStateValue}
                       initialPrediction={pred ?? null}
-                      onSave={predStateValue === 'open' ? (h, a) => savePrediction(m.id, h, a) : undefined}
+                      onSave={
+                        predStateValue === "open" ? (h, a) => savePrediction(m.id, h, a) : undefined
+                      }
                     />
-                    {home && away && predStateValue === 'open' && (
-                      pred ? (
+                    {home &&
+                      away &&
+                      predStateValue === "open" &&
+                      (pred ? (
                         <GoalscorerPicker
                           matchId={m.id}
                           homeId={m.homeId}
@@ -348,13 +367,12 @@ function MisPronosticosPage() {
                         <div className="mt-3 rounded-lg border border-dashed border-border/50 bg-secondary/20 px-3 py-2.5 text-xs text-muted-foreground flex items-center gap-2">
                           <Trophy className="h-4 w-4 text-accent shrink-0" />
                           <span>
-                            Guardá el marcador para poder elegir <strong>goleadores</strong>{" "}
-                            y sumar <strong>+1 punto extra</strong> por cada acierto.
+                            Guardá el marcador para poder elegir <strong>goleadores</strong> y sumar{" "}
+                            <strong>+1 punto extra</strong> por cada acierto.
                           </span>
                         </div>
-                      )
-                    )}
-                    {home && away && predStateValue === 'locked' && pred && (
+                      ))}
+                    {home && away && predStateValue === "locked" && pred && (
                       <GoalscorerPicker
                         matchId={m.id}
                         homeId={m.homeId}
@@ -434,7 +452,114 @@ function InfoBanner() {
   );
 }
 
-function DayHeader({ dayKeyValue, count, isToday }: { dayKeyValue: string; count: number; isToday?: boolean }) {
+function NextClosingHero({
+  match,
+  predicted,
+  onGo,
+}: {
+  match: Match;
+  predicted: boolean;
+  onGo: () => void;
+}) {
+  const home = getTeam(match.homeId);
+  const away = getTeam(match.awayId);
+  return (
+    <div className="mb-6 rounded-2xl border border-border/50 bg-gradient-card p-5 md:p-6 shadow-card-sport">
+      <div className="flex items-center gap-2 mb-4">
+        <AlarmClock className="h-4 w-4 text-accent" />
+        <span className="text-xs uppercase tracking-widest font-bold text-accent">
+          Próximo cierre
+        </span>
+        {predicted ? (
+          <span className="ml-auto inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
+            <CheckCircle2 className="h-3.5 w-3.5" /> Ya pronosticado
+          </span>
+        ) : (
+          <span className="ml-auto inline-flex items-center gap-1 text-xs font-bold text-amber-400">
+            Todavía no lo pronosticaste
+          </span>
+        )}
+      </div>
+
+      <div className="grid md:grid-cols-[1fr_auto] gap-5 items-center">
+        <div className="flex items-center justify-center md:justify-start gap-3">
+          <div className="flex w-24 flex-col items-center gap-1 text-center">
+            <Flag teamId={home?.id ?? match.homeId} className="text-4xl" />
+            <span className="font-display text-sm leading-tight tracking-wide">
+              {home?.name ?? "Por definir"}
+            </span>
+          </div>
+          <span className="font-display text-2xl text-muted-foreground/60">VS</span>
+          <div className="flex w-24 flex-col items-center gap-1 text-center">
+            <Flag teamId={away?.id ?? match.awayId} className="text-4xl" />
+            <span className="font-display text-sm leading-tight tracking-wide">
+              {away?.name ?? "Por definir"}
+            </span>
+          </div>
+        </div>
+
+        <div className="md:min-w-[280px]">
+          <div className="mb-2 text-center text-[11px] font-bold uppercase tracking-widest text-muted-foreground md:text-right">
+            Tiempo para pronosticar
+          </div>
+          <PredictionCountdownHero target={match.date} />
+        </div>
+      </div>
+
+      {!predicted && (
+        <button
+          onClick={onGo}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-pitch px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-primary-foreground shadow-glow-pitch transition-transform hover:scale-[1.02] md:w-auto"
+        >
+          <Target className="h-4 w-4" /> Pronosticar este partido
+        </button>
+      )}
+    </div>
+  );
+}
+
+function PredictionProgress({ done, total }: { done: number; total: number }) {
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const allDone = done >= total;
+  const left = total - done;
+  return (
+    <div className="mb-8 rounded-2xl border border-border/50 bg-card/40 p-4 md:p-5">
+      <div className="flex flex-wrap items-center gap-2">
+        {allDone ? (
+          <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+        ) : (
+          <AlarmClock className="h-5 w-5 text-amber-400" />
+        )}
+        <span className="text-sm font-bold">
+          {allDone
+            ? "¡Listo! Pronosticaste todos los partidos abiertos."
+            : `Pronosticaste ${done} de ${total} partidos abiertos`}
+        </span>
+        {!allDone && (
+          <span className="ml-auto text-xs font-bold uppercase tracking-wide text-amber-400">
+            Te {left === 1 ? "falta" : "faltan"} {left}
+          </span>
+        )}
+      </div>
+      <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-secondary">
+        <div
+          className={`h-full rounded-full transition-all ${allDone ? "bg-emerald-500" : "bg-gradient-pitch"}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DayHeader({
+  dayKeyValue,
+  count,
+  isToday,
+}: {
+  dayKeyValue: string;
+  count: number;
+  isToday?: boolean;
+}) {
   // dayKeyValue is "YYYY-MM-DD" — parse as local
   const [y, m, d] = dayKeyValue.split("-").map(Number);
   const date = new Date(y, m - 1, d);
@@ -487,9 +612,7 @@ function StatCard({
     <div className="bg-gradient-card border border-border/50 rounded-xl p-4 shadow-card-sport">
       <div className={toneClass}>{icon}</div>
       <div className="font-display text-3xl mt-2 tabular-nums">{value}</div>
-      <div className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">
-        {label}
-      </div>
+      <div className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">{label}</div>
     </div>
   );
 }
