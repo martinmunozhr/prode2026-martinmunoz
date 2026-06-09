@@ -24,7 +24,7 @@ const moreLinks = [
   { to: "/bola-de-cristal" as const, label: "Bola de cristal" },
   { to: "/intercambios" as const, label: "Intercambios" },
   { to: "/equipos" as const, label: "Equipos" },
-  { to: "/insights" as const, label: "Insights" },
+  { to: "/insights" as const, label: "Estadísticas" },
   { to: "/reglas" as const, label: "Reglas" },
 ];
 

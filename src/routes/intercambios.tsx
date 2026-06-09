@@ -321,9 +321,11 @@ function ListaTab({ kind }: { kind: "recibidas" | "enviadas" | "historial" }) {
                   )}
                 >
                   {t.status === "pending"
-                    ? "Pendiente"
+                    ? isReceived
+                      ? "Esperando tu respuesta"
+                      : "Esperando respuesta"
                     : t.status === "accepted"
-                      ? "Aceptado"
+                      ? "Confirmado"
                       : t.status === "rejected"
                         ? "Rechazado"
                         : "Cancelado"}
@@ -572,6 +574,29 @@ function NuevoTradeTab() {
 
   return (
     <div className="space-y-6">
+      {/* Guía rápida de cómo armar un intercambio */}
+      <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+        <div className="text-sm font-bold mb-2">Cómo armar un intercambio</div>
+        <ol className="space-y-1.5 text-sm text-muted-foreground">
+          <li>
+            <span className="font-bold text-primary">1.</span> Elegí con quién querés cambiar
+            figuritas.
+          </li>
+          <li>
+            <span className="font-bold text-primary">2.</span> Marcá las tuyas que{" "}
+            <strong>ofrecés</strong> y las del otro que <strong>pedís</strong>.
+          </li>
+          <li>
+            <span className="font-bold text-primary">3.</span> Enviá la propuesta. El otro decide si
+            la acepta.
+          </li>
+        </ol>
+        <p className="text-xs text-muted-foreground mt-3">
+          Cuando los dos están de acuerdo, las figuritas pasan solas de un álbum al otro. Solo podés
+          ofrecer figuritas repetidas.
+        </p>
+      </div>
+
       {/* Selección de usuario */}
       <div className="rounded-2xl border border-border/50 bg-card/40 p-5">
         <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold mb-3">
@@ -640,7 +665,8 @@ function NuevoTradeTab() {
               <div className="text-xs text-muted-foreground">
                 Ofrecés <span className="font-bold text-foreground">{offerCount}</span> figurita
                 {offerCount !== 1 ? "s" : ""} · Pedís{" "}
-                <span className="font-bold text-foreground">{requestCount}</span>
+                <span className="font-bold text-foreground">{requestCount}</span> figurita
+                {requestCount !== 1 ? "s" : ""}
               </div>
               <button
                 onClick={send}

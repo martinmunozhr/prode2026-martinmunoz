@@ -151,10 +151,10 @@ function EquipoDetailPage() {
             onChange={(v) => setPosFilter(v as PosFilter)}
             options={[
               { v: "ALL", l: "Todos" },
-              { v: "POR", l: "POR" },
-              { v: "DEF", l: "DEF" },
-              { v: "MED", l: "MED" },
-              { v: "DEL", l: "DEL" },
+              { v: "POR", l: "Arqueros" },
+              { v: "DEF", l: "Defensores" },
+              { v: "MED", l: "Mediocampistas" },
+              { v: "DEL", l: "Delanteros" },
             ]}
           />
           <div className="w-px bg-border/50 mx-1 hidden sm:block" />

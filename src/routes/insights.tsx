@@ -137,10 +137,8 @@ function InsightsPage() {
         <div className="text-[11px] uppercase tracking-widest text-primary font-bold">
           Tus números
         </div>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">
-          Radiografía del Prode
-        </h1>
-        <p className="mt-2 text-muted-foreground">Cómo viene tu temporada de pronosticador.</p>
+        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Tus estadísticas</h1>
+        <p className="mt-2 text-muted-foreground">Cómo venís en el prode hasta ahora.</p>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
@@ -159,13 +157,13 @@ function InsightsPage() {
         <Stat
           icon={<Flame />}
           value={String(insights.currentStreak)}
-          label="Racha actual"
+          label="Aciertos seguidos"
           tone="primary"
         />
         <Stat
           icon={<TrendingUp />}
           value={String(insights.bestStreak)}
-          label="Mejor racha"
+          label="Mejor racha de aciertos"
           tone="accent"
         />
       </div>

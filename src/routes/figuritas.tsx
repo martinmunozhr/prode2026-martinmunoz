@@ -27,7 +27,10 @@ function FiguritasError({ error }: { error: unknown }) {
     console.error("Figuritas render error:", error);
   }, [error]);
   return (
-    <div className="flex flex-col items-center justify-center gap-4 px-4 py-20 text-center" style={{ minHeight: "60vh" }}>
+    <div
+      className="flex flex-col items-center justify-center gap-4 px-4 py-20 text-center"
+      style={{ minHeight: "60vh" }}
+    >
       <Package className="h-12 w-12 text-muted-foreground/60" />
       <h2 className="font-display text-2xl tracking-wider">No pudimos abrir las figuritas</h2>
       <p className="max-w-sm text-sm text-muted-foreground">
@@ -233,8 +236,11 @@ function SobresTab({ balance }: { balance: number }) {
               <p className="relative text-xs text-white/90 leading-snug">{p.description}</p>
 
               <div className="relative space-y-1">
+                <div className="text-[10px] uppercase tracking-widest font-bold text-white/70 pb-0.5">
+                  Chances de cada figurita
+                </div>
                 {RARITY_ORDER.filter((r) => p.odds[r] > 0).map((r) => (
-                  <div key={r} className="flex justify-between text-[11px] text-white/85">
+                  <div key={r} className="flex justify-between text-xs text-white/90">
                     <span>{RARITY_LABEL[r]}</span>
                     <span className="font-mono font-bold">{Math.round(p.odds[r] * 100)}%</span>
                   </div>
@@ -541,7 +547,7 @@ function ColeccionTab() {
       {filtered.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           {items.length === 0
-            ? "Tu álbum está vacío. Abrí un sobre para empezar."
+            ? 'Tu álbum está vacío. Tocá la pestaña "Sobres" (arriba) y abrí tu primer sobre con monedas.'
             : "No hay figuritas con ese filtro."}
         </div>
       ) : (
@@ -560,35 +566,15 @@ function ColeccionTab() {
                 animationDelay={i * 18}
               />
               {it.quantity > 1 && (
-                confirmRecycle === it.player_id ? (
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 bg-card border border-border rounded-full px-2 py-1 shadow-elevated">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground whitespace-nowrap">¿Seguro?</span>
-                    <button
-                      disabled={recycling === it.player_id}
-                      onClick={() => { setConfirmRecycle(null); handleRecycle(it.player_id); }}
-                      className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 px-1"
-                    >
-                      {recycling === it.player_id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Sí"}
-                    </button>
-                    <span className="text-muted-foreground/50 text-[9px]">|</span>
-                    <button
-                      onClick={() => setConfirmRecycle(null)}
-                      className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground px-1"
-                    >
-                      No
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    disabled={recycling === it.player_id}
-                    onClick={() => setConfirmRecycle(it.player_id)}
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pitch text-pitch-foreground text-[10px] font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
-                    title="Reciclar 1 repetida"
-                  >
-                    <Recycle className="h-3 w-3" />
-                    Reciclar
-                  </button>
-                )
+                <button
+                  disabled={recycling === it.player_id}
+                  onClick={() => setConfirmRecycle(it.player_id)}
+                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-pitch text-pitch-foreground text-[11px] font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-50"
+                  title="Cambiar una repetida por monedas"
+                >
+                  <Recycle className="h-3 w-3" />
+                  Reciclar
+                </button>
               )}
             </div>
           ))}
@@ -622,7 +608,74 @@ function ColeccionTab() {
           Ver todas las selecciones →
         </Link>
       </div>
+
+      {confirmRecycle &&
+        (() => {
+          const item = items.find((i) => i.player_id === confirmRecycle);
+          if (!item) return null;
+          return (
+            <RecycleConfirmModal
+              item={item}
+              busy={recycling === item.player_id}
+              onCancel={() => setConfirmRecycle(null)}
+              onConfirm={() => {
+                setConfirmRecycle(null);
+                handleRecycle(item.player_id);
+              }}
+            />
+          );
+        })()}
     </>
+  );
+}
+
+function RecycleConfirmModal({
+  item,
+  busy,
+  onConfirm,
+  onCancel,
+}: {
+  item: CollectionItem;
+  busy: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in">
+      <div className="relative w-full max-w-sm rounded-2xl border border-border/60 bg-card shadow-2xl p-6">
+        <div className="flex items-center gap-2 text-pitch">
+          <Recycle className="h-5 w-5" />
+          <span className="text-xs uppercase tracking-widest font-bold">Reciclar repetida</span>
+        </div>
+        <h3 className="font-display text-2xl tracking-wide mt-2">{item.player.name}</h3>
+        <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
+          Vas a cambiar <strong>una</strong> de tus {item.quantity} figuritas repetidas de{" "}
+          {item.player.name} por <strong>monedas</strong> (según su rareza:{" "}
+          {RARITY_LABEL[item.player.rarity]}).
+        </p>
+        <div className="mt-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-3 text-xs text-foreground/80">
+          ✅ No perdés la figurita: te queda en el álbum. Solo se va una de las repetidas.
+        </div>
+        <p className="text-xs text-muted-foreground mt-3">Esta acción no se puede deshacer.</p>
+        <div className="flex gap-2 mt-5">
+          <button
+            onClick={onCancel}
+            disabled={busy}
+            className="flex-1 px-4 py-2.5 rounded-lg border border-border/60 text-sm font-bold uppercase tracking-wider hover:bg-muted/40 disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={busy}
+            className="flex-1 px-4 py-2.5 rounded-lg bg-pitch text-pitch-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-[1.02] transition-transform disabled:opacity-50 inline-flex items-center justify-center gap-2"
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Recycle className="h-4 w-4" />}
+            Sí, reciclar
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -661,8 +714,12 @@ function IntercambiosTab() {
           <ArrowLeftRight className="h-4 w-4" /> Ir a intercambios
         </Link>
       </div>
-      <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pitch/10 border border-pitch/40 text-pitch text-xs font-bold uppercase tracking-widest">
-        <Trash2 className="h-3.5 w-3.5" /> Reciclaje generoso 75% + 1 garantizada cada 10
+      <div className="mt-6 inline-flex items-start gap-2 px-4 py-2.5 rounded-lg bg-pitch/10 border border-pitch/40 text-pitch text-xs max-w-md text-left">
+        <Trash2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+        <span>
+          ¿Te salió una figurita repetida? Cambiala por monedas. Cada 10 repetidas que reciclás, te
+          regalamos una figurita.
+        </span>
       </div>
     </div>
   );

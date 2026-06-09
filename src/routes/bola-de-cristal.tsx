@@ -91,7 +91,9 @@ function BolaDeCristalPage() {
     };
   }, [user, authLoading]);
 
-  useEffect(() => { setSaved(false); }, [data]);
+  useEffect(() => {
+    setSaved(false);
+  }, [data]);
 
   const locked = isCrystalBallLocked() || data.locked;
 
@@ -112,8 +114,14 @@ function BolaDeCristalPage() {
       .upsert(payload, { onConflict: "user_id" });
     setSaving(false);
     if (error) {
-      const isRls = error.message.includes("row-level security") || error.message.includes("violates");
-      toast.error(isRls ? "La Bola de Cristal está bloqueada — el Mundial ya arrancó." : "No se pudo guardar: " + error.message);
+      const isRls =
+        error.message.includes("row-level security") || error.message.includes("violates");
+      if (!isRls) console.error("crystal_ball save error:", error);
+      toast.error(
+        isRls
+          ? "La Bola de Cristal está bloqueada — el Mundial ya arrancó."
+          : "No se pudo guardar. Probá de nuevo en un momento.",
+      );
     } else {
       setSaved(true);
     }
@@ -239,6 +247,7 @@ function BolaDeCristalPage() {
           points={crystalBallPoints.goleador}
           icon={<Sparkles className="h-5 w-5" />}
           locked={locked}
+          hint="El jugador que más goles meta en todo el Mundial."
         >
           <PlayerAutocomplete
             disabled={locked}
@@ -257,6 +266,7 @@ function BolaDeCristalPage() {
           points={crystalBallPoints.mejorJugador}
           icon={<Sparkles className="h-5 w-5" />}
           locked={locked}
+          hint="El jugador elegido como la figura del torneo (MVP)."
         >
           <PlayerAutocomplete
             disabled={locked}
@@ -286,6 +296,7 @@ function BolaDeCristalPage() {
           points={crystalBallPoints.fairPlay}
           icon={<Sparkles className="h-5 w-5" />}
           locked={locked}
+          hint="La selección con mejor conducta (menos tarjetas y juego limpio) del torneo."
         >
           <select
             disabled={locked}
@@ -309,11 +320,17 @@ function BolaDeCristalPage() {
         className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-pitch text-primary-foreground font-bold uppercase tracking-wider shadow-glow-pitch hover:scale-105 transition-transform disabled:opacity-60 disabled:hover:scale-100"
       >
         {saving ? (
-          <><Save className="h-4 w-4" /> Guardando...</>
+          <>
+            <Save className="h-4 w-4" /> Guardando...
+          </>
         ) : saved ? (
-          <><Check className="h-4 w-4" /> Guardado</>
+          <>
+            <Check className="h-4 w-4" /> Guardado
+          </>
         ) : (
-          <><Save className="h-4 w-4" /> Guardar Bola de Cristal</>
+          <>
+            <Save className="h-4 w-4" /> Guardar Bola de Cristal
+          </>
         )}
       </button>
     </div>
@@ -326,16 +343,18 @@ function CrystalField({
   icon,
   children,
   locked,
+  hint,
 }: {
   label: string;
   points: number;
   icon: React.ReactNode;
   children: React.ReactNode;
   locked: boolean;
+  hint?: string;
 }) {
   return (
     <div className="bg-gradient-card border border-border/50 rounded-2xl p-5">
-      <div className="flex items-center justify-between gap-2 mb-3">
+      <div className="flex items-center justify-between gap-2 mb-1">
         <div className="flex items-center gap-2">
           <span className="text-primary">{icon}</span>
           <span className="font-display text-lg tracking-wide">{label}</span>
@@ -344,6 +363,8 @@ function CrystalField({
           {points} pts
         </div>
       </div>
+      {hint && <p className="text-xs text-muted-foreground mb-3">{hint}</p>}
+      {!hint && <div className="mb-3" />}
       {children}
       {locked && (
         <div className="mt-2 text-[11px] text-muted-foreground flex items-center gap-1.5">

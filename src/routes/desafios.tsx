@@ -76,7 +76,11 @@ function DesafiosPage() {
   }, [challenges, activeRound]);
 
   // Active/resolved challenges for the current user — cancelled and rejected disappear
-  const VISIBLE_STATUSES: import("@/lib/challenges").ChallengeStatus[] = ["pending", "accepted", "resolved"];
+  const VISIBLE_STATUSES: import("@/lib/challenges").ChallengeStatus[] = [
+    "pending",
+    "accepted",
+    "resolved",
+  ];
   const myChallenges = useMemo(
     () =>
       user
@@ -159,7 +163,9 @@ function DesafiosPage() {
     setSubmitting(true);
     try {
       await createChallenge(user.id, selectedOpponent, activeRound.id);
-      toast.success("Desafío enviado. Esperá que tu rival lo acepte antes de que arranque la jornada.");
+      toast.success(
+        "Desafío enviado. Esperá que tu rival lo acepte antes de que arranque la jornada.",
+      );
       setSelectedOpponent("");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "No se pudo crear el desafío");
@@ -185,16 +191,17 @@ function DesafiosPage() {
           Desafíos por jornada
         </h1>
         <p className="mt-3 text-sm sm:text-base text-muted-foreground max-w-2xl">
-          Elegís una jornada y un rival. Al final de esa jornada, quien hizo más puntos gana los puntos del otro como bonus.{" "}
-          <strong>Solo un desafío por jornada</strong>. En caso de empate, cada uno suma la mitad de los puntos del otro.
+          Elegís una jornada y un rival. Al final de esa jornada, quien hizo más puntos gana los
+          puntos del otro como bonus. <strong>Solo un desafío por jornada</strong>. En caso de
+          empate, cada uno suma la mitad de los puntos del otro.
         </p>
 
         {/* Ventana de desafío */}
         <div className="mt-4 flex items-start gap-2.5 text-sm text-muted-foreground bg-secondary/30 border border-border/40 rounded-xl px-4 py-3">
           <Info className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
           <span>
-            Los desafíos se habilitan <strong>cuando arranca cada jornada</strong> y se cierran cuando termina.
-            No podés desafiar jornadas futuras ni pasadas.
+            Los desafíos se habilitan <strong>cuando arranca cada jornada</strong> y se cierran
+            cuando termina. No podés desafiar jornadas futuras ni pasadas.
           </span>
         </div>
       </header>
@@ -231,7 +238,8 @@ function DesafiosPage() {
                         : " ✓ activa";
                   return (
                     <option key={r.id} value={r.id} disabled={locked}>
-                      {r.name}{suffix}
+                      {r.name}
+                      {suffix}
                     </option>
                   );
                 })}
@@ -359,8 +367,11 @@ function RoundMeta({ round, alreadyHas }: { round: Round; alreadyHas: boolean })
 
   const fmt = (iso: string) =>
     new Date(iso).toLocaleString("es-AR", {
-      weekday: "long", day: "numeric", month: "long",
-      hour: "2-digit", minute: "2-digit",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
     });
 
   return (
@@ -381,7 +392,8 @@ function RoundMeta({ round, alreadyHas }: { round: Round; alreadyHas: boolean })
       ) : active ? (
         <span className="inline-flex items-center gap-1 text-emerald-400">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          Jornada activa — desafíos abiertos hasta el {round.ends_at ? fmt(round.ends_at) : "fin de jornada"}
+          Jornada activa — desafíos abiertos hasta el{" "}
+          {round.ends_at ? fmt(round.ends_at) : "fin de jornada"}
         </span>
       ) : null}
       {alreadyHas && (
@@ -433,13 +445,13 @@ function ChallengeCard({
       case "pending":
         return (
           <span className="px-2 py-0.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wide">
-            Pendiente
+            Sin responder
           </span>
         );
       case "accepted":
         return (
           <span className="px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-bold uppercase tracking-wide">
-            En curso
+            En juego
           </span>
         );
       case "rejected":
@@ -457,7 +469,7 @@ function ChallengeCard({
       case "resolved":
         return (
           <span className="px-2 py-0.5 rounded-full bg-trophy/20 border border-trophy/40 text-trophy text-xs font-bold uppercase tracking-wide">
-            Resuelto
+            Terminado
           </span>
         );
     }
@@ -484,7 +496,9 @@ function ChallengeCard({
               <strong>{challenger?.username ?? "Tu rival"}</strong> te desafió — ¿lo aceptás?
             </span>
           ) : (
-            <span>Esperando que <strong>{opponent?.username ?? "tu rival"}</strong> acepte.</span>
+            <span>
+              Esperando que <strong>{opponent?.username ?? "tu rival"}</strong> acepte.
+            </span>
           )}
         </div>
       )}

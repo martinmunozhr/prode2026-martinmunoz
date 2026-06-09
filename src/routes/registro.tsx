@@ -68,15 +68,19 @@ function RegistroPage() {
 
         <form className="mt-8 space-y-4" onSubmit={onSubmit}>
           <Field
-            label="Usuario"
+            label="Nombre de usuario"
             type="text"
             placeholder="elprofeta"
             value={username}
             onChange={setUsername}
             required
             autoComplete="username"
-            hint="Mínimo 3 caracteres"
-            error={touched.username && username.length > 0 && username.length < 3 ? "Muy corto, elegí al menos 3 caracteres" : undefined}
+            hint="Es el nombre que verán los demás en el ranking. Mínimo 3 caracteres."
+            error={
+              touched.username && username.length > 0 && username.length < 3
+                ? "Muy corto, elegí al menos 3 caracteres"
+                : undefined
+            }
             onBlur={() => setTouched((t) => ({ ...t, username: true }))}
           />
           <Field
@@ -97,7 +101,11 @@ function RegistroPage() {
             required
             autoComplete="new-password"
             hint="Mínimo 6 caracteres"
-            error={touched.password && password.length > 0 && password.length < 6 ? "Contraseña muy corta" : undefined}
+            error={
+              touched.password && password.length > 0 && password.length < 6
+                ? "Contraseña muy corta"
+                : undefined
+            }
             onBlur={() => setTouched((t) => ({ ...t, password: true }))}
           />
           <button

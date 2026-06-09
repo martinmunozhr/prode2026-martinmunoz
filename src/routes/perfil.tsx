@@ -40,8 +40,10 @@ function PerfilPage() {
       .update({ avatar_color: color })
       .eq("id", user.id);
     setSaving(false);
-    if (error) toast.error("No se pudo guardar: " + error.message);
-    else toast.success("Perfil actualizado");
+    if (error) {
+      console.error("perfil save error:", error);
+      toast.error("No se pudo guardar el color. Probá de nuevo en un momento.");
+    } else toast.success("Perfil actualizado");
   };
 
   if (loading) {

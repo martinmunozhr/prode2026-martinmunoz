@@ -101,12 +101,13 @@ export function OnboardingModal() {
             >
               Ver reglas completas
             </Link>
-            <button
+            <Link
+              to="/mis-pronosticos"
               onClick={close}
-              className="flex-1 px-4 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
+              className="flex-1 text-center px-4 py-2.5 rounded-md bg-gradient-pitch text-primary-foreground text-sm font-bold uppercase tracking-wider shadow-glow-pitch"
             >
-              ¡Empezar!
-            </button>
+              Cargar mis pronósticos
+            </Link>
           </div>
         </div>
       </div>
