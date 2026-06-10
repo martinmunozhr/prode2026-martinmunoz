@@ -20,7 +20,13 @@ type Match = {
   stage: string;
   status: string;
 };
-type Pred = { home_score: number; away_score: number; probability: number };
+type Pred = {
+  home_score: number;
+  away_score: number;
+  p_exact: number;
+  p_outcome: number;
+  ev_points: number;
+};
 type Wdl = {
   p_home: number;
   p_draw: number;
@@ -95,12 +101,13 @@ function AdminPredictor() {
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="h-5 w-5 text-primary" />
           <h3 className="font-bold uppercase tracking-wider">
-            Resultados más probables (Elo del paper + Poisson)
+            Pronóstico sugerido (Elo del paper + Poisson)
           </h3>
         </div>
         <p className="text-xs text-muted-foreground -mt-2 mb-4">
-          Fuerza inicial sembrada del paper Panmure Liberum; se ajusta sola con cada resultado
-          real del Mundial.
+          Ordenado por puntos esperados del prode (3 pts exacto, 1 pt resultado): conviene el
+          marcador que mejor combina chance de exacto con chance de acertar el ganador. Fuerza
+          inicial sembrada del paper Panmure Liberum; se ajusta sola con cada resultado real.
         </p>
 
         <div className="grid gap-3 md:grid-cols-3">
@@ -189,13 +196,16 @@ function AdminPredictor() {
                 className={`rounded-lg border p-4 text-center ${i === 0 ? "border-primary bg-primary/10" : "border-border/40 bg-muted/20"}`}
               >
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                  #{i + 1}
+                  {i === 0 ? "Sugerido" : `#${i + 1}`}
                 </div>
                 <div className="font-display text-3xl tracking-wider mt-1">
                   {p.home_score} - {p.away_score}
                 </div>
                 <div className="mt-1 text-xs font-mono text-primary">
-                  {(p.probability * 100).toFixed(1)}%
+                  {Number(p.ev_points).toFixed(2)} pts esp.
+                </div>
+                <div className="mt-0.5 text-[10px] font-mono text-muted-foreground">
+                  exacto {(Number(p.p_exact) * 100).toFixed(1)}%
                 </div>
               </div>
             ))}
