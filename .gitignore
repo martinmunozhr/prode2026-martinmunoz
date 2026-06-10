@@ -50,3 +50,5 @@ scripts/panini/album_crops/**/*.png
 *.njsproj
 *.sln
 *.sw?
+
+smoke-report/

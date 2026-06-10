@@ -9,30 +9,27 @@ import { OnboardingModal } from "@/components/onboarding-modal";
 
 import appCss from "../styles.css?url";
 
+// Renderiza dentro del layout de RootComponent, que ya pone header y footer.
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
-      <div className="flex-1 flex items-center justify-center px-4 py-20">
-        <div className="max-w-md text-center">
-          <div className="font-display text-9xl text-gradient-pitch">404</div>
-          <h2 className="mt-4 font-display text-3xl tracking-wider text-foreground">
-            Página no encontrada
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            La página que buscás no existe o fue movida.
-          </p>
-          <div className="mt-6">
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-pitch px-6 py-3 font-bold uppercase tracking-wider text-primary-foreground shadow-glow-pitch hover:scale-105 transition-transform"
-            >
-              Volver al inicio
-            </Link>
-          </div>
+    <div className="flex flex-1 items-center justify-center px-4 py-20">
+      <div className="max-w-md text-center">
+        <div className="font-display text-9xl text-gradient-pitch">404</div>
+        <h2 className="mt-4 font-display text-3xl tracking-wider text-foreground">
+          Página no encontrada
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          La página que buscás no existe o fue movida.
+        </p>
+        <div className="mt-6">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-pitch px-6 py-3 font-bold uppercase tracking-wider text-primary-foreground shadow-glow-pitch hover:scale-105 transition-transform"
+          >
+            Volver al inicio
+          </Link>
         </div>
       </div>
-      <SiteFooter />
     </div>
   );
 }
@@ -83,19 +80,8 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Prode Mundial 2026" },
       {
-        name: "description",
-        content:
-          "World Cup Predictor: A football prediction app with real player images and a sticker collection system.",
-      },
-      {
-        property: "og:description",
-        content:
-          "World Cup Predictor: A football prediction app with real player images and a sticker collection system.",
-      },
-      {
         name: "twitter:description",
-        content:
-          "World Cup Predictor: A football prediction app with real player images and a sticker collection system.",
+        content: "Pronosticá cada partido del Mundial 2026 y competí con tus amigos.",
       },
       {
         property: "og:image",

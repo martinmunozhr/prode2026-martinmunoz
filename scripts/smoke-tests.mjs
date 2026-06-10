@@ -33,7 +33,9 @@ const ROUTES = [
   { name: "bola-de-cristal", path: "/bola-de-cristal" },
   { name: "login", path: "/login" },
   { name: "registro", path: "/registro" },
-  { name: "404", path: "/ruta-inexistente-xyz" },
+  // expectStatus: el documento DEBE responder ese código. El console error
+  // genérico del navegador por esa respuesta se ignora (comportamiento esperado).
+  { name: "404", path: "/ruta-inexistente-xyz", expectStatus: 404 },
 ];
 
 // Patrones de log que ignoramos (ruido conocido del entorno de preview).
@@ -60,6 +62,11 @@ async function visitRoute(browser, route, viewport, label) {
   page.on("console", (msg) => {
     const text = msg.text();
     if (shouldIgnore(text)) return;
+    if (
+      route.expectStatus &&
+      new RegExp(`status of ${route.expectStatus}`).test(text)
+    )
+      return;
     if (msg.type() === "error") consoleErrors.push(text);
     if (msg.type() === "warning") consoleWarnings.push(text);
   });
@@ -79,6 +86,9 @@ async function visitRoute(browser, route, viewport, label) {
       timeout: 30000,
     });
     httpStatus = response?.status() ?? null;
+    if (route.expectStatus && httpStatus !== route.expectStatus) {
+      pageErrors.push(`esperaba HTTP ${route.expectStatus}, llegó ${httpStatus}`);
+    }
     // Pequeña espera para hidratación + animaciones.
     await page.waitForTimeout(800);
   } catch (err) {
