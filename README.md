@@ -112,11 +112,11 @@ docs/                deploy, setup local, checklist de QA
 
 ## 📸 Demo
 
-> _(Capturas / video del prode en acción.)_
-
-| Home | Pronósticos | Ranking | Figuritas |
+| Home | Fixture | Equipos | Mobile |
 |---|---|---|---|
-| _captura_ | _captura_ | _captura_ | _captura_ |
+| ![Home del prode](docs/screenshots/home-desktop.png) | ![Fixture completo por grupos](docs/screenshots/fixture-desktop.png) | ![Las 48 selecciones](docs/screenshots/equipos-desktop.png) | ![Versión mobile](docs/screenshots/home-mobile.png) |
+
+Diseño responsive completo: la misma experiencia en desktop y en el teléfono.
 
 ---
 
