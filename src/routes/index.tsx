@@ -61,7 +61,7 @@ function HomePage() {
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
               Inscripciones abiertas
             </div>
-            <div className="relative">
+            <div className="relative w-fit">
               <h1 className="font-display text-5xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-[5rem] leading-[0.9] tracking-tight">
                 PRODE
                 <br />
@@ -73,7 +73,7 @@ function HomePage() {
                 src={trofeo2026}
                 alt=""
                 aria-hidden
-                className="hidden sm:block absolute top-1/2 -translate-y-1/2 right-2 md:right-4 lg:right-6 h-28 md:h-36 lg:h-44 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
+                className="hidden sm:block absolute top-1/2 -translate-y-1/2 left-full ml-3 md:ml-4 lg:ml-5 h-28 md:h-36 lg:h-44 object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
                 loading="lazy"
                 decoding="async"
               />
